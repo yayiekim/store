@@ -21,10 +21,10 @@ namespace yayks.Models
         public string Name { get; set; }
         public string Description { get; set; }
         public decimal Amount { get; set; }
-        public string Gender { get; set; }
-        public int CategoryId { get; set; }
         public int MeasurementId { get; set; }
         public List<HttpPostedFileBase> Images { get; set; }
+        public List<ProductCategory> Categories { get; set; }
+        public List<GenderCheckBox> Genders { get; set; }
 
     }
 

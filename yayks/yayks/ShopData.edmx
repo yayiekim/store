@@ -157,6 +157,8 @@
           </Key>
           <Property Name="Id" Type="nvarchar" MaxLength="128" Nullable="false" />
           <Property Name="ProductName" Type="nvarchar" MaxLength="1000" Nullable="false" />
+          <Property Name="Amount" Type="money" Nullable="false" />
+          <Property Name="Description" Type="nvarchar(max)" />
         </EntityType>
         <EntityType Name="ProductsInCategories">
           <Key>
@@ -709,6 +711,8 @@
           <NavigationProperty Name="ProductDetails" Relationship="Model.FK_ProductDetails_Products" FromRole="Product" ToRole="ProductDetail" />
           <NavigationProperty Name="ProductsInGenders" Relationship="Model.FK_ProductsInGenders_Products" FromRole="Product" ToRole="ProductsInGender" />
           <NavigationProperty Name="ProductCategories" Relationship="Model.ProductsInCategories" FromRole="Product" ToRole="ProductCategory" />
+          <Property Name="Amount" Type="Decimal" Nullable="false" Precision="19" Scale="4" />
+          <Property Name="Description" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
         </EntityType>
         <EntityType Name="ProductsInGender">
           <Key>
@@ -1035,6 +1039,8 @@
           <EntitySetMapping Name="Products">
             <EntityTypeMapping TypeName="Model.Product">
               <MappingFragment StoreEntitySet="Products">
+                <ScalarProperty Name="Description" ColumnName="Description" />
+                <ScalarProperty Name="Amount" ColumnName="Amount" />
                 <ScalarProperty Name="ProductName" ColumnName="ProductName" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
