@@ -8,10 +8,10 @@
 <h2>AddNewProduct</h2>
 
 
-@using (Html.BeginForm()) 
+@using (Html.BeginForm("AddNewProduct", "AdminProducts", FormMethod.Post, new { enctype = "multipart/form-data" }))
 {
     @Html.AntiForgeryToken()
-    
+
     <div class="form-horizontal">
         <h4>NewProductModel</h4>
         <hr />
@@ -40,31 +40,69 @@
             </div>
         </div>
 
-       
+        
+
+        @*Category list*@
         <div class="form-group">
-            @Html.LabelFor(model => model.MeasurementId, htmlAttributes: new { @class = "control-label col-md-2" })
+            @Html.LabelFor(model => model.Categories, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
-                @Html.EditorFor(model => model.MeasurementId, new { htmlAttributes = new { @class = "form-control" } })
+                <div class="panel panel-default">
+                    @for (int i = 0; i < Model.Categories.Count; i++)
+                    {
+
+                        @Html.DisplayFor(model => model.Categories[i].Label)
+                        @Html.HiddenFor(model => model.Categories[i].Id)
+                        @Html.CheckBoxFor(model => model.Categories[i].IsSelected, new { @id= Model.Categories[i].Id, @class = "categoriesClass", @checked = "checked" })
+
+                    }
+                </div>
+            </div>
+        </div>
+
+        @*Category list*@
+        <div class="form-group">
+            @Html.LabelFor(model => model.Genders, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                <div class="panel panel-default">
+                    @for (int i = 0; i < Model.Genders.Count; i++)
+                    {
+
+                        @Html.DisplayFor(model => model.Genders[i].Label)
+                        @Html.HiddenFor(model => model.Genders[i].Id)
+                        @Html.CheckBoxFor(model => model.Genders[i].IsSelected, new { @checked = "checked" })
+
+                    }
+                </div>
+            </div>
+        </div>
+
+
+        <div class="form-group">
+            @Html.Label("Measurement", htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.DropDownListFor(model => model.MeasurementId, new List<SelectListItem>(), "--Select--", new { @class = "form-control ddlMeasurements" })
                 @Html.ValidationMessageFor(model => model.MeasurementId, "", new { @class = "text-danger" })
             </div>
         </div>
 
-        @for (int i = 0; i < Model.Genders.Count; i++)
-        {
-            <div class="form-group">
+        <div class="form-group">
+            @Html.Label("Color", htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.DropDownListFor(model => model.ColordId, new SelectList(ViewBag.Colors, "Id", "Color", "Id"), "--Select--", new { @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.ColordId, "", new { @class = "text-danger" })
+            </div>
+        </div>
 
-                <div class="col-md-10">
-                    <div class="checkbox">
-                        <label>
-                            @Html.HiddenFor(model => model.Genders[i].Name)
-                            @Html.CheckBoxFor(model => model.Genders[i].IsSelected, new { @checked = "checked" })
-                        </label>
-                    </div>
 
+        <div class="form-group">
+            @Html.Label("Images", htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                <div id="multiple">
+                    <input type="file" class="multiple form-control" name="files" multiple />
                 </div>
             </div>
-        }
- 
+        </div>
+
 
 
         <div class="form-group">
@@ -81,4 +119,42 @@
 
 @section Scripts {
     @Scripts.Render("~/bundles/jqueryval")
+
+
+    <script>
+        $(document).ready(function () {
+
+
+            $('.categoriesClass').change(function () {
+
+                var selectedGroups = [];
+                $(".ddlMeasurements").empty();
+
+                $('.categoriesClass:checkbox:checked').each(function () {
+                 
+                    selectedGroups.push($(this).attr('id'));
+
+                });
+
+                $.ajax({
+                    type: "post",
+                    url: "/Rest/getMeasurement",
+                    data: { Categories: selectedGroups },
+                    datatype: "json",
+                    traditional: true,
+                    success: function (data) {
+
+                        $.each(data, function (i, res) {
+                            $(".ddlMeasurements").append('<option value="' + res.Id + '">' +
+                                 res.Name + '</option>');
+                            // here we are adding option for States
+
+                        });
+                    }
+                });
+
+
+            });
+        });
+    </script>
 }

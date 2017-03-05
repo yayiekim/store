@@ -148,8 +148,8 @@
           </Key>
           <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="MeasurementName" Type="nvarchar" MaxLength="50" Nullable="false" />
-          <Property Name="MeasurementType" Type="nvarchar" MaxLength="50" Nullable="false" />
-          <Property Name="MeasurementValue" Type="decimal" Precision="18" Scale="0" />
+          <Property Name="ProductCategoryId" Type="int" Nullable="false" />
+          <Property Name="MeasurementValue" Type="decimal" Precision="18" Scale="0" Nullable="false" />
         </EntityType>
         <EntityType Name="Products">
           <Key>
@@ -342,8 +342,22 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK_ProductsInCategories_ProductCategories">
+        <Association Name="FK_ProductMeasurements_ProductCategories">
           <End Role="ProductCategories" Type="Self.ProductCategories" Multiplicity="1" />
+          <End Role="ProductMeasurements" Type="Self.ProductMeasurements" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ProductCategories">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="ProductMeasurements">
+              <PropertyRef Name="ProductCategoryId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_ProductsInCategories_ProductCategories">
+          <End Role="ProductCategories" Type="Self.ProductCategories" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
           <End Role="ProductsInCategories" Type="Self.ProductsInCategories" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="ProductCategories">
@@ -355,7 +369,9 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_ProductsInCategories_Products">
-          <End Role="Products" Type="Self.Products" Multiplicity="1" />
+          <End Role="Products" Type="Self.Products" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
           <End Role="ProductsInCategories" Type="Self.ProductsInCategories" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="Products">
@@ -367,7 +383,9 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_ProductsInGenders_Products">
-          <End Role="Products" Type="Self.Products" Multiplicity="1" />
+          <End Role="Products" Type="Self.Products" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
           <End Role="ProductsInGenders" Type="Self.ProductsInGenders" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="Products">
@@ -449,6 +467,10 @@
             <End Role="Products" EntitySet="Products" />
             <End Role="ProductDetails" EntitySet="ProductDetails" />
           </AssociationSet>
+          <AssociationSet Name="FK_ProductMeasurements_ProductCategories" Association="Self.FK_ProductMeasurements_ProductCategories">
+            <End Role="ProductCategories" EntitySet="ProductCategories" />
+            <End Role="ProductMeasurements" EntitySet="ProductMeasurements" />
+          </AssociationSet>
           <AssociationSet Name="FK_ProductsInCategories_ProductCategories" Association="Self.FK_ProductsInCategories_ProductCategories">
             <End Role="ProductCategories" EntitySet="ProductCategories" />
             <End Role="ProductsInCategories" EntitySet="ProductsInCategories" />
@@ -510,6 +532,10 @@
           <AssociationSet Name="FK_PaymentDetails_Payments" Association="Model.FK_PaymentDetails_Payments">
             <End Role="Payment" EntitySet="Payments" />
             <End Role="PaymentDetail" EntitySet="PaymentDetails" />
+          </AssociationSet>
+          <AssociationSet Name="FK_ProductMeasurements_ProductCategories" Association="Model.FK_ProductMeasurements_ProductCategories">
+            <End Role="ProductCategory" EntitySet="ProductCategories" />
+            <End Role="ProductMeasurement" EntitySet="ProductMeasurements" />
           </AssociationSet>
           <AssociationSet Name="FK_ProductDetails_ProductColors" Association="Model.FK_ProductDetails_ProductColors">
             <End Role="ProductColor" EntitySet="ProductColors" />
@@ -654,6 +680,7 @@
           </Key>
           <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="CategoryName" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="ProductMeasurements" Relationship="Model.FK_ProductMeasurements_ProductCategories" FromRole="ProductCategory" ToRole="ProductMeasurement" />
           <NavigationProperty Name="Products" Relationship="Model.ProductsInCategories" FromRole="ProductCategory" ToRole="Product" />
         </EntityType>
         <EntityType Name="ProductColor">
@@ -697,8 +724,9 @@
           </Key>
           <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="MeasurementName" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="MeasurementType" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="MeasurementValue" Type="Decimal" Precision="18" Scale="0" />
+          <Property Name="ProductCategoryId" Type="Int32" Nullable="false" />
+          <Property Name="MeasurementValue" Type="Decimal" Nullable="false" Precision="18" Scale="0" />
+          <NavigationProperty Name="ProductCategory" Relationship="Model.FK_ProductMeasurements_ProductCategories" FromRole="ProductMeasurement" ToRole="ProductCategory" />
           <NavigationProperty Name="ProductDetails" Relationship="Model.FK_ProductDetails_ProductMeasurements" FromRole="ProductMeasurement" ToRole="ProductDetail" />
         </EntityType>
         <EntityType Name="Product">
@@ -707,12 +735,12 @@
           </Key>
           <Property Name="Id" Type="String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="true" />
           <Property Name="ProductName" Type="String" Nullable="false" MaxLength="1000" FixedLength="false" Unicode="true" />
+          <Property Name="Amount" Type="Decimal" Nullable="false" Precision="19" Scale="4" />
+          <Property Name="Description" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
           <NavigationProperty Name="OrderDetails" Relationship="Model.FK_OrderDetails_Products" FromRole="Product" ToRole="OrderDetail" />
           <NavigationProperty Name="ProductDetails" Relationship="Model.FK_ProductDetails_Products" FromRole="Product" ToRole="ProductDetail" />
           <NavigationProperty Name="ProductsInGenders" Relationship="Model.FK_ProductsInGenders_Products" FromRole="Product" ToRole="ProductsInGender" />
           <NavigationProperty Name="ProductCategories" Relationship="Model.ProductsInCategories" FromRole="Product" ToRole="ProductCategory" />
-          <Property Name="Amount" Type="Decimal" Nullable="false" Precision="19" Scale="4" />
-          <Property Name="Description" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
         </EntityType>
         <EntityType Name="ProductsInGender">
           <Key>
@@ -813,6 +841,18 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_ProductMeasurements_ProductCategories">
+          <End Type="Model.ProductCategory" Role="ProductCategory" Multiplicity="1" />
+          <End Type="Model.ProductMeasurement" Role="ProductMeasurement" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ProductCategory">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="ProductMeasurement">
+              <PropertyRef Name="ProductCategoryId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_ProductDetails_ProductColors">
           <End Type="Model.ProductColor" Role="ProductColor" Multiplicity="0..1" />
           <End Type="Model.ProductDetail" Role="ProductDetail" Multiplicity="*" />
@@ -862,7 +902,9 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_ProductsInGenders_Products">
-          <End Type="Model.Product" Role="Product" Multiplicity="1" />
+          <End Type="Model.Product" Role="Product" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
           <End Type="Model.ProductsInGender" Role="ProductsInGender" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="Product">
@@ -881,7 +923,7 @@
           <End Type="Model.ProductCategory" Role="ProductCategory" Multiplicity="*" />
           <End Type="Model.Product" Role="Product" Multiplicity="*" />
         </Association>
-      </Schema>
+        </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
     <edmx:Mappings>
@@ -1030,7 +1072,7 @@
             <EntityTypeMapping TypeName="Model.ProductMeasurement">
               <MappingFragment StoreEntitySet="ProductMeasurements">
                 <ScalarProperty Name="MeasurementValue" ColumnName="MeasurementValue" />
-                <ScalarProperty Name="MeasurementType" ColumnName="MeasurementType" />
+                <ScalarProperty Name="ProductCategoryId" ColumnName="ProductCategoryId" />
                 <ScalarProperty Name="MeasurementName" ColumnName="MeasurementName" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>

@@ -11,12 +11,13 @@ namespace yayks.Models
     public class CommonModels
     {
         Entities data = new Entities();
-        public List<string> GetMeasurementTypes()
+
+        public List<string> GetGenders()
         {
             List<string> list = new List<string>();
 
-            list.Add("Shoes");
-            list.Add("Shirts");
+            list.Add("Male");
+            list.Add("Female");
 
             return list;
 
@@ -38,34 +39,9 @@ namespace yayks.Models
 
         }
 
-        public List<GenderCheckBox> GetGenders()
-        {
-            List<string> genders = new List<string>();
+      
 
-            genders.Add("Shoes");
-            genders.Add("Top");
-            genders.Add("Bottom");
-
-            List<GenderCheckBox> list = new List<GenderCheckBox>();
-
-            foreach (var x in genders)
-            {
-               
-                    GenderCheckBox gc = new GenderCheckBox()
-                    {
-                        Name = x,
-                        IsSelected = false
-                    };
-
-                    list.Add(gc);
-
-            }
-
-            return list;
-
-        }
-
-        public List<GenderCheckBox> GetProductGenders(List<ProductGenders> productGenders)
+        public List<CheckBoxModel> GetProductGenders(List<ProductGenders> productGenders)
         {
             List<string> genders = new List<string>();
 
@@ -73,15 +49,15 @@ namespace yayks.Models
             genders.Add("Top");
             genders.Add("Bottom");
             
-            List<GenderCheckBox> list = new List<GenderCheckBox>();
+            List<CheckBoxModel> list = new List<CheckBoxModel>();
 
             foreach (var x in genders)
             {
                 if (productGenders.Any(i => i.Gender == x))
                 {
-                    GenderCheckBox gc = new GenderCheckBox()
+                    CheckBoxModel gc = new CheckBoxModel()
                     {
-                        Name = x,
+                        Id = x,
                         IsSelected = true
                     };
 
@@ -89,9 +65,9 @@ namespace yayks.Models
                 }
                 else
                 {
-                    GenderCheckBox gc = new GenderCheckBox()
+                    CheckBoxModel gc = new CheckBoxModel()
                     {
-                        Name = x,
+                        Id = x,
                         IsSelected = false
                     };
 
@@ -105,9 +81,12 @@ namespace yayks.Models
 
     }
 
-    public class GenderCheckBox
+    public class CheckBoxModel
     {
-        public string Name { get; set; }
+        public string Id { get; set; }
         public bool IsSelected { get; set; }
+        public string Label { get; set; }
     }
+
+    
 }

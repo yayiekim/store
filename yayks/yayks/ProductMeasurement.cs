@@ -22,9 +22,10 @@ namespace yayks
     
         public int Id { get; set; }
         public string MeasurementName { get; set; }
-        public string MeasurementType { get; set; }
-        public Nullable<decimal> MeasurementValue { get; set; }
+        public int ProductCategoryId { get; set; }
+        public decimal MeasurementValue { get; set; }
     
+        public virtual ProductCategory ProductCategory { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<ProductDetail> ProductDetails { get; set; }
     }

@@ -15,7 +15,7 @@ namespace yayks.Helpers
         // Parse the connection string and return a reference to the storage account.
         CloudStorageAccount storageAccount = CloudStorageAccount.Parse(CloudConfigurationManager.GetSetting("StorageConnectionString"));
 
-        public async Task<string> UploadImageAsync(HttpPostedFileBase imageToUpload)
+        public async Task<BlobResult> UploadImageAsync(HttpPostedFileBase imageToUpload)
         {
             // Create the blob client.
             CloudBlobClient blobClient = storageAccount.CreateCloudBlobClient();
@@ -27,16 +27,50 @@ namespace yayks.Helpers
             CloudBlockBlob blockBlob = container.GetBlockBlobReference("myblob");
 
 
+            if (await container.CreateIfNotExistsAsync())
+            {
+                // Enable public access on the newly created "images" container
+                await container.SetPermissionsAsync(
+                    new BlobContainerPermissions
+                    {
+                        PublicAccess =
+                            BlobContainerPublicAccessType.Blob
+                    });
+
+
+            }
+            
+
             string imageName = Guid.NewGuid().ToString() + "-" + Path.GetExtension(imageToUpload.FileName);
 
             CloudBlockBlob cloudBlockBlob = container.GetBlockBlobReference(imageName);
             cloudBlockBlob.Properties.ContentType = imageToUpload.ContentType;
             await cloudBlockBlob.UploadFromStreamAsync(imageToUpload.InputStream);
+
+            BlobResult res = new BlobResult()
+            {
+                URL = cloudBlockBlob.Uri.ToString(),
+                BaseUrl = storageAccount.BlobEndpoint.ToString(),
+                FileName = imageName,
+
+
+            };
             
-            return cloudBlockBlob.Uri.ToString();
+            return res;
 
         }
 
 
     }
+
+    public class BlobResult {
+
+        public string BaseUrl { get; set; }
+        public string FileName { get; set; }
+
+        public string URL { get; set; }
+
+    }
+
+
 }

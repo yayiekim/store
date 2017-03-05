@@ -1,6 +1,7 @@
 ﻿using PagedList;
 using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
@@ -21,7 +22,7 @@ namespace yayks.Controllers
         {
             return View();
         }
-
+         
         public ActionResult Products(string sortOrder, string currentFilter, string searchString, int? page)
         {
             ViewBag.CurrentSort = sortOrder;
@@ -83,14 +84,120 @@ namespace yayks.Controllers
 
             NewProductModel model = new Models.NewProductModel();
 
-            model.Genders = common.GetGenders();
+            var genders = from o in common.GetGenders()
+                          select new CheckBoxModel
+                          {
+                              Id = o,
+                              IsSelected = false,
+                              Label = o
+
+                          };
+
+
+            var categories = from o in data.ProductCategories
+                             select new CheckBoxModel
+                             {
+                                 Id = o.Id.ToString(),
+                                 IsSelected = false,
+                                 Label = o.CategoryName
+
+                             };
+
+
+            ViewBag.Colors = from o in data.ProductColors
+                             select new
+                             {
+                                 Id = o.Id,
+                                 Color = o.ProductColorName
+
+                             };
+
+
+            model.Genders = genders.ToList();
+            model.Categories = categories.ToList();
+
 
             return View(model);
         }
 
         [HttpPost]
-        public ActionResult AddNewProduct(NewProductModel product)
+        public async Task<ActionResult> AddNewProduct(NewProductModel product, IEnumerable<HttpPostedFileBase> files)
         {
+
+
+
+            Product dbProduct = new Product()
+            {
+                Id = Guid.NewGuid().ToString(),
+                Amount = product.Amount,
+                Description = product.Description,
+                ProductName = product.Name,
+
+            };
+
+            //many to many insert mapping
+            List<string> tmpint = product.Categories
+                                    .Where(i => i.IsSelected).Select(i => i.Id).ToList();
+
+            var tmp = await (from p in data.ProductCategories
+                             where tmpint.Contains(p.Id.ToString())
+                             select p).ToListAsync();
+
+
+            foreach (var o in tmp)
+            {
+
+                dbProduct.ProductCategories.Add(o);
+
+            }
+
+            ProductDetail dbProductDetail = new ProductDetail()
+            {
+                Id = Guid.NewGuid().ToString(),
+                ProductMeasurementId = product.MeasurementId,
+                ProductColorId = product.ColordId
+
+            };
+
+
+            foreach (var x in files)
+            {
+
+                var res = await azureBlob.UploadImageAsync(x);
+                ProductDetailImage dbProductImage = new ProductDetailImage()
+                {
+
+                    Id = Guid.NewGuid().ToString(),
+                    BaseAddress = res.BaseUrl,
+                    ImagePath = res.URL
+
+                };
+
+
+                dbProductDetail.ProductDetailImages.Add(dbProductImage);
+
+            }
+
+
+            foreach (var o in product.Genders)
+            {
+                if (o.IsSelected)
+                {
+                    ProductsInGender dbProdcutsInGender = new ProductsInGender()
+                    {
+                        Gender = o.Id,
+                        Product = dbProduct
+                    };
+
+                    data.ProductsInGenders.Add(dbProdcutsInGender);
+                }
+
+            }
+
+
+            dbProduct.ProductDetails.Add(dbProductDetail);
+            data.Products.Add(dbProduct);
+            await data.SaveChangesAsync();
 
             return RedirectToAction("Products");
         }

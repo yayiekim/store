@@ -230,6 +230,7 @@
     <Compile Include="Controllers\AdminProductsController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
+    <Compile Include="Controllers\RestController.cs" />
     <Compile Include="C__MigrationHistory.cs">
       <DependentUpon>ShopData.tt</DependentUpon>
     </Compile>
@@ -389,7 +390,9 @@
     <Content Include="Views\AdminProducts\Products.cshtml" />
     <Content Include="Views\AdminProducts\AddNewProduct.cshtml" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Views\Rest\" />
+  </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config" />
     <None Include="Project_Readme.html" />
