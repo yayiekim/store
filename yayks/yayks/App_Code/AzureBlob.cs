@@ -10,12 +10,19 @@ using System.IO;
 
 namespace yayks.Helpers
 {
+    public class BlobResultForSaving
+    {
+        public string BaseUrl { get; set; }
+        public string FileName { get; set; }
+        public string URL { get; set; }
+
+    }
     public class AzureBlob
     {
         // Parse the connection string and return a reference to the storage account.
         CloudStorageAccount storageAccount = CloudStorageAccount.Parse(CloudConfigurationManager.GetSetting("StorageConnectionString"));
 
-        public async Task<BlobResult> UploadImageAsync(HttpPostedFileBase imageToUpload)
+        public async Task<BlobResultForSaving> UploadImageAsync(HttpPostedFileBase imageToUpload)
         {
             // Create the blob client.
             CloudBlobClient blobClient = storageAccount.CreateCloudBlobClient();
@@ -47,7 +54,7 @@ namespace yayks.Helpers
             cloudBlockBlob.Properties.ContentType = imageToUpload.ContentType;
             await cloudBlockBlob.UploadFromStreamAsync(imageToUpload.InputStream);
 
-            BlobResult res = new BlobResult()
+            BlobResultForSaving res = new BlobResultForSaving()
             {
                 URL = cloudBlockBlob.Uri.ToString(),
                 BaseUrl = storageAccount.BlobEndpoint.ToString(),
@@ -63,14 +70,7 @@ namespace yayks.Helpers
 
     }
 
-    public class BlobResult {
-
-        public string BaseUrl { get; set; }
-        public string FileName { get; set; }
-
-        public string URL { get; set; }
-
-    }
+   
 
 
 }
