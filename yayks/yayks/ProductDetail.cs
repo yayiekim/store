@@ -27,6 +27,7 @@ namespace yayks
         public Nullable<decimal> Length { get; set; }
         public Nullable<decimal> Width { get; set; }
         public Nullable<decimal> Height { get; set; }
+        public Nullable<decimal> Weight { get; set; }
     
         public virtual ProductColor ProductColor { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]

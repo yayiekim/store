@@ -41,5 +41,7 @@ namespace yayks
         public virtual DbSet<ProductMeasurement> ProductMeasurements { get; set; }
         public virtual DbSet<Product> Products { get; set; }
         public virtual DbSet<ProductsInGender> ProductsInGenders { get; set; }
+        public virtual DbSet<PurchaseDetail> PurchaseDetails { get; set; }
+        public virtual DbSet<Purchase> Purchases { get; set; }
     }
 }

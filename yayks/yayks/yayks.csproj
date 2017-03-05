@@ -279,6 +279,12 @@
       <DependentUpon>ShopData.tt</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Purchase.cs">
+      <DependentUpon>ShopData.tt</DependentUpon>
+    </Compile>
+    <Compile Include="PurchaseDetail.cs">
+      <DependentUpon>ShopData.tt</DependentUpon>
+    </Compile>
     <Compile Include="ShopData.Context.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -389,6 +395,7 @@
     </Content>
     <Content Include="Views\AdminProducts\Products.cshtml" />
     <Content Include="Views\AdminProducts\AddNewProduct.cshtml" />
+    <Content Include="Views\AdminProducts\Edit.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Views\Rest\" />

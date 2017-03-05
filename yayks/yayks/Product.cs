@@ -20,6 +20,7 @@ namespace yayks
             this.OrderDetails = new HashSet<OrderDetail>();
             this.ProductDetails = new HashSet<ProductDetail>();
             this.ProductsInGenders = new HashSet<ProductsInGender>();
+            this.PurchaseDetails = new HashSet<PurchaseDetail>();
             this.ProductCategories = new HashSet<ProductCategory>();
         }
     
@@ -27,6 +28,7 @@ namespace yayks
         public string ProductName { get; set; }
         public decimal Amount { get; set; }
         public string Description { get; set; }
+        public bool IsEnabled { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<OrderDetail> OrderDetails { get; set; }
@@ -34,6 +36,8 @@ namespace yayks
         public virtual ICollection<ProductDetail> ProductDetails { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<ProductsInGender> ProductsInGenders { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<PurchaseDetail> PurchaseDetails { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<ProductCategory> ProductCategories { get; set; }
     }

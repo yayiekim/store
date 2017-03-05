@@ -5,25 +5,28 @@
     <!-- Diagram content (shape and connector positions) -->
     <edmx:Diagrams>
       <Diagram DiagramId="fe528289af9b4d94b3592a05abd96d8d" Name="Diagram1">
-        <EntityTypeShape EntityType="Model.C__MigrationHistory" Width="1.5" PointX="8.75" PointY="2.125" />
-        <EntityTypeShape EntityType="Model.AspNetRole" Width="1.5" PointX="1.5" PointY="15.875" />
-        <EntityTypeShape EntityType="Model.AspNetUserClaim" Width="1.5" PointX="3" PointY="0.75" />
-        <EntityTypeShape EntityType="Model.AspNetUserLogin" Width="1.5" PointX="3" PointY="18.5" />
-        <EntityTypeShape EntityType="Model.AspNetUser" Width="1.5" PointX="0.75" PointY="10.625" />
-        <EntityTypeShape EntityType="Model.OrderDetail" Width="1.5" PointX="5.25" PointY="4.25" />
-        <EntityTypeShape EntityType="Model.Order" Width="1.5" PointX="3" PointY="11.375" />
-        <EntityTypeShape EntityType="Model.PaymentDetail" Width="1.5" PointX="7.5" PointY="11.875" />
-        <EntityTypeShape EntityType="Model.Payment" Width="1.5" PointX="5.25" PointY="11.375" />
-        <EntityTypeShape EntityType="Model.ProductCategory" Width="1.5" PointX="0.75" PointY="6.25" />
-        <EntityTypeShape EntityType="Model.ProductColor" Width="1.5" PointX="6" PointY="1.25" />
-        <EntityTypeShape EntityType="Model.ProductDetailImage" Width="1.5" PointX="10.5" PointY="6.125" />
-        <EntityTypeShape EntityType="Model.ProductDetail" Width="1.5" PointX="8.25" PointY="5.5" />
-        <EntityTypeShape EntityType="Model.ProductMeasurement" Width="1.5" PointX="3" PointY="7.75" />
-        <EntityTypeShape EntityType="Model.Product" Width="1.5" PointX="3" PointY="4.375" />
-        <EntityTypeShape EntityType="Model.ProductsInGender" Width="1.5" PointX="5.25" PointY="8.375" />
+        <EntityTypeShape EntityType="Model.C__MigrationHistory" Width="1.5" PointX="8.75" PointY="1.5" />
+        <EntityTypeShape EntityType="Model.AspNetRole" Width="1.5" PointX="1.5" PointY="16.375" />
+        <EntityTypeShape EntityType="Model.AspNetUserClaim" Width="1.5" PointX="3" PointY="12.25" />
+        <EntityTypeShape EntityType="Model.AspNetUserLogin" Width="1.5" PointX="3" PointY="19" />
+        <EntityTypeShape EntityType="Model.AspNetUser" Width="1.5" PointX="0.75" PointY="11.125" />
+        <EntityTypeShape EntityType="Model.OrderDetail" Width="1.5" PointX="5.25" PointY="5.625" />
+        <EntityTypeShape EntityType="Model.Order" Width="1.5" PointX="3" PointY="0.75" />
+        <EntityTypeShape EntityType="Model.PaymentDetail" Width="1.5" PointX="7.5" PointY="16.875" />
+        <EntityTypeShape EntityType="Model.Payment" Width="1.5" PointX="5.25" PointY="16.375" />
+        <EntityTypeShape EntityType="Model.ProductCategory" Width="1.5" PointX="0.75" PointY="7.625" />
+        <EntityTypeShape EntityType="Model.ProductColor" Width="1.5" PointX="6" PointY="9.625" />
+        <EntityTypeShape EntityType="Model.ProductDetailImage" Width="1.5" PointX="10.5" PointY="10.5" />
+        <EntityTypeShape EntityType="Model.ProductDetail" Width="1.5" PointX="8.25" PointY="9.875" />
+        <EntityTypeShape EntityType="Model.ProductMeasurement" Width="1.5" PointX="3" PointY="9.25" />
+        <EntityTypeShape EntityType="Model.Product" Width="1.5" PointX="3" PointY="5.5" />
+        <EntityTypeShape EntityType="Model.ProductsInGender" Width="1.5" PointX="5.25" PointY="13" />
+        <EntityTypeShape EntityType="Model.PurchaseDetail" Width="1.5" PointX="8.25" PointY="5.75" />
+        <EntityTypeShape EntityType="Model.Purchase" Width="1.5" PointX="6" PointY="1.875" />
         <AssociationConnector Association="Model.FK_dbo_AspNetUserClaims_dbo_AspNetUsers_UserId" />
         <AssociationConnector Association="Model.FK_dbo_AspNetUserLogins_dbo_AspNetUsers_UserId" />
         <AssociationConnector Association="Model.FK_Orders_AspNetUsers" />
+        <AssociationConnector Association="Model.FK_Table_AspNeUsers" />
         <AssociationConnector Association="Model.FK_OrderDetails_Orders" />
         <AssociationConnector Association="Model.FK_OrderDetails_Products" />
         <AssociationConnector Association="Model.FK_Payments_Orders" />
@@ -34,6 +37,8 @@
         <AssociationConnector Association="Model.FK_ProductDetails_ProductMeasurements" />
         <AssociationConnector Association="Model.FK_ProductDetails_Products" />
         <AssociationConnector Association="Model.FK_ProductsInGenders_Products" />
+        <AssociationConnector Association="Model.FK_PurchaseDetails_Products" />
+        <AssociationConnector Association="Model.FK_PurchaseDetails_Purchases" />
         <AssociationConnector Association="Model.AspNetUserRoles" />
         <AssociationConnector Association="Model.ProductsInCategories" />
       </Diagram>

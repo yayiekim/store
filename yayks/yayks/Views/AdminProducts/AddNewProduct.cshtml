@@ -40,19 +40,20 @@
             </div>
         </div>
 
-        
+
 
         @*Category list*@
         <div class="form-group">
             @Html.LabelFor(model => model.Categories, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
-                <div class="panel panel-default">
+                <div class="checkbox">
                     @for (int i = 0; i < Model.Categories.Count; i++)
                     {
-
-                        @Html.DisplayFor(model => model.Categories[i].Label)
                         @Html.HiddenFor(model => model.Categories[i].Id)
-                        @Html.CheckBoxFor(model => model.Categories[i].IsSelected, new { @id= Model.Categories[i].Id, @class = "categoriesClass", @checked = "checked" })
+
+                        <label class="checkbox-inline">@Html.CheckBoxFor(model => model.Categories[i].IsSelected, new { @id = Model.Categories[i].Id, @class = "categoriesClass", @checked = "checked" })
+                        @Html.DisplayFor(model => model.Categories[i].Label)</label>
+
 
                     }
                 </div>
@@ -61,19 +62,21 @@
 
         @*Category list*@
         <div class="form-group">
+
             @Html.LabelFor(model => model.Genders, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
-                <div class="panel panel-default">
+                <div class="checkbox">
                     @for (int i = 0; i < Model.Genders.Count; i++)
-                    {
-
-                        @Html.DisplayFor(model => model.Genders[i].Label)
+                     {
                         @Html.HiddenFor(model => model.Genders[i].Id)
-                        @Html.CheckBoxFor(model => model.Genders[i].IsSelected, new { @checked = "checked" })
+
+                        <label class="checkbox-inline">@Html.CheckBoxFor(model => model.Genders[i].IsSelected, new { @checked = "checked" })@Html.DisplayFor(model => model.Genders[i].Label)</label>
+
 
                     }
                 </div>
             </div>
+
         </div>
 
 
@@ -131,7 +134,7 @@
                 $(".ddlMeasurements").empty();
 
                 $('.categoriesClass:checkbox:checked').each(function () {
-                 
+
                     selectedGroups.push($(this).attr('id'));
 
                 });
