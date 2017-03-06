@@ -32,7 +32,8 @@ namespace yayks.Models
         public List<CheckBoxModel> Categories { get; set; }
         [Required]
         public List<CheckBoxModel> Genders { get; set; }
-        public List<string> Images { get; set; }
+        public List<NewIMageModel> Images { get; set; }
+        public string[] ForDeleteImages { get; set; }
 
     }
 

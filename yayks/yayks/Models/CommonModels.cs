@@ -88,5 +88,11 @@ namespace yayks.Models
         public string Label { get; set; }
     }
 
-    
+    public class NewIMageModel
+    {
+        public string Id { get; set; }
+        public string ImgUrl { get; set; }
+    }
+
+
 }

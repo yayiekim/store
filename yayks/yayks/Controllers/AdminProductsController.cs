@@ -123,9 +123,7 @@ namespace yayks.Controllers
         [HttpPost]
         public async Task<ActionResult> AddNewProduct(NewProductModel product, IEnumerable<HttpPostedFileBase> files)
         {
-
-
-
+            
             Product dbProduct = new Product()
             {
                 Id = Guid.NewGuid().ToString(),
@@ -266,12 +264,23 @@ namespace yayks.Controllers
             var _tmpImages = from o in _product.ProductDetails
                              select o.ProductDetailImages;
 
-            List<string> _images = new List<string>();
+            List<NewIMageModel> _images = new List<NewIMageModel>();
             
             foreach (var x in _tmpImages)
             {
-                _images.AddRange(x.Select(i => i.ImagePath));
+               
+                foreach (var y in x)
+                {
+                    NewIMageModel _imgModel = new NewIMageModel()
+                    {
+                        Id = y.Id,
+                        ImgUrl = y.ImagePath,
 
+                    };
+
+                    _images.Add(_imgModel);
+                }
+                
             }
 
             NewProductModel model = new NewProductModel()
@@ -309,10 +318,111 @@ namespace yayks.Controllers
         }
 
         [HttpPost]
-        public ActionResult Edit(NewProductModel product, IEnumerable<HttpPostedFileBase> files)
+        public async Task<ActionResult> Edit(NewProductModel product, IEnumerable<HttpPostedFileBase> files)
         {
 
-            return View();
+            var _data = await data.Products.FindAsync(product.Id);
+
+            _data.ProductName = product.Id;
+            _data.Amount = product.Amount;
+            _data.Description = product.Description;
+            _data.ProductName = product.Name;
+
+            //many to many insert mapping
+            List<string> tmpint = product.Categories
+                                    .Where(i => i.IsSelected).Select(i => i.Id).ToList();
+
+            var tmp = await(from p in data.ProductCategories
+                            where tmpint.Contains(p.Id.ToString())
+                            select p).ToListAsync();
+
+
+            foreach (var x in data.ProductCategories)
+            {
+                if (!tmp.Contains(x))
+                {
+                    _data.ProductCategories.Remove(x);
+
+                }
+                else {
+
+                    if (!_data.ProductCategories.Contains(x))
+                    {
+                        _data.ProductCategories.Add(x);
+                    }
+
+                }
+
+
+            }
+
+
+            foreach (var o in tmp)
+            {
+             
+                if (_data.ProductCategories.Where(i => i.Id == o.Id).Count() == 0)
+                {
+                    _data.ProductCategories.Add(o);
+
+                }
+
+                if (tmp.Contains(_data.ProductCategories.Where(i => i.Id == o.Id).Single()))
+                {
+
+
+                }
+               
+            }
+
+            //ProductDetail dbProductDetail = new ProductDetail()
+            //{
+            //    Id = Guid.NewGuid().ToString(),
+            //    ProductMeasurementId = product.MeasurementId,
+            //    ProductColorId = product.ColordId
+
+            //};
+
+
+            //foreach (var x in files)
+            //{
+
+            //    var res = await azureBlob.UploadImageAsync(x);
+            //    ProductDetailImage dbProductImage = new ProductDetailImage()
+            //    {
+
+            //        Id = Guid.NewGuid().ToString(),
+            //        BaseAddress = res.BaseUrl,
+            //        ImagePath = res.URL
+
+            //    };
+
+
+            //    dbProductDetail.ProductDetailImages.Add(dbProductImage);
+
+            //}
+
+
+            //foreach (var o in product.Genders)
+            //{
+            //    if (o.IsSelected)
+            //    {
+            //        ProductsInGender dbProdcutsInGender = new ProductsInGender()
+            //        {
+            //            Gender = o.Id,
+            //            Product = dbProduct
+            //        };
+
+            //        data.ProductsInGenders.Add(dbProdcutsInGender);
+            //    }
+
+            //}
+            
+            data.Entry(_data).State = EntityState.Modified;
+            await data.SaveChangesAsync();
+
+
+
+            return RedirectToAction("Products");
         }
 
 
