@@ -41,43 +41,7 @@ namespace yayks.Models
 
       
 
-        public List<CheckBoxModel> GetProductGenders(List<ProductGenders> productGenders)
-        {
-            List<string> genders = new List<string>();
-
-            genders.Add("Shoes");
-            genders.Add("Top");
-            genders.Add("Bottom");
-            
-            List<CheckBoxModel> list = new List<CheckBoxModel>();
-
-            foreach (var x in genders)
-            {
-                if (productGenders.Any(i => i.Gender == x))
-                {
-                    CheckBoxModel gc = new CheckBoxModel()
-                    {
-                        Id = x,
-                        IsSelected = true
-                    };
-
-                    list.Add(gc);
-                }
-                else
-                {
-                    CheckBoxModel gc = new CheckBoxModel()
-                    {
-                        Id = x,
-                        IsSelected = false
-                    };
-
-                    list.Add(gc);
-                }
-            }
-
-            return list;
-
-        }
+      
 
     }
 

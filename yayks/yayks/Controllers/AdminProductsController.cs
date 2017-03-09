@@ -22,7 +22,7 @@ namespace yayks.Controllers
         {
             return View();
         }
-         
+
         public ActionResult Products(string sortOrder, string currentFilter, string searchString, int? page)
         {
             ViewBag.CurrentSort = sortOrder;
@@ -123,7 +123,7 @@ namespace yayks.Controllers
         [HttpPost]
         public async Task<ActionResult> AddNewProduct(NewProductModel product, IEnumerable<HttpPostedFileBase> files)
         {
-            
+
             Product dbProduct = new Product()
             {
                 Id = Guid.NewGuid().ToString(),
@@ -210,11 +210,11 @@ namespace yayks.Controllers
 
                              };
 
-               
+
             var _product = await data.Products.FindAsync(Id);
             List<CheckBoxModel> cbCategoriesList = new List<CheckBoxModel>();
             List<CheckBoxModel> cbGenderList = new List<CheckBoxModel>();
-            
+
             foreach (var x in data.ProductCategories)
             {
                 var IsSelected = false;
@@ -223,7 +223,8 @@ namespace yayks.Controllers
                 {
                     IsSelected = true;
                 }
-                else {
+                else
+                {
                     IsSelected = false;
                 }
 
@@ -265,10 +266,10 @@ namespace yayks.Controllers
                              select o.ProductDetailImages;
 
             List<NewIMageModel> _images = new List<NewIMageModel>();
-            
+
             foreach (var x in _tmpImages)
             {
-               
+
                 foreach (var y in x)
                 {
                     NewIMageModel _imgModel = new NewIMageModel()
@@ -280,7 +281,7 @@ namespace yayks.Controllers
 
                     _images.Add(_imgModel);
                 }
-                
+
             }
 
             NewProductModel model = new NewProductModel()
@@ -299,19 +300,19 @@ namespace yayks.Controllers
 
 
 
-            string[] catArray = cbCategoriesList.Where(i=>i.IsSelected).Select(i => i.Id).ToArray();
+            string[] catArray = cbCategoriesList.Where(i => i.IsSelected).Select(i => i.Id).ToArray();
 
             ViewBag.Measurements = await (from p in data.ProductMeasurements.
                            Where(a => catArray.Contains(a.ProductCategoryId.ToString()))
-                             select new
-                             {
+                                          select new
+                                          {
 
-                                 Id = p.Id,
-                                 Name = p.MeasurementName,
-                                 Value = p.MeasurementValue,
+                                              Id = p.Id,
+                                              Name = p.MeasurementName,
+                                              Value = p.MeasurementValue,
 
 
-                             }).ToListAsync();
+                                          }).ToListAsync();
 
 
             return View(model);
@@ -329,22 +330,23 @@ namespace yayks.Controllers
             _data.ProductName = product.Name;
 
             //many to many insert mapping
-            List<string> tmpint = product.Categories
+            List<string> tmpCategoryInt = product.Categories
                                     .Where(i => i.IsSelected).Select(i => i.Id).ToList();
 
-            var tmp = await(from p in data.ProductCategories
-                            where tmpint.Contains(p.Id.ToString())
-                            select p).ToListAsync();
+            var tmpCategory = await (from p in data.ProductCategories
+                                     where tmpCategoryInt.Contains(p.Id.ToString())
+                                     select p).ToListAsync();
 
 
             foreach (var x in data.ProductCategories)
             {
-                if (!tmp.Contains(x))
+                if (!tmpCategory.Contains(x))
                 {
                     _data.ProductCategories.Remove(x);
 
                 }
-                else {
+                else
+                {
 
                     if (!_data.ProductCategories.Contains(x))
                     {
@@ -357,21 +359,40 @@ namespace yayks.Controllers
             }
 
 
-            foreach (var o in tmp)
+            foreach (var o in tmpCategory)
             {
-             
-                if (_data.ProductCategories.Where(i => i.Id == o.Id).Count() == 0)
+
+                if (!_data.ProductCategories.Contains(o) && tmpCategoryInt.Contains(o.Id.ToString()))
                 {
                     _data.ProductCategories.Add(o);
 
                 }
+                else if (_data.ProductCategories.Contains(o) && !tmpCategoryInt.Contains(o.Id.ToString()))
+                { }
 
-                if (tmp.Contains(_data.ProductCategories.Where(i => i.Id == o.Id).Single()))
+            }
+
+
+            //many to many insert mapping
+            List<string> tmpGenderName = product.Genders
+                                    .Where(i => i.IsSelected).Select(i => i.Id).ToList();
+
+
+            foreach (var x in common.GetGenders())
+            {
+                if (!tmpGenderName.Contains(x) && _data.ProductsInGenders.Where(i => i.Gender == x).Any())
                 {
+                    _data.ProductsInGenders.Remove(_data.ProductsInGenders.Where(i => i.Gender == x).Single());
+                }
+                else if (tmpGenderName.Contains(x) && !_data.ProductsInGenders.Where(i => i.Gender == x).Any())
+                {
+
+                    _data.ProductsInGenders.Add(new ProductsInGender() { Gender = x, ProductId = product.Id });
 
 
                 }
-               
+
+
             }
 
             //ProductDetail dbProductDetail = new ProductDetail()
@@ -416,7 +437,7 @@ namespace yayks.Controllers
             //    }
 
             //}
-            
+
             data.Entry(_data).State = EntityState.Modified;
             await data.SaveChangesAsync();
 
