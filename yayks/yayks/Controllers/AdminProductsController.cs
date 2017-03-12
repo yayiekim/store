@@ -129,7 +129,7 @@ namespace yayks.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult> AddNewProduct(NewProductModel product, IEnumerable<HttpPostedFileBase> files)
+        public async Task<ActionResult> AddNewProduct(NewProductModel product, List<HttpPostedFileBase> files)
         {
 
             Product dbProduct = new Product()
@@ -166,36 +166,39 @@ namespace yayks.Controllers
 
             };
 
-
-            foreach (var x in files)
+            if (files.Count() >= 1 && files[0] != null)
             {
-
-                var id = Guid.NewGuid().ToString();
-
-                NewIMageModel img = new Models.NewIMageModel()
-                {
-                    Id = id,
-                    FileExtention = x.ContentType,
-                    File = x,
-
-                };
-
-                var res = await azureBlob.UploadImageAsync(img);
-
-
-                ProductDetailImage dbProductImage = new ProductDetailImage()
+                foreach (var x in files)
                 {
 
-                    Id = img.Id,
-                    ImageUrl = res.URL,
-                    FileName = res.FileName
+                    var id = Guid.NewGuid().ToString();
 
-                };
+                    NewIMageModel img = new Models.NewIMageModel()
+                    {
+                        Id = id,
+                        FileExtention = x.ContentType,
+                        File = x,
+
+                    };
+
+                    var res = await azureBlob.UploadImageAsync(img);
 
 
-                dbProductDetail.ProductDetailImages.Add(dbProductImage);
+                    ProductDetailImage dbProductImage = new ProductDetailImage()
+                    {
 
+                        Id = img.Id,
+                        ImageUrl = res.URL,
+                        FileName = res.FileName
+
+                    };
+
+
+                    dbProductDetail.ProductDetailImages.Add(dbProductImage);
+
+                }
             }
+               
 
 
             foreach (var o in product.Genders)

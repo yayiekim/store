@@ -72,6 +72,9 @@
 
                             }
                         </div>
+                        @Html.ValidationMessageFor(model => model.Categories, "", new { @class = "text-danger" })
+
+
                     </div>
                 </div>
 
@@ -86,9 +89,12 @@
                                 @Html.HiddenFor(model => model.Genders[i].Id)
 
                                 <label class="checkbox-inline">@Html.CheckBoxFor(model => model.Genders[i].IsSelected, new { @checked = "checked" })@Html.DisplayFor(model => model.Genders[i].Label)</label>
-
+                              
 
                             }
+                            @Html.ValidationMessageFor(model => model.Genders, "", new { @class = "text-danger" })
+
+
                         </div>
                     </div>
 
