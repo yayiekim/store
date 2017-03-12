@@ -33,7 +33,7 @@
     <OutputPath>bin\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
+    <WarningLevel>0</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -257,6 +257,9 @@
       <DependentUpon>ShopData.tt</DependentUpon>
     </Compile>
     <Compile Include="Product.cs">
+      <DependentUpon>ShopData.tt</DependentUpon>
+    </Compile>
+    <Compile Include="ProductBrand.cs">
       <DependentUpon>ShopData.tt</DependentUpon>
     </Compile>
     <Compile Include="ProductCategory.cs">

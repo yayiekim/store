@@ -1,4 +1,5 @@
-﻿using PagedList;
+﻿using Newtonsoft.Json;
+using PagedList;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity;
@@ -112,6 +113,13 @@ namespace yayks.Controllers
 
                              };
 
+            ViewBag.Brands = from o in data.ProductBrands
+                             select new
+                             {
+                                 Id = o.Id,
+                                 Name = o.Name
+
+                             };
 
             model.Genders = genders.ToList();
             model.Categories = categories.ToList();
@@ -130,6 +138,7 @@ namespace yayks.Controllers
                 Amount = product.Amount,
                 Description = product.Description,
                 ProductName = product.Name,
+                ProductBrandId = product.ProductBrandId
 
             };
 
@@ -161,13 +170,25 @@ namespace yayks.Controllers
             foreach (var x in files)
             {
 
-                var res = await azureBlob.UploadImageAsync(x);
+                var id = Guid.NewGuid().ToString();
+
+                NewIMageModel img = new Models.NewIMageModel()
+                {
+                    Id = id,
+                    FileExtention = x.ContentType,
+                    File = x,
+
+                };
+
+                var res = await azureBlob.UploadImageAsync(img);
+
+
                 ProductDetailImage dbProductImage = new ProductDetailImage()
                 {
 
-                    Id = Guid.NewGuid().ToString(),
-                    BaseAddress = res.BaseUrl,
-                    ImagePath = res.URL
+                    Id = img.Id,
+                    ImageUrl = res.URL,
+                    FileName = res.FileName
 
                 };
 
@@ -206,7 +227,7 @@ namespace yayks.Controllers
                              select new
                              {
                                  Id = o.Id,
-                                 Color = o.ProductColorName
+                                 Name = o.ProductColorName
 
                              };
 
@@ -275,8 +296,7 @@ namespace yayks.Controllers
                     NewIMageModel _imgModel = new NewIMageModel()
                     {
                         Id = y.Id,
-                        ImgUrl = y.ImagePath,
-
+                        Url = y.ImageUrl
                     };
 
                     _images.Add(_imgModel);
@@ -314,12 +334,30 @@ namespace yayks.Controllers
 
                                           }).ToListAsync();
 
+            ViewBag.Brands = from o in data.ProductBrands
+                             select new
+                             {
+                                 Id = o.Id,
+                                 Name = o.Name
+
+                             };
+
+
+            ViewBag.Colors = from o in data.ProductColors
+                             select new
+                             {
+                                 Id = o.Id,
+                                 Color = o.ProductColorName
+
+                             };
+
+
 
             return View(model);
         }
 
         [HttpPost]
-        public async Task<ActionResult> Edit(NewProductModel product, IEnumerable<HttpPostedFileBase> files)
+        public async Task<ActionResult> Edit(NewProductModel product, List<HttpPostedFileBase> files)
         {
 
             var _data = await data.Products.FindAsync(product.Id);
@@ -329,7 +367,8 @@ namespace yayks.Controllers
             _data.Description = product.Description;
             _data.ProductName = product.Name;
 
-            //many to many insert mapping
+
+            //many to many insert mapping Categories
             List<string> tmpCategoryInt = product.Categories
                                     .Where(i => i.IsSelected).Select(i => i.Id).ToList();
 
@@ -373,7 +412,7 @@ namespace yayks.Controllers
             }
 
 
-            //many to many insert mapping
+            //many to many insert mapping Genders
             List<string> tmpGenderName = product.Genders
                                     .Where(i => i.IsSelected).Select(i => i.Id).ToList();
 
@@ -395,54 +434,70 @@ namespace yayks.Controllers
 
             }
 
-            //ProductDetail dbProductDetail = new ProductDetail()
-            //{
-            //    Id = Guid.NewGuid().ToString(),
-            //    ProductMeasurementId = product.MeasurementId,
-            //    ProductColorId = product.ColordId
 
-            //};
+            foreach (var x in _data.ProductDetails)
+            {
+                x.ProductColorId = product.ColordId;
 
+            }
 
-            //foreach (var x in files)
-            //{
+            //Add new images
+            if (files.Count() >= 1 && files[0] != null)
+            {
+                foreach (var x in files)
+                {
 
-            //    var res = await azureBlob.UploadImageAsync(x);
-            //    ProductDetailImage dbProductImage = new ProductDetailImage()
-            //    {
+                    var id = Guid.NewGuid().ToString();
 
-            //        Id = Guid.NewGuid().ToString(),
-            //        BaseAddress = res.BaseUrl,
-            //        ImagePath = res.URL
+                    NewIMageModel img = new Models.NewIMageModel()
+                    {
+                        Id = id,
+                        FileExtention = x.ContentType,
+                        File = x,
 
-            //    };
+                    };
 
-
-            //    dbProductDetail.ProductDetailImages.Add(dbProductImage);
-
-            //}
+                    var res = await azureBlob.UploadImageAsync(img);
 
 
-            //foreach (var o in product.Genders)
-            //{
-            //    if (o.IsSelected)
-            //    {
-            //        ProductsInGender dbProdcutsInGender = new ProductsInGender()
-            //        {
-            //            Gender = o.Id,
-            //            Product = dbProduct
-            //        };
+                    ProductDetailImage dbProductImage = new ProductDetailImage()
+                    {
 
-            //        data.ProductsInGenders.Add(dbProdcutsInGender);
-            //    }
+                        Id = img.Id,
+                        ProductDetailsId = _data.ProductDetails.First().Id,
+                        ImageUrl = res.URL,
+                        FileName = res.FileName
 
-            //}
+                    };
+
+
+                    data.ProductDetailImages.Add(dbProductImage);
+
+                }
+            }
+
+            //remove images
+            if (product.ForDeleteImages != null)
+            {
+                string[] imgs = product.ForDeleteImages.Split(',');
+
+
+                foreach (var x in imgs)
+                {
+
+                    var y = await data.ProductDetailImages.FindAsync(x);
+
+                    data.ProductDetailImages.Remove(y);
+
+                }
+
+                await azureBlob.DeleteBlobs(product.ForDeleteImages.Split(','));
+            }
+
 
             data.Entry(_data).State = EntityState.Modified;
             await data.SaveChangesAsync();
-
-
-
+                    
             return RedirectToAction("Products");
         }
 

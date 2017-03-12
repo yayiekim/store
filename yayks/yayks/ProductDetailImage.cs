@@ -16,8 +16,8 @@ namespace yayks
     {
         public string Id { get; set; }
         public string ProductDetailsId { get; set; }
-        public string BaseAddress { get; set; }
-        public string ImagePath { get; set; }
+        public string ImageUrl { get; set; }
+        public string FileName { get; set; }
     
         public virtual ProductDetail ProductDetail { get; set; }
     }

@@ -18,7 +18,10 @@ namespace yayks.Models
 
     public class NewProductModel
     {
+        [Required]
         public string Id { get; set; }
+        [Required]
+        public int ProductBrandId { get; set; }
         [Required]
         public string Name { get; set; }
         [Required]
@@ -33,7 +36,7 @@ namespace yayks.Models
         [Required]
         public List<CheckBoxModel> Genders { get; set; }
         public List<NewIMageModel> Images { get; set; }
-        public string[] ForDeleteImages { get; set; }
+        public string ForDeleteImages { get; set; }
 
     }
 

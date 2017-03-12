@@ -106,6 +106,13 @@
           <Property Name="ReferenceId" Type="nvarchar" MaxLength="500" />
           <Property Name="PaymentType" Type="nvarchar" MaxLength="50" Nullable="false" />
         </EntityType>
+        <EntityType Name="ProductBrands">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Name" Type="nvarchar" MaxLength="150" Nullable="false" />
+        </EntityType>
         <EntityType Name="ProductCategories">
           <Key>
             <PropertyRef Name="Id" />
@@ -127,8 +134,8 @@
           </Key>
           <Property Name="Id" Type="nvarchar" MaxLength="128" Nullable="false" />
           <Property Name="ProductDetailsId" Type="nvarchar" MaxLength="128" Nullable="false" />
-          <Property Name="BaseAddress" Type="nvarchar" MaxLength="500" Nullable="false" />
-          <Property Name="ImagePath" Type="nvarchar" MaxLength="500" Nullable="false" />
+          <Property Name="ImageUrl" Type="nvarchar" MaxLength="500" Nullable="false" />
+          <Property Name="FileName" Type="nvarchar" MaxLength="500" Nullable="false" />
         </EntityType>
         <EntityType Name="ProductDetails">
           <Key>
@@ -161,6 +168,7 @@
           <Property Name="Amount" Type="money" Nullable="false" />
           <Property Name="Description" Type="nvarchar(max)" Nullable="false" />
           <Property Name="IsEnabled" Type="bit" Nullable="false" />
+          <Property Name="ProductBrandId" Type="int" Nullable="false" />
         </EntityType>
         <EntityType Name="ProductsInCategories">
           <Key>
@@ -381,6 +389,18 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_Products_ProductBrand">
+          <End Role="ProductBrands" Type="Self.ProductBrands" Multiplicity="1" />
+          <End Role="Products" Type="Self.Products" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ProductBrands">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Products">
+              <PropertyRef Name="ProductBrandId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_ProductsInCategories_ProductCategories">
           <End Role="ProductCategories" Type="Self.ProductCategories" Multiplicity="1">
             <OnDelete Action="Cascade" />
@@ -472,6 +492,7 @@
           <EntitySet Name="Orders" EntityType="Self.Orders" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="PaymentDetails" EntityType="Self.PaymentDetails" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Payments" EntityType="Self.Payments" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="ProductBrands" EntityType="Self.ProductBrands" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="ProductCategories" EntityType="Self.ProductCategories" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="ProductColors" EntityType="Self.ProductColors" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="ProductDetailImages" EntityType="Self.ProductDetailImages" Schema="dbo" store:Type="Tables" />
@@ -538,6 +559,10 @@
             <End Role="ProductCategories" EntitySet="ProductCategories" />
             <End Role="ProductMeasurements" EntitySet="ProductMeasurements" />
           </AssociationSet>
+          <AssociationSet Name="FK_Products_ProductBrand" Association="Self.FK_Products_ProductBrand">
+            <End Role="ProductBrands" EntitySet="ProductBrands" />
+            <End Role="Products" EntitySet="Products" />
+          </AssociationSet>
           <AssociationSet Name="FK_ProductsInCategories_ProductCategories" Association="Self.FK_ProductsInCategories_ProductCategories">
             <End Role="ProductCategories" EntitySet="ProductCategories" />
             <End Role="ProductsInCategories" EntitySet="ProductsInCategories" />
@@ -577,6 +602,7 @@
           <EntitySet Name="Orders" EntityType="Model.Order" />
           <EntitySet Name="PaymentDetails" EntityType="Model.PaymentDetail" />
           <EntitySet Name="Payments" EntityType="Model.Payment" />
+          <EntitySet Name="ProductBrands" EntityType="Model.ProductBrand" />
           <EntitySet Name="ProductCategories" EntityType="Model.ProductCategory" />
           <EntitySet Name="ProductColors" EntityType="Model.ProductColor" />
           <EntitySet Name="ProductDetailImages" EntityType="Model.ProductDetailImage" />
@@ -617,6 +643,10 @@
           <AssociationSet Name="FK_PaymentDetails_Payments" Association="Model.FK_PaymentDetails_Payments">
             <End Role="Payment" EntitySet="Payments" />
             <End Role="PaymentDetail" EntitySet="PaymentDetails" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Products_ProductBrand" Association="Model.FK_Products_ProductBrand">
+            <End Role="ProductBrand" EntitySet="ProductBrands" />
+            <End Role="Product" EntitySet="Products" />
           </AssociationSet>
           <AssociationSet Name="FK_ProductMeasurements_ProductCategories" Association="Model.FK_ProductMeasurements_ProductCategories">
             <End Role="ProductCategory" EntitySet="ProductCategories" />
@@ -768,6 +798,14 @@
           <NavigationProperty Name="Order" Relationship="Model.FK_Payments_Orders" FromRole="Payment" ToRole="Order" />
           <NavigationProperty Name="PaymentDetails" Relationship="Model.FK_PaymentDetails_Payments" FromRole="Payment" ToRole="PaymentDetail" />
         </EntityType>
+        <EntityType Name="ProductBrand">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Name" Type="String" Nullable="false" MaxLength="150" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="Products" Relationship="Model.FK_Products_ProductBrand" FromRole="ProductBrand" ToRole="Product" />
+        </EntityType>
         <EntityType Name="ProductCategory">
           <Key>
             <PropertyRef Name="Id" />
@@ -792,8 +830,8 @@
           </Key>
           <Property Name="Id" Type="String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="true" />
           <Property Name="ProductDetailsId" Type="String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="true" />
-          <Property Name="BaseAddress" Type="String" Nullable="false" MaxLength="500" FixedLength="false" Unicode="true" />
-          <Property Name="ImagePath" Type="String" Nullable="false" MaxLength="500" FixedLength="false" Unicode="true" />
+          <Property Name="ImageUrl" Type="String" Nullable="false" MaxLength="500" FixedLength="false" Unicode="true" />
+          <Property Name="FileName" Type="String" Nullable="false" MaxLength="500" FixedLength="false" Unicode="true" />
           <NavigationProperty Name="ProductDetail" Relationship="Model.FK_ProductDetailImages_ProductDetails" FromRole="ProductDetailImage" ToRole="ProductDetail" />
         </EntityType>
         <EntityType Name="ProductDetail">
@@ -833,7 +871,9 @@
           <Property Name="Amount" Type="Decimal" Nullable="false" Precision="19" Scale="4" />
           <Property Name="Description" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="true" />
           <Property Name="IsEnabled" Type="Boolean" Nullable="false" />
+          <Property Name="ProductBrandId" Type="Int32" Nullable="false" />
           <NavigationProperty Name="OrderDetails" Relationship="Model.FK_OrderDetails_Products" FromRole="Product" ToRole="OrderDetail" />
+          <NavigationProperty Name="ProductBrand" Relationship="Model.FK_Products_ProductBrand" FromRole="Product" ToRole="ProductBrand" />
           <NavigationProperty Name="ProductDetails" Relationship="Model.FK_ProductDetails_Products" FromRole="Product" ToRole="ProductDetail" />
           <NavigationProperty Name="ProductsInGenders" Relationship="Model.FK_ProductsInGenders_Products" FromRole="Product" ToRole="ProductsInGender" />
           <NavigationProperty Name="PurchaseDetails" Relationship="Model.FK_PurchaseDetails_Products" FromRole="Product" ToRole="PurchaseDetail" />
@@ -972,6 +1012,18 @@
             </Principal>
             <Dependent Role="PaymentDetail">
               <PropertyRef Name="PaymentId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Products_ProductBrand">
+          <End Type="Model.ProductBrand" Role="ProductBrand" Multiplicity="1" />
+          <End Type="Model.Product" Role="Product" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ProductBrand">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Product">
+              <PropertyRef Name="ProductBrandId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -1192,6 +1244,14 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
+          <EntitySetMapping Name="ProductBrands">
+            <EntityTypeMapping TypeName="Model.ProductBrand">
+              <MappingFragment StoreEntitySet="ProductBrands">
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
           <EntitySetMapping Name="ProductCategories">
             <EntityTypeMapping TypeName="Model.ProductCategory">
               <MappingFragment StoreEntitySet="ProductCategories">
@@ -1212,8 +1272,8 @@
           <EntitySetMapping Name="ProductDetailImages">
             <EntityTypeMapping TypeName="Model.ProductDetailImage">
               <MappingFragment StoreEntitySet="ProductDetailImages">
-                <ScalarProperty Name="ImagePath" ColumnName="ImagePath" />
-                <ScalarProperty Name="BaseAddress" ColumnName="BaseAddress" />
+                <ScalarProperty Name="FileName" ColumnName="FileName" />
+                <ScalarProperty Name="ImageUrl" ColumnName="ImageUrl" />
                 <ScalarProperty Name="ProductDetailsId" ColumnName="ProductDetailsId" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
@@ -1246,6 +1306,7 @@
           <EntitySetMapping Name="Products">
             <EntityTypeMapping TypeName="Model.Product">
               <MappingFragment StoreEntitySet="Products">
+                <ScalarProperty Name="ProductBrandId" ColumnName="ProductBrandId" />
                 <ScalarProperty Name="IsEnabled" ColumnName="IsEnabled" />
                 <ScalarProperty Name="Description" ColumnName="Description" />
                 <ScalarProperty Name="Amount" ColumnName="Amount" />

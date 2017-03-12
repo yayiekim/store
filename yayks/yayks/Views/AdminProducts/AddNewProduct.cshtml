@@ -6,115 +6,144 @@
 }
 
 <h2>AddNewProduct</h2>
+<div class="row">
+
+    <div class="col-md-6">
+
+        @using (Html.BeginForm("AddNewProduct", "AdminProducts", FormMethod.Post, new { enctype = "multipart/form-data" }))
+        {
+            @Html.AntiForgeryToken()
+
+            <div class="form-horizontal">
+                <h4>NewProductModel</h4>
+                <hr />
+                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+                <div class="form-group">
+                    @Html.Label("Brand", htmlAttributes: new { @class = "control-label col-md-2" })
+                    <div class="col-md-10">
+                        @Html.DropDownListFor(model => model.ProductBrandId, new SelectList(ViewBag.Brands, "Id", "Name", "Id"), new { @class = "form-control" })
+                        @Html.ValidationMessageFor(model => model.ProductBrandId, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    @Html.LabelFor(model => model.Name, htmlAttributes: new { @class = "control-label col-md-2" })
+                    <div class="col-md-10">
+                        @Html.EditorFor(model => model.Name, new { htmlAttributes = new { @class = "form-control" } })
+                        @Html.ValidationMessageFor(model => model.Name, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    @Html.LabelFor(model => model.Description, htmlAttributes: new { @class = "control-label col-md-2" })
+                    <div class="col-md-10">
+                        @Html.EditorFor(model => model.Description, new { htmlAttributes = new { @class = "form-control" } })
+                        @Html.ValidationMessageFor(model => model.Description, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    @Html.LabelFor(model => model.Amount, htmlAttributes: new { @class = "control-label col-md-2" })
+                    <div class="col-md-10">
+                        @Html.EditorFor(model => model.Amount, new { htmlAttributes = new { @class = "form-control" } })
+                        @Html.ValidationMessageFor(model => model.Amount, "", new { @class = "text-danger" })
+                    </div>
+                </div>
 
 
-@using (Html.BeginForm("AddNewProduct", "AdminProducts", FormMethod.Post, new { enctype = "multipart/form-data" }))
-{
-    @Html.AntiForgeryToken()
 
-    <div class="form-horizontal">
-        <h4>NewProductModel</h4>
-        <hr />
-        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-        <div class="form-group">
-            @Html.LabelFor(model => model.Name, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.Name, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.Name, "", new { @class = "text-danger" })
-            </div>
-        </div>
+                @*Category list*@
+                <div class="form-group">
+                    @Html.LabelFor(model => model.Categories, htmlAttributes: new { @class = "control-label col-md-2" })
+                    <div class="col-md-10">
+                        <div class="checkbox">
+                            @for (int i = 0; i < Model.Categories.Count; i++)
+                            {
+                                @Html.HiddenFor(model => model.Categories[i].Id)
 
-        <div class="form-group">
-            @Html.LabelFor(model => model.Description, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.Description, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.Description, "", new { @class = "text-danger" })
-            </div>
-        </div>
-
-        <div class="form-group">
-            @Html.LabelFor(model => model.Amount, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.Amount, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.Amount, "", new { @class = "text-danger" })
-            </div>
-        </div>
+                                <label class="checkbox-inline">
+                                    @Html.CheckBoxFor(model => model.Categories[i].IsSelected, new { @id = Model.Categories[i].Id, @class = "categoriesClass", @checked = "checked" })
+                                    @Html.DisplayFor(model => model.Categories[i].Label)
+                                </label>
 
 
+                            }
+                        </div>
+                    </div>
+                </div>
 
-        @*Category list*@
-        <div class="form-group">
-            @Html.LabelFor(model => model.Categories, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                <div class="checkbox">
-                    @for (int i = 0; i < Model.Categories.Count; i++)
-                    {
-                        @Html.HiddenFor(model => model.Categories[i].Id)
+                @*Category list*@
+                <div class="form-group">
 
-                        <label class="checkbox-inline">@Html.CheckBoxFor(model => model.Categories[i].IsSelected, new { @id = Model.Categories[i].Id, @class = "categoriesClass", @checked = "checked" })
-                        @Html.DisplayFor(model => model.Categories[i].Label)</label>
+                    @Html.LabelFor(model => model.Genders, htmlAttributes: new { @class = "control-label col-md-2" })
+                    <div class="col-md-10">
+                        <div class="checkbox">
+                            @for (int i = 0; i < Model.Genders.Count; i++)
+                            {
+                                @Html.HiddenFor(model => model.Genders[i].Id)
+
+                                <label class="checkbox-inline">@Html.CheckBoxFor(model => model.Genders[i].IsSelected, new { @checked = "checked" })@Html.DisplayFor(model => model.Genders[i].Label)</label>
 
 
-                    }
+                            }
+                        </div>
+                    </div>
+
+                </div>
+
+
+                <div class="form-group">
+                    @Html.Label("Measurement", htmlAttributes: new { @class = "control-label col-md-2" })
+                    <div class="col-md-10">
+                        @Html.DropDownListFor(model => model.MeasurementId, new List<SelectListItem>(), "--Select--", new { @class = "form-control ddlMeasurements" })
+                        @Html.ValidationMessageFor(model => model.MeasurementId, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    @Html.Label("Color", htmlAttributes: new { @class = "control-label col-md-2" })
+                    <div class="col-md-10">
+                        @Html.DropDownListFor(model => model.ColordId, new SelectList(ViewBag.Colors, "Id", "Color", "Id"), "--Select--", new { @class = "form-control" })
+                        @Html.ValidationMessageFor(model => model.ColordId, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+
+                <div class="form-group">
+                    @Html.Label("Images", htmlAttributes: new { @class = "control-label col-md-2" })
+                    <div class="col-md-10">
+                        <div id="multiple">
+                            <input type="file" id="inputImage" class="multiple form-control" name="files" multiple />
+                        </div>
+                    </div>
+                </div>
+
+
+
+                <div class="form-group">
+                    <div class="col-md-offset-2 col-md-10">
+                        <input type="submit" value="Create" class="btn btn-default" />
+                    </div>
                 </div>
             </div>
-        </div>
-
-        @*Category list*@
-        <div class="form-group">
-
-            @Html.LabelFor(model => model.Genders, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                <div class="checkbox">
-                    @for (int i = 0; i < Model.Genders.Count; i++)
-                     {
-                        @Html.HiddenFor(model => model.Genders[i].Id)
-
-                        <label class="checkbox-inline">@Html.CheckBoxFor(model => model.Genders[i].IsSelected, new { @checked = "checked" })@Html.DisplayFor(model => model.Genders[i].Label)</label>
-
-
-                    }
-                </div>
-            </div>
-
-        </div>
-
-
-        <div class="form-group">
-            @Html.Label("Measurement", htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.DropDownListFor(model => model.MeasurementId, new List<SelectListItem>(), "--Select--", new { @class = "form-control ddlMeasurements" })
-                @Html.ValidationMessageFor(model => model.MeasurementId, "", new { @class = "text-danger" })
-            </div>
-        </div>
-
-        <div class="form-group">
-            @Html.Label("Color", htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.DropDownListFor(model => model.ColordId, new SelectList(ViewBag.Colors, "Id", "Color", "Id"), "--Select--", new { @class = "form-control" })
-                @Html.ValidationMessageFor(model => model.ColordId, "", new { @class = "text-danger" })
-            </div>
-        </div>
-
-
-        <div class="form-group">
-            @Html.Label("Images", htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                <div id="multiple">
-                    <input type="file" class="multiple form-control" name="files" multiple />
-                </div>
-            </div>
-        </div>
-
-
-
-        <div class="form-group">
-            <div class="col-md-offset-2 col-md-10">
-                <input type="submit" value="Create" class="btn btn-default" />
-            </div>
-        </div>
+        }
     </div>
-}
+
+
+
+    <div class="col-md-6">
+        <h3>New images</h3>
+        <hr />
+        <div id="foruploadimages" class="row">
+
+        </div>
+
+    </div>
+
+
+</div>
+
 
 <div>
     @Html.ActionLink("Back to List", "Products")
@@ -126,6 +155,47 @@
 
     <script>
         $(document).ready(function () {
+
+
+            function readURL(input) {
+                if (input.files && input.files[0]) {
+
+                    $('#foruploadimages').empty();
+
+                    for (var i = 0, f; f = input.files[i]; i++) {
+
+                        var reader = new FileReader();
+
+                        reader.onload = function (e) {
+
+                            var htm = '<div class="col-md-4">' +
+                                        '<div class="img-thumbnail">'
+                                        + '<img class="img-responsive" src="' + e.target.result + '" />'
+                                        + '</div>'
+                                        + '</div>';
+
+
+                            $('#foruploadimages').append(htm);
+
+                        }
+
+
+                        reader.readAsDataURL(f);
+
+                    }
+
+                }
+                else {
+
+                    $('#foruploadimages').empty();
+
+                }
+            }
+
+            $("#inputImage").change(function () {
+                readURL(this);
+            });
+
 
 
             $('.categoriesClass').change(function () {

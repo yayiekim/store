@@ -12,6 +12,16 @@ namespace yayks.Models
     {
         Entities data = new Entities();
 
+
+        public class BlobResultForSaving
+        {
+            public string BaseUrl { get; set; }
+            public string FileName { get; set; }
+            public string URL { get; set; }
+
+        }
+
+
         public List<string> GetGenders()
         {
             List<string> list = new List<string>();
@@ -22,6 +32,9 @@ namespace yayks.Models
             return list;
 
         }
+
+
+
 
         public async Task<List<ProductCategory>> GetProductCategories()
         {
@@ -38,11 +51,7 @@ namespace yayks.Models
             return res;
 
         }
-
-      
-
-      
-
+        
     }
 
     public class CheckBoxModel
@@ -55,7 +64,9 @@ namespace yayks.Models
     public class NewIMageModel
     {
         public string Id { get; set; }
-        public string ImgUrl { get; set; }
+        public string FileExtention { get; set; }
+        public string Url { get; set; }
+        public HttpPostedFileBase File { get; set; }
     }
 
 
