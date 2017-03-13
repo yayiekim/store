@@ -31,12 +31,14 @@
                 <div class="col-md-4">
                     <h3>@item.Name</h3>
                     <small>@item.Brand</small>
-                    <h2>@item.Amount</h2>
-                    <span onclick="addToCart('@item.Id')" style="font-size:24px" role="button" class="glyphicon glyphicon-shopping-cart" ></span>
-                </div>
+                    <h2>@item.Amount.ToString("0.00")</h2>
+                    <span onclick="addToCart('@item.Id')" style="font-size:24px" role="button" class="glyphicon glyphicon-shopping-cart" ></span>&nbsp;add to cart
+                   <hr />
+                     <small>@item.Description</small>
+                  </div>
 
             </div>
-            <div class="col-md-4"><p>@item.Description</p></div>
+           
         </div>
 
     }
