@@ -1,0 +1,75 @@
+﻿@model PagedList.IPagedList<yayks.Models.ProductModel>
+@using PagedList.Mvc;
+@{
+    ViewBag.Title = "Products";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Products</h2>
+
+@using (Html.BeginForm("SearchProducts", "Customers", FormMethod.Get))
+{
+    <p>
+        <div class="input-group">
+            @Html.TextBox("SearchString", ViewBag.CurrentFilter as string, new { @class = "form-control" })
+            <span class="input-group-btn pull-left">
+                <input class="btn btn-default" type="submit" value="Search" />
+            </span>
+        </div>
+
+    </p>
+}
+
+<div class="row">
+    @foreach (var item in Model)
+    {
+        <div class="col-md-6">
+            <div class="row">
+                <div class="col-md-8">
+                    <div class="img-thumbnail"><img class="img-responsive" src="@item.Images[0]" /></div>
+                </div>
+                <div class="col-md-4">
+                    <h3>@item.Name</h3>
+                    <small>@item.Brand</small>
+                    <h2>@item.Amount</h2>
+                    <span onclick="addToCart('@item.Id')" style="font-size:24px" role="button" class="glyphicon glyphicon-shopping-cart" ></span>
+                </div>
+
+            </div>
+            <div class="col-md-4"><p>@item.Description</p></div>
+        </div>
+
+    }
+
+</div>
+
+
+
+
+<br />
+Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount
+
+@Html.PagedListPager(Model, page => Url.Action("SearchProducts",
+    new { page, sortOrder = ViewBag.CurrentSort, currentFilter = ViewBag.CurrentFilter }))
+
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+
+    <script>
+
+        function addToCart(id)
+        {
+
+            $.get('@Url.Action("AddToCart", "Customers")', { Id: id }, function (data) {
+                alert(data);
+            });
+
+        }
+
+
+    </script>
+
+
+     
+    }

@@ -1,0 +1,144 @@
+﻿@model yayks.Models.NewProductModel
+
+@{
+    ViewBag.Title = "Delete";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Delete</h2>
+
+<h3>Are you sure you want to delete this?</h3>
+<div>
+    <h4>NewProductModel</h4>
+    <hr />
+
+    <div class="row">
+        <div class="col-md-6">
+
+
+            <div class="form-horizontal">
+            
+                @Html.HiddenFor(model => model.Id)
+                @Html.HiddenFor(model => model.ForDeleteImages, new { id = "imgList" })
+
+                <div class="form-group">
+                    @Html.Label("Brand", htmlAttributes: new { @class = "control-label col-md-2" })
+                    <div class="col-md-10">
+                        @Html.DropDownListFor(model => model.ProductBrandId, new SelectList(ViewBag.Brands, "Id", "Name", "Id"), new { @disabled = "disabled", @class = "form-control" })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    @Html.LabelFor(model => model.Name, htmlAttributes: new { @class = "control-label col-md-2" })
+                    <div class="col-md-10">
+                        @Html.DisplayFor(model => model.Name, new { htmlAttributes = new { @class = "form-control" } })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    @Html.LabelFor(model => model.Description, htmlAttributes: new { @class = "control-label col-md-2" })
+                    <div class="col-md-10">
+                        @Html.DisplayFor(model => model.Description, new { htmlAttributes = new { @class = "form-control" } })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    @Html.LabelFor(model => model.Amount, htmlAttributes: new { @class = "control-label col-md-2" })
+                    <div class="col-md-10">
+                        @Html.DisplayFor(model => model.Amount, new { htmlAttributes = new { @class = "form-control" } })
+                    </div>
+                </div>
+
+                @*Category list*@
+                <div class="form-group">
+                    @Html.LabelFor(model => model.Categories, htmlAttributes: new { @class = "control-label col-md-2" })
+                    <div class="col-md-10">
+                        <div class="checkbox">
+                            @for (int i = 0; i < Model.Categories.Count; i++)
+                            {
+                                @Html.HiddenFor(model => model.Categories[i].Id)
+
+                                <label class="checkbox-inline">
+                                    @Html.CheckBoxFor(model => model.Categories[i].IsSelected, new { @disabled = "disabled", @id = Model.Categories[i].Id, @class = "categoriesClass", @checked = "checked" })
+                                    @Html.DisplayFor(model => model.Categories[i].Label)
+                                </label>
+
+
+                            }
+                        </div>
+
+
+                    </div>
+                </div>
+
+                @*Category list*@
+                <div class="form-group">
+
+                    @Html.LabelFor(model => model.Genders, htmlAttributes: new { @class = "control-label col-md-2" })
+                    <div class="col-md-10">
+                        <div class="checkbox">
+                            @for (int i = 0; i < Model.Genders.Count; i++)
+                            {
+                                @Html.HiddenFor(model => model.Genders[i].Id)
+
+                                <label class="checkbox-inline">@Html.CheckBoxFor(model => model.Genders[i].IsSelected, new { @disabled = "disabled", @checked = "checked" })@Html.DisplayFor(model => model.Genders[i].Label)</label>
+
+
+                            }
+
+
+                        </div>
+                    </div>
+
+                </div>
+
+
+                <div class="form-group">
+                    @Html.Label("Measurement", htmlAttributes: new { @class = "control-label col-md-2" })
+                    <div class="col-md-10">
+                        @Html.DropDownListFor(model => model.MeasurementId, new SelectList(ViewBag.Measurements, "Id", "Name", Model.MeasurementId), "--Select--", new { @disabled = "disabled", @class = "form-control ddlMeasurements" })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    @Html.Label("Color", htmlAttributes: new { @class = "control-label col-md-2" })
+                    <div class="col-md-10">
+                        @Html.DropDownListFor(model => model.ColordId, new SelectList(ViewBag.Colors, "Id", "Color", "Id"), "--Select--", new { @disabled = "disabled", @class = "form-control" })
+                    </div>
+                </div>
+
+                @using (Html.BeginForm())
+                {
+                    @Html.AntiForgeryToken()
+
+                    <div class="form-actions no-color">
+                        <input type="submit" value="Delete" class="btn btn-default" /> |
+                        @Html.ActionLink("Back to List", "Index")
+                    </div>
+                }
+            </div>
+
+        </div>
+        <div class="col-md-6">
+            <h3>Images</h3>
+            <hr />
+            <div id="imagesList" class="row">
+
+                @foreach (var x in Model.Images)
+            {
+
+                    <div id="@x.Id" class="col-md-4">
+                        <div class="img-thumbnail">
+                            <img class="img-responsive" src="@x.Url" />
+                        </div>
+
+                    </div>
+                }
+            </div>
+
+        </div>
+
+      
+    </div>
+
+</div>

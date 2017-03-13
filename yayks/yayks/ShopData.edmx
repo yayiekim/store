@@ -77,6 +77,7 @@
           <Property Name="Remarks" Type="nvarchar(max)" />
           <Property Name="Amount" Type="money" Nullable="false" />
           <Property Name="OrderDetailsStatus" Type="nvarchar" MaxLength="50" />
+          <Property Name="DateAdded" Type="datetime" Nullable="false" />
         </EntityType>
         <EntityType Name="Orders">
           <Key>
@@ -763,6 +764,7 @@
           <Property Name="OrderDetailsStatus" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
           <NavigationProperty Name="Order" Relationship="Model.FK_OrderDetails_Orders" FromRole="OrderDetail" ToRole="Order" />
           <NavigationProperty Name="Product" Relationship="Model.FK_OrderDetails_Products" FromRole="OrderDetail" ToRole="Product" />
+          <Property Name="DateAdded" Type="DateTime" Nullable="false" Precision="3" />
         </EntityType>
         <EntityType Name="Order">
           <Key>
@@ -1203,6 +1205,7 @@
           <EntitySetMapping Name="OrderDetails">
             <EntityTypeMapping TypeName="Model.OrderDetail">
               <MappingFragment StoreEntitySet="OrderDetails">
+                <ScalarProperty Name="DateAdded" ColumnName="DateAdded" />
                 <ScalarProperty Name="OrderDetailsStatus" ColumnName="OrderDetailsStatus" />
                 <ScalarProperty Name="Amount" ColumnName="Amount" />
                 <ScalarProperty Name="Remarks" ColumnName="Remarks" />

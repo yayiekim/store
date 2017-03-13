@@ -198,7 +198,7 @@ namespace yayks.Controllers
 
                 }
             }
-               
+
 
 
             foreach (var o in product.Genders)
@@ -359,6 +359,8 @@ namespace yayks.Controllers
             return View(model);
         }
 
+
+        [ValidateAntiForgeryToken]
         [HttpPost]
         public async Task<ActionResult> Edit(NewProductModel product, List<HttpPostedFileBase> files)
         {
@@ -500,10 +502,174 @@ namespace yayks.Controllers
 
             data.Entry(_data).State = EntityState.Modified;
             await data.SaveChangesAsync();
-                    
+
             return RedirectToAction("Products");
         }
 
+
+        public async Task<ActionResult> Delete(string Id)
+        {
+
+            ViewBag.Colors = from o in data.ProductColors
+                             select new
+                             {
+                                 Id = o.Id,
+                                 Name = o.ProductColorName
+
+                             };
+
+
+            var _product = await data.Products.FindAsync(Id);
+            List<CheckBoxModel> cbCategoriesList = new List<CheckBoxModel>();
+            List<CheckBoxModel> cbGenderList = new List<CheckBoxModel>();
+
+            foreach (var x in data.ProductCategories)
+            {
+                var IsSelected = false;
+
+                if (_product.ProductCategories.Where(i => i.Id == x.Id).Count() == 1)
+                {
+                    IsSelected = true;
+                }
+                else
+                {
+                    IsSelected = false;
+                }
+
+                CheckBoxModel cb = new Models.CheckBoxModel()
+                {
+                    Id = x.Id.ToString(),
+                    IsSelected = IsSelected,
+                    Label = x.CategoryName
+                };
+
+                cbCategoriesList.Add(cb);
+            }
+
+
+            foreach (var x in common.GetGenders())
+            {
+                var IsSelected = false;
+
+                if (_product.ProductsInGenders.Where(i => i.Gender == x).Count() == 1)
+                {
+                    IsSelected = true;
+                }
+                else
+                {
+                    IsSelected = false;
+                }
+
+                CheckBoxModel cb = new CheckBoxModel()
+                {
+                    Id = x,
+                    IsSelected = IsSelected,
+                    Label = x
+                };
+
+                cbGenderList.Add(cb);
+            }
+
+            var _tmpImages = from o in _product.ProductDetails
+                             select o.ProductDetailImages;
+
+            List<NewIMageModel> _images = new List<NewIMageModel>();
+
+            foreach (var x in _tmpImages)
+            {
+
+                foreach (var y in x)
+                {
+                    NewIMageModel _imgModel = new NewIMageModel()
+                    {
+                        Id = y.Id,
+                        Url = y.ImageUrl
+                    };
+
+                    _images.Add(_imgModel);
+                }
+
+            }
+
+            NewProductModel model = new NewProductModel()
+            {
+                Id = _product.Id,
+                Amount = _product.Amount,
+                Description = _product.Description,
+                Name = _product.ProductName,
+                ColordId = _product.ProductDetails.Select(i => i.ProductColor.Id).First(),
+                MeasurementId = _product.ProductDetails.Select(i => i.ProductMeasurement.Id).First(),
+                Categories = cbCategoriesList,
+                Genders = cbGenderList,
+                Images = _images
+
+            };
+
+
+
+            string[] catArray = cbCategoriesList.Where(i => i.IsSelected).Select(i => i.Id).ToArray();
+
+            ViewBag.Measurements = await (from p in data.ProductMeasurements.
+                           Where(a => catArray.Contains(a.ProductCategoryId.ToString()))
+                                          select new
+                                          {
+
+                                              Id = p.Id,
+                                              Name = p.MeasurementName,
+                                              Value = p.MeasurementValue,
+
+
+                                          }).ToListAsync();
+
+            ViewBag.Brands = from o in data.ProductBrands
+                             select new
+                             {
+                                 Id = o.Id,
+                                 Name = o.Name
+
+                             };
+
+
+            ViewBag.Colors = from o in data.ProductColors
+                             select new
+                             {
+                                 Id = o.Id,
+                                 Color = o.ProductColorName
+
+                             };
+
+
+
+            return View(model);
+
+
+
+        }
+
+        [HttpPost, ActionName("Delete")]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> DeleteConfirmed(string Id)
+        {
+            var x = await data.Products.FindAsync(Id);
+
+            foreach (var y in x.ProductDetails)
+            {
+
+                string[] c = y.ProductDetailImages.Select(i => i.Id).ToArray();
+
+                await azureBlob.DeleteBlobs(c);
+
+            }
+
+
+
+            data.Products.Remove(x);
+            await data.SaveChangesAsync();
+
+
+
+            return RedirectToAction("Products");
+        }
 
     }
 }

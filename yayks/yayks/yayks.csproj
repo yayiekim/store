@@ -228,6 +228,7 @@
     </Compile>
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\AdminProductsController.cs" />
+    <Compile Include="Controllers\CustomersController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
     <Compile Include="Controllers\RestController.cs" />
@@ -398,9 +399,12 @@
     <Content Include="Views\AdminProducts\Products.cshtml" />
     <Content Include="Views\AdminProducts\AddNewProduct.cshtml" />
     <Content Include="Views\AdminProducts\Edit.cshtml" />
+    <Content Include="Views\AdminProducts\Delete.cshtml" />
+    <Content Include="Views\Customers\SearchProducts.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Views\Rest\" />
+    <Folder Include="Views\SearchProduct\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config" />

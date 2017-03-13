@@ -21,6 +21,7 @@ namespace yayks
         public string Remarks { get; set; }
         public decimal Amount { get; set; }
         public string OrderDetailsStatus { get; set; }
+        public System.DateTime DateAdded { get; set; }
     
         public virtual Order Order { get; set; }
         public virtual Product Product { get; set; }
