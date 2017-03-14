@@ -5,8 +5,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
-using yayks.Helpers;
 using yayks.Models;
+using yayks.MyHelpers;
 
 namespace yayks.Controllers
 {

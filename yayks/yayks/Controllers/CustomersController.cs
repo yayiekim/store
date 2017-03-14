@@ -6,8 +6,9 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
-using yayks.Helpers;
+using TwoCheckout;
 using yayks.Models;
+using yayks.MyHelpers;
 
 namespace yayks.Controllers
 {
@@ -16,6 +17,8 @@ namespace yayks.Controllers
         Entities data = new Entities();
         AzureBlob azureBlob = new AzureBlob();
         CommonModels common = new CommonModels();
+        PaymentGateways _payment = new PaymentGateways();
+
         // GET: Customers
         public ActionResult Index()
         {
@@ -101,10 +104,11 @@ namespace yayks.Controllers
                 _orderDetail.ProductsId = Id;
                 _orderDetail.DateAdded = DateTime.UtcNow;
                 data.OrderDetails.Add(_orderDetail);
-                
+
             }
-            else {
-              
+            else
+            {
+
 
                 Order _order = new Order()
                 {
@@ -115,7 +119,7 @@ namespace yayks.Controllers
                     OrderStatus = "new",
 
                 };
-                
+
                 _orderDetail.Id = Guid.NewGuid().ToString();
                 _orderDetail.OrdersId = _order.Id;
                 _orderDetail.Amount = _product.Amount;
@@ -128,7 +132,7 @@ namespace yayks.Controllers
                 _order.OrderDetails.Add(_orderDetail);
 
                 data.Orders.Add(_order);
-             
+
             }
 
             await data.SaveChangesAsync();
@@ -142,11 +146,66 @@ namespace yayks.Controllers
         }
 
         public ActionResult Cart()
-        {    
+        {
 
             return View();
 
         }
+
+    
+        public ActionResult Card()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public ActionResult CheckOut(FormCollection collection)
+        {
+
+            //var _charge = new ChargeAuthorizeServiceOptionsModel()
+            //{
+            //    total = (decimal)1.00,
+            //    currency = "USD",
+            //    merchantOrderId = "123",
+            //    token = "YjdhN2Q0ZDItZDEzYS00Y2RlLWI3MDUtYjkzYzZlMjA2OWY2"
+            //};
+
+
+            //AuthBillingAddressModel _address = new AuthBillingAddressModel();
+
+            //_address.charge = _charge;
+
+
+            //var _billingAddress = new AuthBillingAddress()
+            //{
+            //    addrLine1 = billingAddress.addressLine1,
+            //    addrLine2 = billingAddress.addressLine2,
+            //    city = billingAddress.city,
+            //    country = billingAddress.country,
+            //    zipCode = billingAddress.zipCode,
+            //    email = billingAddress.email,
+            //    name = billingAddress.name,
+            //    phoneNumber = billingAddress.phoneNumber,
+            //    state = billingAddress.state
+
+            //};
+
+            //var _charge = new ChargeAuthorizeServiceOptions()
+            //{
+            //    billingAddr = _billingAddress,
+            //    total = billingAddress.charge.total,
+            //    currency = billingAddress.charge.currency,
+            //    merchantOrderId = billingAddress.charge.merchantOrderId,
+            //    token = billingAddress.charge.token
+
+            //};
+
+            //_payment.CheckOutTwoCheckOut(_charge);
+
+            return View();
+
+        }
+
 
     }
 }
