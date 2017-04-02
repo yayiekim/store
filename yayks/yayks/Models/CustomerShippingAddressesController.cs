@@ -8,6 +8,7 @@ using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using yayks;
+using Microsoft.AspNet.Identity;
 
 namespace yayks.Models
 {
@@ -40,7 +41,7 @@ namespace yayks.Models
         // GET: CustomerShippingAddresses/Create
         public ActionResult Create()
         {
-            ViewBag.AspNetUserId = new SelectList(db.AspNetUsers, "Id", "Email");
+          
             return View();
         }
 
@@ -49,8 +50,13 @@ namespace yayks.Models
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Create([Bind(Include = "Id,AspNetUserId,IsDefault,Line1,Line2,City,State")] CustomerShippingAddress customerShippingAddress)
+        public async Task<ActionResult> Create([Bind(Include = "IsDefault,Line1,Line2,City,State")] CustomerShippingAddress customerShippingAddress)
         {
+            var userId = User.Identity.GetUserId();
+
+            customerShippingAddress.AspNetUserId = userId;
+            customerShippingAddress.Id = Guid.NewGuid().ToString();
+
             if (ModelState.IsValid)
             {
                 db.CustomerShippingAddresses.Add(customerShippingAddress);
@@ -58,7 +64,6 @@ namespace yayks.Models
                 return RedirectToAction("Index");
             }
 
-            ViewBag.AspNetUserId = new SelectList(db.AspNetUsers, "Id", "Email", customerShippingAddress.AspNetUserId);
             return View(customerShippingAddress);
         }
 

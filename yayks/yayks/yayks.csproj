@@ -152,11 +152,10 @@
       <Private>True</Private>
       <HintPath>..\packages\Microsoft.AspNet.WebPages.3.2.3\lib\net45\System.Web.WebPages.Razor.dll</HintPath>
     </Reference>
-    <Reference Include="TwoCheckout, Version=1.0.5636.6562, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="TwoCheckout, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\Downloads\TwoCheckout.dll</HintPath>
+      <HintPath>..\packages\TwoCheckout.dll</HintPath>
       <Private>True</Private>
-      <EmbedInteropTypes>False</EmbedInteropTypes>
     </Reference>
     <Reference Include="WebGrease, Version=1.6.5135.21930, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\WebGrease.1.6.0\lib\WebGrease.dll</HintPath>
