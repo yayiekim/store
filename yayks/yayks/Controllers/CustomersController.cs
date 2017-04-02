@@ -14,6 +14,7 @@ namespace yayks.Controllers
 {
     public class CustomersController : Controller
     {
+        DataLayer dataLayer = new DataLayer();
         Entities data = new Entities();
         AzureBlob azureBlob = new AzureBlob();
         CommonModels common = new CommonModels();
@@ -145,14 +146,42 @@ namespace yayks.Controllers
             return Json("", JsonRequestBehavior.AllowGet);
         }
 
-        public ActionResult Cart()
+        public async Task<ActionResult> Cart()
         {
 
-            return View();
+            var _currentOrderId = "296b9871-beb5-41d8-b0f8-8865a3172a06";
+            var _productList = await dataLayer.getProductsListByOrderId(_currentOrderId);
+            decimal _total = 0;
+            foreach (var o in _productList)
+            {
+
+                if (o.Quantity == 1)
+                {
+                    _total = _total + o.Amount;
+                }
+                else {
+
+                    _total = _total + (o.Amount*o.Quantity);
+
+                }
+                
+            }
+            
+            CartModel _model = new Models.CartModel()
+            {
+                OrdersId = _currentOrderId,
+                ProductList = _productList,
+                Total = _total
+
+            };
+
+
+
+            return View(_model);
 
         }
 
-    
+
         public ActionResult Card()
         {
             return View();
@@ -162,49 +191,36 @@ namespace yayks.Controllers
         public ActionResult CheckOut(FormCollection collection)
         {
 
-            //var _charge = new ChargeAuthorizeServiceOptionsModel()
-            //{
-            //    total = (decimal)1.00,
-            //    currency = "USD",
-            //    merchantOrderId = "123",
-            //    token = "YjdhN2Q0ZDItZDEzYS00Y2RlLWI3MDUtYjkzYzZlMjA2OWY2"
-            //};
+            var Billing = new AuthBillingAddress();
+            Billing.addrLine1 = "123 test st";
+            Billing.city = "Columbus";
+            Billing.zipCode = "43123";
+            Billing.state = "OH";
+            Billing.country = "USA";
+            Billing.name = "Testing Tester";
+            Billing.email = "example@2co.com";
+            Billing.phoneNumber = "5555555555";
+
+            var _charge = new ChargeAuthorizeServiceOptions()
+            {
+                total = (decimal)1.00,
+                currency = "USD",
+                merchantOrderId = "123",
+                token = collection["token"].ToString(),
+                billingAddr = Billing
+
+            };
 
 
-            //AuthBillingAddressModel _address = new AuthBillingAddressModel();
-
-            //_address.charge = _charge;
-
-
-            //var _billingAddress = new AuthBillingAddress()
-            //{
-            //    addrLine1 = billingAddress.addressLine1,
-            //    addrLine2 = billingAddress.addressLine2,
-            //    city = billingAddress.city,
-            //    country = billingAddress.country,
-            //    zipCode = billingAddress.zipCode,
-            //    email = billingAddress.email,
-            //    name = billingAddress.name,
-            //    phoneNumber = billingAddress.phoneNumber,
-            //    state = billingAddress.state
-
-            //};
-
-            //var _charge = new ChargeAuthorizeServiceOptions()
-            //{
-            //    billingAddr = _billingAddress,
-            //    total = billingAddress.charge.total,
-            //    currency = billingAddress.charge.currency,
-            //    merchantOrderId = billingAddress.charge.merchantOrderId,
-            //    token = billingAddress.charge.token
-
-            //};
-
-            //_payment.CheckOutTwoCheckOut(_charge);
+            _payment.CheckOutTwoCheckOut(_charge);
 
             return View();
 
         }
+
+
+
+
 
 
     }

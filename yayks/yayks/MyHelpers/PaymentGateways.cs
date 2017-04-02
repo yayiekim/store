@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
 using System.Web;
 using TwoCheckout;
@@ -11,8 +12,9 @@ namespace yayks.MyHelpers
 
         public bool CheckOutTwoCheckOut(ChargeAuthorizeServiceOptions charge)
         {
-            TwoCheckoutConfig.SellerID = "203205815";
-            TwoCheckoutConfig.PrivateKey = "50870A0E-C0A1-4AE4-8FDD-590EBBE29F6F";
+            TwoCheckoutConfig.SellerID = ConfigurationManager.AppSettings["TwoCheckOutSellerId"];
+            TwoCheckoutConfig.PrivateKey = ConfigurationManager.AppSettings["TwoCheckOutPrivateKey"]; ;
+            TwoCheckoutConfig.Sandbox = true;
 
 
             try
@@ -22,7 +24,7 @@ namespace yayks.MyHelpers
                 return true;
 
             }
-            catch
+            catch (Exception ex)
             {
 
                 return false;

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.AspNet.Identity;
+using System;
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
@@ -40,5 +41,33 @@ namespace yayks.Controllers
 
             return Json(tmp, JsonRequestBehavior.AllowGet);
         }
+
+
+        #region Customers
+
+        public async Task<JsonResult> getCartCount()
+        {
+
+            var _userId = User.Identity.GetUserId();
+
+            var _tmp = await (from o in data.Orders.Where(i => i.AspNetUserId == _userId)
+                              join p in data.OrderDetails on o.Id equals p.OrdersId into op
+                              select new
+                              {
+                                  Count = op.Sum(i => i.Quantity)
+
+                              }).SingleOrDefaultAsync();
+
+
+            return Json(_tmp, JsonRequestBehavior.AllowGet);
+
+
+        }
+
+
+        #endregion
+
+
+
     }
 }

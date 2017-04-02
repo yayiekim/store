@@ -11,9 +11,13 @@ namespace yayks.Models
         public string Id { get; set; }
         public string Name { get; set; }
         public string Brand { get; set; }
+        public string Measurement { get; set; }
+        public string Color { get; set; }
         public string Description { get; set; }
         public decimal Amount { get; set; }
+        public int Quantity { get; set; }
         public List<string> Images { get; set; }
+        public bool IsSelected { get; set; }
 
     }
 

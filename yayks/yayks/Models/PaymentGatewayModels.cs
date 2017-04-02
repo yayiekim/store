@@ -31,21 +31,11 @@ namespace yayks.Models
         public string email { get; set; }
         [Required]
         public string phoneNumber { get; set; }
-        [Required]
-        public ChargeAuthorizeServiceOptionsModel charge { get; set; }
+      
+       
 
     }
 
-    public class ChargeAuthorizeServiceOptionsModel
-    {
-
-        public decimal total { get; set; }
-        public string currency { get; set; }
-        public string merchantOrderId { get; set; }
-        public string token { get; set; }
-
-
-
-    }
+  
 
 }

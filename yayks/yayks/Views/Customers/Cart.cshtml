@@ -1,0 +1,35 @@
+﻿@model yayks.Models.CartModel
+
+@{
+    ViewBag.Title = "Cart";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Cart</h2>
+
+<h3>Total: @Model.Total</h3>
+
+<table class="table table-responsive" >
+    <thead>
+        <tr>
+            <td>Name</td>
+            <td>Description</td>
+            <td>Qty</td>
+            <td>Amount</td>
+        </tr>
+    </thead>
+    <tbody>
+            @foreach (var x in Model.ProductList)
+            {
+                <tr>
+                    <td>@x.Name</td>
+                    <td>@x.Description</td>
+                    <td>@x.Quantity</td>
+                    <td>@x.Amount</td>
+                </tr>
+
+            } 
+    </tbody>
+</table>
+
+

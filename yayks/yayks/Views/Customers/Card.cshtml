@@ -44,9 +44,9 @@
         // Called when token created successfully.
         var successCallback = function(data) {
             var myForm = document.getElementById('myCCForm');
-            console.log(data);
+           
             // Set the token as the value for the token input
-            alert(data);
+            $('input[name="token"]').val(data.response.token.token);
             
             // IMPORTANT: Here we call `submit()` on the form element directly instead of using jQuery to prevent and infinite token request loop.
             myForm.submit();
@@ -57,7 +57,7 @@
             if (data.errorCode === 200) {
                 // This error code indicates that the ajax call failed. We recommend that you retry the token request.
             } else {
-                alert(data.errorMsg);
+               console.log(data);
             }
         };
 
@@ -65,7 +65,7 @@
             // Setup token request arguments
             var args = {
                 sellerId: "901342854",
-                publishableKey: "939945CA-A843-4851-9ACC-42D9F9E14472",
+                publishableKey: "F9078314-0FE2-45DB-894F-FF918E5BD87F",
                 ccNo: $("#ccNo").val(),
                 cvv: $("#cvv").val(),
                 expMonth: $("#expMonth").val(),
