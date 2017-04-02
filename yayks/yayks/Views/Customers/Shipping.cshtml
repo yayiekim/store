@@ -1,0 +1,31 @@
+﻿@model yayks.Models.ShippingModel
+
+@{
+    ViewBag.Title = "Shipping";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Shipping</h2>
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    
+    <div class="form-horizontal">
+        <h4>ShippingModel</h4>
+        <hr />
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="Save" class="btn btn-default" />
+            </div>
+        </div>
+    </div>
+}
+
+@Html.Partial("~/Views/Shared/_Partial_ShippingList.cshtml", Model.ShippingAddressList)
+
+
+<div>
+    @Html.ActionLink("Back to List", "Index")
+</div>

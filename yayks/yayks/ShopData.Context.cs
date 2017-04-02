@@ -44,5 +44,7 @@ namespace yayks
         public virtual DbSet<ProductsInGender> ProductsInGenders { get; set; }
         public virtual DbSet<PurchaseDetail> PurchaseDetails { get; set; }
         public virtual DbSet<Purchase> Purchases { get; set; }
+        public virtual DbSet<CustomerCreditCard> CustomerCreditCards { get; set; }
+        public virtual DbSet<CustomerShippingAddress> CustomerShippingAddresses { get; set; }
     }
 }

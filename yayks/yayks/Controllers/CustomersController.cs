@@ -2,6 +2,7 @@
 using PagedList;
 using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
@@ -181,6 +182,23 @@ namespace yayks.Controllers
 
         }
 
+        public async Task<ActionResult> Shipping()
+        {
+            var userId = User.Identity.GetUserId();
+          
+            var _shippingAddressList = await (from o in data.CustomerShippingAddresses.Where(i => i.AspNetUserId == userId)
+                                              select o).ToListAsync();
+            var _currentShippingAddress = (from o in _shippingAddressList.Where(i => i.IsDefault == true) select o).FirstOrDefault();
+
+            var _shipping = new ShippingModel()
+            {
+                CurrentShippingAddress = _currentShippingAddress,
+                ShippingAddressList = _shippingAddressList
+
+            };
+
+            return View(_shipping);
+        }
 
         public ActionResult Card()
         {

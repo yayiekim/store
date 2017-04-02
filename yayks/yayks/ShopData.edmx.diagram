@@ -43,6 +43,11 @@
         <AssociationConnector Association="Model.FK_PurchaseDetails_Purchases" />
         <AssociationConnector Association="Model.AspNetUserRoles" />
         <AssociationConnector Association="Model.ProductsInCategories" />
+        <EntityTypeShape EntityType="Model.CustomerCreditCard" Width="1.5" PointX="6" PointY="27.875" />
+        <EntityTypeShape EntityType="Model.CustomerShippingAddress" Width="1.5" PointX="6" PointY="24.375" />
+        <AssociationConnector Association="Model.FK_CustomerCreditCards_AspNetUsers" />
+        <AssociationConnector Association="Model.FK_CustomerShippingAddresses_AspNetUsers" />
+        <AssociationConnector Association="Model.FK_OrderDetails_CustomerShippingAddresses" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

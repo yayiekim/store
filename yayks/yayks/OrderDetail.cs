@@ -22,8 +22,10 @@ namespace yayks
         public decimal Amount { get; set; }
         public string OrderDetailsStatus { get; set; }
         public System.DateTime DateAdded { get; set; }
+        public string ShippingAddressId { get; set; }
     
         public virtual Order Order { get; set; }
         public virtual Product Product { get; set; }
+        public virtual CustomerShippingAddress CustomerShippingAddress { get; set; }
     }
 }
