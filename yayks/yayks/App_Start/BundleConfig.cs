@@ -20,11 +20,16 @@ namespace yayks
                         "~/Scripts/modernizr-*"));
 
             bundles.Add(new ScriptBundle("~/bundles/bootstrap").Include(
-                      "~/Scripts/bootstrap.js",
+                "~/Scripts/startbootstrap-sb-admin-2-gh-pages/vendor/metisMenu/metisMenu.min.js",
+                "~/Scripts/startbootstrap-sb-admin-2-gh-pages/dist/js/sb-admin-2.min.js",
+                "~/Scripts/bootstrap.js",
                       "~/Scripts/respond.js"));
 
             bundles.Add(new StyleBundle("~/Content/css").Include(
-                      "~/Content/bootstrap.min.css",
+                     "~/Content/bootstrap.min.css",
+                        "~/Content/font-awesome.min.css",
+                        "~/Scripts/startbootstrap-sb-admin-2-gh-pages/dist/css/sb-admin-2.min.css",
+                        "~/Scripts/startbootstrap-sb-admin-2-gh-pages/vendor/metisMenu/metisMenu.min.css",
                       "~/Content/site.css"));
         }
     }

@@ -7,21 +7,53 @@
 
 <h2>Shipping</h2>
 
-@using (Html.BeginForm())
-{
-    @Html.AntiForgeryToken()
-    
-    <div class="form-horizontal">
-        <h4>ShippingModel</h4>
-        <hr />
-        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-        <div class="form-group">
-            <div class="col-md-offset-2 col-md-10">
-                <input type="submit" value="Save" class="btn btn-default" />
-            </div>
-        </div>
-    </div>
-}
+
+<div>
+    <h4>CustomerShippingAddress</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.CurrentShippingAddress.IsDefault)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.CurrentShippingAddress.IsDefault)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.CurrentShippingAddress.Line1)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.CurrentShippingAddress.Line1)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.CurrentShippingAddress.Line2)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.CurrentShippingAddress.Line2)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.CurrentShippingAddress.City)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.CurrentShippingAddress.City)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.CurrentShippingAddress.State)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.CurrentShippingAddress.State)
+        </dd>
+
+    </dl>
+</div>
 
 @Html.Partial("~/Views/Shared/_Partial_ShippingList.cshtml", Model.ShippingAddressList)
 

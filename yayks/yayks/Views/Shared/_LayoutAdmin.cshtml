@@ -1,0 +1,224 @@
+﻿@using Microsoft.AspNet.Identity
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title - My ASP.NET Application</title>
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/modernizr")
+
+</head>
+<body>
+
+
+    <div id="wrapper" class="medium">
+
+        <!-- Navigation -->
+        <nav class="navbar navbar-fixed-top" role="navigation" style="margin-bottom: 0">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                @Html.ActionLink("Yaks!", "Index", "Home", new { area = "" }, new { @class = "navbar-brand" })
+            </div>
+            <!-- /.navbar-header -->
+
+            <ul class="nav navbar-top-links navbar-right">
+                <li><div hidden="hidden" id="loader">  Please wait system is loading <img src="~/Images/294.GIF" /></div></li>
+
+                @if (User.Identity.IsAuthenticated == true)
+            {
+                    <li class="dropdown">
+                        <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                            <i class="fa fa-envelope fa-fw"></i>  <i class="fa fa-caret-down"></i>
+                        </a>
+                        <ul class="dropdown-menu dropdown-messages"></ul>
+                        <!-- /.dropdown-messages -->
+                    </li>
+
+                <!-- /.dropdown -->
+                    <li class="dropdown">
+                        <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                            <i class="fa fa-bell fa-fw"></i>  <i class="fa fa-caret-down"></i>
+                        </a>
+                        <ul class="dropdown-menu dropdown-alerts"></ul>
+                        <!-- /.dropdown-alerts -->
+                    </li>
+
+                }
+
+                <!-- /.dropdown -->
+                <li class="dropdown">
+                    <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                        <i class="fa fa-user fa-fw"></i>  <i class="fa fa-caret-down"></i>
+                    </a>
+                    <ul class="dropdown-menu dropdown-user">
+                        <li>
+                            <a href="#"><i class="fa fa-user fa-fw"></i> User Profile</a>
+                        </li>
+                        <li>
+                            <a href="@Url.Action("Index", "Manage", new { title = "Manage" })"><i class="fa fa-gear fa-fw"></i> Settings</a>
+                        </li>
+                        <li class="divider"></li>
+                        <li>
+                            @Html.Partial("_LoginPartial")
+                        </li>
+                    </ul>
+                    <!-- /.dropdown-user -->
+                </li>
+                <!-- /.dropdown -->
+
+
+            </ul>
+            <!-- /.navbar-top-links -->
+            @if (User.Identity.IsAuthenticated == true)
+            {
+                <div class="sidebar" role="navigation">
+                    <div class="sidebar-nav navbar-collapse">
+                        <ul class="nav" id="side-menu">
+
+                            <li>
+
+                                <a href="#"><i class="fa fa-2x fa-gift fa-fw"></i> Products<span class="fa fa-2x arrow"></span></a>
+                                <ul class="nav nav-second-level">
+                                    <li>@Html.ActionLink("Products List", "Products", "AdminProducts")</li>
+                                    <li>@Html.ActionLink("Product Brands", "Brands", "AdminProducts")</li>
+                                    <li>@Html.ActionLink("Product Categories", "Categories", "AdminProducts")</li>
+                                    <li>@Html.ActionLink("Product Colors", "Colors", "AdminProducts")</li>
+                                    <li>@Html.ActionLink("Product Measurements", "Measurements", "AdminProducts")</li>
+                                </ul>
+                            
+                            </li>
+
+                            <li>
+
+                                <a href="#"><i class="fa fa-2x fa-book fa-fw"></i> Inventory<span class="fa fa-2x arrow"></span></a>
+                                <ul class="nav nav-second-level">
+                                    <li>@Html.ActionLink("Patient Records", "PatientRecords", "Reports")</li>
+
+                                </ul>
+
+                            </li>
+
+                            <li>
+                                <a href="#"><i class="fa fa-2x fa-shopping-basket fa-fw"></i> Purchases<span class="fa fa-2x arrow"></span></a>
+                                <ul class="nav nav-second-level">
+                                    <li>@Html.ActionLink("Patient Records", "PatientRecords", "Reports")</li>
+
+                                </ul>
+
+                            </li>
+
+
+                            <li>
+                                <a href="#"><i class="fa fa-2x fa-shopping-cart fa-fw"></i> Orders<span class="fa fa-2x arrow"></span></a>
+                                <ul class="nav nav-second-level">
+                                    <li>@Html.ActionLink("Patient Records", "PatientRecords", "Reports")</li>
+
+                                </ul>
+                                <!-- /.nav-second-level -->
+                            </li>
+
+                            <li>
+                                <a href="#"><i class="fa fa-2x fa-truck fa-fw"></i> Shipping<span class="fa fa-2x arrow"></span></a>
+                                <ul class="nav nav-second-level">
+                                    <li>@Html.ActionLink("Diagnosis Categories", "DiagnosisCategories", "Diagnosis")</li>
+                                    <li>@Html.ActionLink("Diagnosis", "Index", "Diagnosis")</li>
+
+                                </ul>
+                                <!-- /.nav-second-level -->
+                            </li>
+
+                            <li>
+                                <a href="#"><i class="fa fa-2x fa-money fa-fw"></i> Payments<span class="fa fa-2x arrow"></span></a>
+                                <ul class="nav nav-second-level">
+                                    <li>@Html.ActionLink("Medications Categories", "MedicationCategories", "Medications")</li>
+                                    <li>@Html.ActionLink("Medications", "Index", "Medications")</li>
+
+                                </ul>
+                                <!-- /.nav-second-level -->
+                            </li>
+                            <li>
+                                <a href="#"><i class="fa fa-2x fa-minus-circle fa-fw"></i> Refunds<span class="fa fa-2x arrow"></span></a>
+                                <ul class="nav nav-second-level">
+                                    <li>@Html.ActionLink("Records Categories", "RecordTypeCategories", "RecordTypes")</li>
+                                    <li>@Html.ActionLink("Record Types", "RecordTypes", "RecordTypes")</li>
+
+                                </ul>
+                                <!-- /.nav-second-level -->
+                            </li>
+
+                            <li>
+                                <a href="#"><i class="fa fa-2x fa-cogs fa-fw"></i> Settings<span class="fa fa-2x arrow"></span></a>
+                                <ul class="nav nav-second-level">
+                                    <li>@Html.ActionLink("Lab Record Categories", "LabRecordCategories", "RecordTypes")</li>
+                                    <li>@Html.ActionLink("Lab Records", "LabRecords", "RecordTypes")</li>
+
+                                </ul>
+                                <!-- /.nav-second-level -->
+                            </li>
+
+                            <li>
+
+                                <a href="@Url.Action("Index", "Consultation")"><i class="fa fa-2x fa-question-circle fa-fw"></i> Help</a>
+                            </li>
+
+                        </ul>
+                    </div>
+                    <!-- /.sidebar-collapse -->
+                </div>
+            }
+            <!-- /.navbar-static-side -->
+        </nav>
+
+        <div id="page-wrapper" style="padding-top:12px">
+            <div class="row">
+
+                <div class="col-lg-12">
+
+                    @RenderBody()
+
+
+                    <hr />
+
+
+
+                    <footer>
+                        <p>&copy; @DateTime.Now.Year - Clinic One Application</p>
+                    </footer>
+
+
+
+                </div>
+
+
+            </div>
+
+        </div>
+
+
+    </div>
+
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/bootstrap")
+    @RenderSection("scripts", required: false)
+
+
+    <script>
+
+        function ToJavaScriptDate(value) {
+            var pattern = /Date\(([^)]+)\)/;
+            var results = pattern.exec(value);
+            var dt = new Date(parseFloat(results[1]));
+            return dt;
+        }
+    </script>
+
+
+</body>
+</html>
