@@ -1,0 +1,35 @@
+﻿@model yayks.ProductColor
+
+@{
+    ViewBag.Title = "Details";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>ProductColor</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.ProductColorName)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.ProductColorName)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.ProductColorCode)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.ProductColorCode)
+        </dd>
+
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id = Model.Id }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>

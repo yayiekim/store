@@ -232,6 +232,9 @@
     <Compile Include="Controllers\CustomersController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
+    <Compile Include="Controllers\ProductBrandsController.cs" />
+    <Compile Include="Controllers\ProductCategoriesController.cs" />
+    <Compile Include="Controllers\ProductColorsController.cs" />
     <Compile Include="Controllers\RestController.cs" />
     <Compile Include="CustomerCreditCard.cs">
       <DependentUpon>ShopData.tt</DependentUpon>
@@ -423,6 +426,21 @@
     <Content Include="Views\CustomerShippingAddresses\Index.cshtml" />
     <Content Include="Views\Customers\Shipping.cshtml" />
     <Content Include="Views\Shared\_Partial_ShippingList.cshtml" />
+    <Content Include="Views\ProductColors\Create.cshtml" />
+    <Content Include="Views\ProductColors\Delete.cshtml" />
+    <Content Include="Views\ProductColors\Details.cshtml" />
+    <Content Include="Views\ProductColors\Edit.cshtml" />
+    <Content Include="Views\ProductColors\Index.cshtml" />
+    <Content Include="Views\ProductCategories\Create.cshtml" />
+    <Content Include="Views\ProductCategories\Delete.cshtml" />
+    <Content Include="Views\ProductCategories\Details.cshtml" />
+    <Content Include="Views\ProductCategories\Edit.cshtml" />
+    <Content Include="Views\ProductCategories\Index.cshtml" />
+    <Content Include="Views\ProductBrands\Create.cshtml" />
+    <Content Include="Views\ProductBrands\Delete.cshtml" />
+    <Content Include="Views\ProductBrands\Details.cshtml" />
+    <Content Include="Views\ProductBrands\Edit.cshtml" />
+    <Content Include="Views\ProductBrands\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Code\" />
