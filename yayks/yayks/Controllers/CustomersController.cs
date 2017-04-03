@@ -149,8 +149,8 @@ namespace yayks.Controllers
 
         public async Task<ActionResult> Cart()
         {
-
-            var _currentOrderId = "296b9871-beb5-41d8-b0f8-8865a3172a06";
+            var userId = User.Identity.GetUserId();
+            var _currentOrderId = await (from o in data.Orders.Where(i => i.OrderStatus == "new" && i.AspNetUserId == userId) select o.Id).FirstOrDefaultAsync();
             var _productList = await dataLayer.getProductsListByOrderId(_currentOrderId);
             decimal _total = 0;
             foreach (var o in _productList)
@@ -182,8 +182,11 @@ namespace yayks.Controllers
 
         }
 
-        public async Task<ActionResult> Shipping()
+        public async Task<ActionResult> Shipping(CartModel model)
         {
+
+
+
             var userId = User.Identity.GetUserId();
           
             var _shippingAddressList = await (from o in data.CustomerShippingAddresses.Where(i => i.AspNetUserId == userId)

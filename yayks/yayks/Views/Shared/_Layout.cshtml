@@ -24,53 +24,71 @@
                 <ul class="nav navbar-nav">
                     <li>
                         @using (Html.BeginForm("SearchProducts", "Customers", FormMethod.Get))
-                    {
-                        <div id="global-search" class="input-group">
+                        {
+                            <div id="global-search" class="input-group">
 
-                            <span class="input-group-btn">
-                                <input class="btn btn-default" type="submit" value="Go!" />
-                            </span>
-                            @Html.TextBox("SearchString", "", new { @id = "currentFilter", placeholder = "Search for...", @class = "form-control" })
+                                <span class="input-group-btn">
+                                    <input class="btn btn-default" type="submit" value="Go!" />
+                                </span>
+                                @Html.TextBox("SearchString", "", new { @id = "currentFilter", placeholder = "Search for...", @class = "form-control" })
 
 
-                        </div>
-                    }
+                            </div>
+                        }
 
-                </li>
-            </ul>
-            @Html.Partial("_LoginPartial")
+                    </li>
+                </ul>
+                @Html.Partial("_LoginPartial")
+            </div>
         </div>
     </div>
-</div>
-<div class="container body-content">
-    @RenderBody()
+    <div class="container body-content">
+        @RenderBody()
 
 
 
 
-    <hr />
-    <footer>
-        <p>&copy; @DateTime.Now.Year - My ASP.NET Application</p>
-    </footer>
-</div>
+        <hr />
+        <footer>
+            <p>&copy; @DateTime.Now.Year - My ASP.NET Application</p>
+        </footer>
+    </div>
 
-@Scripts.Render("~/bundles/jquery")
-@Scripts.Render("~/bundles/bootstrap")
-@RenderSection("scripts", required: false)
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/bootstrap")
+    @RenderSection("scripts", required: false)
 
-<script>
-    //loads cart item count
-    $.ajax({
-        type: "get",
-        url: "/Rest/getCartCount",
-        datatype: "json",
-        traditional: true,
-        success: function (data) {
-            console.log(data.Count);
-            $('#icon-cart-link').text(' ' + data.Count);
+    <script>
+
+        function updateCartCount() {
+            //loads cart item count
+            $.ajax({
+                type: "get",
+                url: "/Rest/getCartCount",
+                datatype: "json",
+                traditional: true,
+                success: function (data) {
+                    console.log(data.Count);
+                    $('#icon-cart-link').text(' ' + data.Count);
+                }
+            });
+
+        };
+
+        updateCartCount();
+
+
+        function ToJavaScriptDate(value) {
+            var pattern = /Date\(([^)]+)\)/;
+            var results = pattern.exec(value);
+            var dt = new Date(parseFloat(results[1]));
+            return dt;
         }
-    });
-</script>
+
+
+
+
+    </script>
 
 </body>
 </html>

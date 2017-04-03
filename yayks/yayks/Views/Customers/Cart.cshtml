@@ -7,31 +7,72 @@
 
 <h2>Cart</h2>
 
-<h3>Total: @Model.Total</h3>
+<h3 id="total"></h3>
 
-@Html.ActionLink("Check Out", "Shipping", "Customers", new { @class="btn btn-primary" })
+@Html.ActionLink("Check Out", "Shipping", "Customers", new { @class = "btn btn-primary" })
 
-<table class="table table-responsive" >
-    <thead>
-        <tr>
-            <td>Name</td>
-            <td>Description</td>
-            <td>Qty</td>
-            <td>Amount</td>
-        </tr>
-    </thead>
-    <tbody>
-            @foreach (var x in Model.ProductList)
+@using (Html.BeginForm("Shipping", "Customers", FormMethod.Post))
+{
+
+    <table class="table table-responsive">
+        <thead>
+            <tr>
+                <td></td>
+                <td>Name</td>
+                <td>Description</td>
+                <td>Amount</td>
+                <td>Qty</td>
+            </tr>
+        </thead>
+        <tbody id="table-body">
+
+            @for (int i = 0; i < Model.ProductList.Count; i++)
             {
                 <tr>
-                    <td>@x.Name</td>
-                    <td>@x.Description</td>
-                    <td>@x.Quantity</td>
-                    <td>@x.Amount</td>
+
+                    <td>@Html.CheckBoxFor(o => o.ProductList[i].IsSelected, new {@onclick = "SumAmount()" })</td>
+                    <td>@Html.DisplayFor(o => o.ProductList[i].Name, null)</td>
+                    <td>@Html.DisplayFor(o => o.ProductList[i].Description, null)</td>
+                    <td class="amount">@Html.DisplayFor(o => o.ProductList[i].Amount)</td>
+                    <td>@Html.EditorFor(m => m.ProductList[i].Quantity, new { @class = "form-control" })</td>
                 </tr>
 
-            } 
-    </tbody>
-</table>
+            }
+
+        </tbody>
+
+
+    </table>
+
+
+    <input type="submit" value="go" />
+
+}
+
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+
+    <script>
+
+       
+
+        function SumAmount() {
+            var total = 0;
+          
+            $('#table-body').find('tr').each(function () {
+                var row = $(this);
+                if (row.find('input[type="checkbox"]').is(':checked')){
+                    total = total + parseInt(row.find('.amount').text());
+                }
+            });
+
+            $('#total').text('Total: ' + total);
+
+        }
+
+    </script>
+
+}
 
 
