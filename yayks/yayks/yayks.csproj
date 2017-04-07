@@ -228,6 +228,10 @@
       <DependentUpon>ShopData.tt</DependentUpon>
     </Compile>
     <Compile Include="Controllers\AccountController.cs" />
+    <Compile Include="Controllers\AdminProductBrandsController.cs" />
+    <Compile Include="Controllers\AdminProductCategoriesController.cs" />
+    <Compile Include="Controllers\AdminProductColorsController.cs" />
+    <Compile Include="Controllers\AdminProductMeasurementsController.cs" />
     <Compile Include="Controllers\AdminProductsController.cs" />
     <Compile Include="Controllers\CustomersController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
@@ -597,6 +601,26 @@
     <Content Include="Scripts\startbootstrap-sb-admin-2-gh-pages\vendor\font-awesome\scss\_stacked.scss" />
     <Content Include="Scripts\startbootstrap-sb-admin-2-gh-pages\vendor\font-awesome\scss\_variables.scss" />
     <Content Include="Views\Shared\_LayoutAdmin.cshtml" />
+    <Content Include="Views\AdminProductBrands\Create.cshtml" />
+    <Content Include="Views\AdminProductBrands\Delete.cshtml" />
+    <Content Include="Views\AdminProductBrands\Details.cshtml" />
+    <Content Include="Views\AdminProductBrands\Edit.cshtml" />
+    <Content Include="Views\AdminProductBrands\Index.cshtml" />
+    <Content Include="Views\AdminProductCategories\Create.cshtml" />
+    <Content Include="Views\AdminProductCategories\Delete.cshtml" />
+    <Content Include="Views\AdminProductCategories\Details.cshtml" />
+    <Content Include="Views\AdminProductCategories\Edit.cshtml" />
+    <Content Include="Views\AdminProductCategories\Index.cshtml" />
+    <Content Include="Views\AdminProductColors\Create.cshtml" />
+    <Content Include="Views\AdminProductColors\Delete.cshtml" />
+    <Content Include="Views\AdminProductColors\Details.cshtml" />
+    <Content Include="Views\AdminProductColors\Edit.cshtml" />
+    <Content Include="Views\AdminProductColors\Index.cshtml" />
+    <Content Include="Views\AdminProductMeasurements\Create.cshtml" />
+    <Content Include="Views\AdminProductMeasurements\Delete.cshtml" />
+    <Content Include="Views\AdminProductMeasurements\Details.cshtml" />
+    <Content Include="Views\AdminProductMeasurements\Edit.cshtml" />
+    <Content Include="Views\AdminProductMeasurements\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Code\" />
