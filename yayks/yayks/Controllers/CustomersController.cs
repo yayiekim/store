@@ -142,9 +142,24 @@ namespace yayks.Controllers
             return Json("", JsonRequestBehavior.AllowGet);
         }
 
-        public async Task<JsonResult> RemoveFromCart(string Id)
+        [HttpGet]
+        public async Task<bool> RemoveFromCart(string Id)
         {
-            return Json("", JsonRequestBehavior.AllowGet);
+
+            var res = await data.OrderDetails.FindAsync(Id);
+
+            data.OrderDetails.Remove(res);
+
+            try {
+                await data.SaveChangesAsync();
+                return true;
+            }
+            catch
+            {
+                return false;
+
+            }
+          
         }
 
         public async Task<ActionResult> Cart()

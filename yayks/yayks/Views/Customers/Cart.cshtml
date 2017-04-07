@@ -28,13 +28,14 @@
 
             @for (int i = 0; i < Model.ProductList.Count; i++)
             {
-                <tr>
+                <tr data-id="@Html.DisplayFor(o => o.ProductList[i].ProductDetailId, null).ToHtmlString()">
 
                     <td>@Html.CheckBoxFor(o => o.ProductList[i].IsSelected, new {@onclick = "SumAmount()" })</td>
                     <td>@Html.DisplayFor(o => o.ProductList[i].Name, null)</td>
                     <td>@Html.DisplayFor(o => o.ProductList[i].Description, null)</td>
                     <td class="amount">@Html.DisplayFor(o => o.ProductList[i].Amount)</td>
-                    <td>@Html.EditorFor(m => m.ProductList[i].Quantity, new { @class = "form-control" })</td>
+                    <td>@Html.EditorFor(m => m.ProductList[i].Quantity, new { htmlAttributes = new { @class = "item-qty form-control" } })</td>
+                    <td><button class="delete" type="button">Delete</button></td>
                 </tr>
 
             }
@@ -63,13 +64,48 @@
             $('#table-body').find('tr').each(function () {
                 var row = $(this);
                 if (row.find('input[type="checkbox"]').is(':checked')){
-                    total = total + parseInt(row.find('.amount').text());
+                    total = total + parseInt(row.find('.amount').text()) * parseInt(row.find('input[type="number"]').val());
                 }
             });
 
             $('#total').text('Total: ' + total);
 
         }
+
+        $(document).ready(function () {
+
+            $(".delete").on("click", function () {
+                             
+                var tr = $(this).closest('tr');
+
+                $.get('@Url.Action("RemoveFromCart", "Customers")', { Id: tr.attr('data-id') }, function (res) {
+                        
+                    if (res)
+                    {
+                        tr.remove();
+                        SumAmount();
+                        updateCartCount();
+                    }
+
+                   
+                });
+
+               
+            });
+        });
+
+        //compute total on qty value change
+        $(".item-qty").keyup(function () {
+            SumAmount();
+        });
+
+        $(".item-qty").click(function () {
+            SumAmount();
+        });
+
+
+
+
 
     </script>
 

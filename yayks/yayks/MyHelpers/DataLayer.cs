@@ -30,7 +30,9 @@ namespace yayks.MyHelpers
                                           Name = r.ProductName,
                                           Measurement = rr.ProductMeasurement.MeasurementValue.ToString(),
                                           Images = rr.ProductDetailImages.ToList().Select(i=>i.ImageUrl).ToList(),
-                                          IsSelected = false
+                                          IsSelected = false,
+                                          ProductDetailId = p.Id
+
 
                                       }).ToListAsync();
 
