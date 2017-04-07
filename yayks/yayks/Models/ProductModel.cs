@@ -18,6 +18,8 @@ namespace yayks.Models
         public int Quantity { get; set; }
         public List<string> Images { get; set; }
         public bool IsSelected { get; set; }
+        public string ProductDetailId { get; set; }
+
 
     }
 
