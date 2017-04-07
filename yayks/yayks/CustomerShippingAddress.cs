@@ -14,12 +14,6 @@ namespace yayks
     
     public partial class CustomerShippingAddress
     {
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public CustomerShippingAddress()
-        {
-            this.OrderDetailShippingAddresses = new HashSet<OrderDetailShippingAddress>();
-        }
-    
         public string Id { get; set; }
         public string AspNetUserId { get; set; }
         public bool IsDefault { get; set; }
@@ -29,7 +23,5 @@ namespace yayks
         public string State { get; set; }
     
         public virtual AspNetUser AspNetUser { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<OrderDetailShippingAddress> OrderDetailShippingAddresses { get; set; }
     }
 }

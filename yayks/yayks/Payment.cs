@@ -23,10 +23,9 @@ namespace yayks
         public string Id { get; set; }
         public System.DateTime PaymentDate { get; set; }
         public string OrdersId { get; set; }
-        public decimal Amount { get; set; }
-        public string ReferenceId { get; set; }
-        public string PaymentType { get; set; }
+        public string AspNetUserId { get; set; }
     
+        public virtual AspNetUser AspNetUser { get; set; }
         public virtual Order Order { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<PaymentDetail> PaymentDetails { get; set; }

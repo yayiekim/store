@@ -1,7 +1,7 @@
 ﻿@model yayks.CustomerShippingAddress
 
 
-@using (Html.BeginForm()) 
+@using (Html.BeginForm("CreateShipping", "Rest")) 
 {
     @Html.AntiForgeryToken()
     

@@ -5,38 +5,41 @@
     <!-- Diagram content (shape and connector positions) -->
     <edmx:Diagrams>
       <Diagram DiagramId="fe528289af9b4d94b3592a05abd96d8d" Name="Diagram1">
-        <EntityTypeShape EntityType="Model.C__MigrationHistory" Width="1.5" PointX="0.75" PointY="2.375" />
-        <EntityTypeShape EntityType="Model.AspNetRole" Width="1.5" PointX="0.75" PointY="13.25" />
-        <EntityTypeShape EntityType="Model.AspNetUserClaim" Width="1.5" PointX="5.25" PointY="11.5" />
-        <EntityTypeShape EntityType="Model.AspNetUserLogin" Width="1.5" PointX="5.25" PointY="21.75" />
-        <EntityTypeShape EntityType="Model.AspNetUser" Width="1.5" PointX="3" PointY="11.625" />
-        <EntityTypeShape EntityType="Model.CustomerCreditCard" Width="1.5" PointX="5.25" PointY="5.375" />
-        <EntityTypeShape EntityType="Model.CustomerShippingAddress" Width="1.5" PointX="5.25" PointY="15.125" />
-        <EntityTypeShape EntityType="Model.OrderDetail" Width="1.5" PointX="7.5" PointY="8" />
-        <EntityTypeShape EntityType="Model.OrderDetailShippingAddress" Width="1.5" PointX="7.5" PointY="15.375" />
-        <EntityTypeShape EntityType="Model.Order" Width="1.5" PointX="5.25" PointY="8.125" />
-        <EntityTypeShape EntityType="Model.PaymentDetail" Width="1.5" PointX="9.75" PointY="12.25" />
-        <EntityTypeShape EntityType="Model.Payment" Width="1.5" PointX="7.5" PointY="11.875" />
-        <EntityTypeShape EntityType="Model.ProductBrand" Width="1.5" PointX="3" PointY="7.5" />
-        <EntityTypeShape EntityType="Model.ProductCategory" Width="1.5" PointX="3" PointY="5" />
-        <EntityTypeShape EntityType="Model.ProductColor" Width="1.5" PointX="8.25" PointY="22" />
-        <EntityTypeShape EntityType="Model.ProductDetailImage" Width="1.5" PointX="12.75" PointY="15.875" />
-        <EntityTypeShape EntityType="Model.ProductDetail" Width="1.5" PointX="10.5" PointY="15.125" />
-        <EntityTypeShape EntityType="Model.ProductMeasurement" Width="1.5" PointX="5.25" PointY="24.75" />
-        <EntityTypeShape EntityType="Model.Product" Width="1.5" PointX="5.25" PointY="0.75" />
-        <EntityTypeShape EntityType="Model.ProductsInGender" Width="1.5" PointX="7.5" PointY="4.75" />
-        <EntityTypeShape EntityType="Model.PurchaseDetail" Width="1.5" PointX="7.5" PointY="18.625" />
-        <EntityTypeShape EntityType="Model.Purchase" Width="1.5" PointX="5.25" PointY="18.625" />
+        <EntityTypeShape EntityType="Model.C__MigrationHistory" Width="1.5" PointX="0.75" PointY="5.75" />
+        <EntityTypeShape EntityType="Model.AspNetRole" Width="1.5" PointX="0.75" PointY="13.375" />
+        <EntityTypeShape EntityType="Model.AspNetUserClaim" Width="1.5" PointX="5.25" PointY="12.25" />
+        <EntityTypeShape EntityType="Model.AspNetUserLogin" Width="1.5" PointX="5.25" PointY="18.25" />
+        <EntityTypeShape EntityType="Model.AspNetUser" Width="1.5" PointX="3" PointY="11.75" />
+        <EntityTypeShape EntityType="Model.CustomerCreditCard" Width="1.5" PointX="5.25" PointY="20.875" />
+        <EntityTypeShape EntityType="Model.CustomerShippingAddress" Width="1.5" PointX="5.25" PointY="15" />
+        <EntityTypeShape EntityType="Model.OrderDetail" Width="1.5" PointX="7.5" PointY="9.5" />
+        <EntityTypeShape EntityType="Model.OrderDetailShippingAddress" Width="1.5" PointX="7.5" PointY="16" />
+        <EntityTypeShape EntityType="Model.Order" Width="1.5" PointX="5.25" PointY="8.75" />
+        <EntityTypeShape EntityType="Model.PaymentDetail" Width="1.5" PointX="12.75" PointY="11.375" />
+        <EntityTypeShape EntityType="Model.PaymentMethod" Width="1.5" PointX="10.5" PointY="8.875" />
+        <EntityTypeShape EntityType="Model.Payment" Width="1.5" PointX="10.5" PointY="11.5" />
+        <EntityTypeShape EntityType="Model.ProductBrand" Width="1.5" PointX="3" PointY="0.75" />
+        <EntityTypeShape EntityType="Model.ProductCategory" Width="1.5" PointX="3" PointY="3.125" />
+        <EntityTypeShape EntityType="Model.ProductColor" Width="1.5" PointX="8.25" PointY="19.75" />
+        <EntityTypeShape EntityType="Model.ProductDetailImage" Width="1.5" PointX="12.75" PointY="15.625" />
+        <EntityTypeShape EntityType="Model.ProductDetail" Width="1.5" PointX="10.5" PointY="15" />
+        <EntityTypeShape EntityType="Model.ProductMeasurement" Width="1.5" PointX="5.25" PointY="23.875" />
+        <EntityTypeShape EntityType="Model.Product" Width="1.5" PointX="5.25" PointY="1.125" />
+        <EntityTypeShape EntityType="Model.ProductsInGender" Width="1.5" PointX="7.5" PointY="2" />
+        <EntityTypeShape EntityType="Model.PurchaseDetail" Width="1.5" PointX="7.5" PointY="5.5" />
+        <EntityTypeShape EntityType="Model.Purchase" Width="1.5" PointX="5.25" PointY="5.625" />
         <AssociationConnector Association="Model.FK_dbo_AspNetUserClaims_dbo_AspNetUsers_UserId" />
         <AssociationConnector Association="Model.FK_dbo_AspNetUserLogins_dbo_AspNetUsers_UserId" />
         <AssociationConnector Association="Model.FK_CustomerCreditCards_AspNetUsers" />
         <AssociationConnector Association="Model.FK_CustomerShippingAddresses_AspNetUsers" />
         <AssociationConnector Association="Model.FK_Orders_AspNetUsers" />
+        <AssociationConnector Association="Model.FK_Payments_AspNetUsers" />
         <AssociationConnector Association="Model.FK_Table_AspNeUsers" />
-        <AssociationConnector Association="Model.FK_OrderDetailShippingAddress_CustomerShippingAddresses" />
         <AssociationConnector Association="Model.FK_OrderDetails_Orders" />
         <AssociationConnector Association="Model.FK_OrderDetails_Products" />
+        <AssociationConnector Association="Model.FK_OrderShippingAddress_Oders" />
         <AssociationConnector Association="Model.FK_Payments_Orders" />
+        <AssociationConnector Association="Model.FK_PaymentDetails_PaymentMethod" />
         <AssociationConnector Association="Model.FK_PaymentDetails_Payments" />
         <AssociationConnector Association="Model.FK_Products_ProductBrand" />
         <AssociationConnector Association="Model.FK_ProductMeasurements_ProductCategories" />

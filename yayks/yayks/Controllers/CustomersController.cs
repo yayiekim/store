@@ -101,7 +101,7 @@ namespace yayks.Controllers
             {
                 _orderDetail.Id = Guid.NewGuid().ToString();
                 _orderDetail.OrdersId = _currentOrder.FirstOrDefault().Id;
-                _orderDetail.Amount = _product.Amount;
+                _orderDetail.ProductAmount = _product.Amount;
                 _orderDetail.Quantity = 1;
                 _orderDetail.ProductsId = Id;
                 _orderDetail.DateAdded = DateTime.UtcNow;
@@ -124,7 +124,7 @@ namespace yayks.Controllers
 
                 _orderDetail.Id = Guid.NewGuid().ToString();
                 _orderDetail.OrdersId = _order.Id;
-                _orderDetail.Amount = _product.Amount;
+                _orderDetail.ProductAmount = _product.Amount;
                 _orderDetail.Quantity = 1;
                 _orderDetail.ProductsId = Id;
                 _orderDetail.DateAdded = DateTime.UtcNow;
@@ -204,13 +204,58 @@ namespace yayks.Controllers
           
             var _shippingAddressList = await (from o in data.CustomerShippingAddresses.Where(i => i.AspNetUserId == userId)
                                               select o).ToListAsync();
-            var _currentShippingAddress = (from o in _shippingAddressList.Where(i => i.IsDefault == true) select o).FirstOrDefault();
-            
+           
 
             ViewData["_shippingAddressList"] = _shippingAddressList;
-            ViewData["_currentShippingAddress"] = _currentShippingAddress;
 
-            return View();
+            var _model = new CheckOutModels()
+            {
+                Cart = model,
+               
+            };
+
+
+            return View(_model);
+        }
+
+        public async Task<ActionResult> PaymentMethod(CheckOutModels model)
+        {
+            var _model = new CheckOutModels()
+            {
+                Cart = model.Cart,
+                ShippingAddress = model.ShippingAddress
+
+            };
+
+            return View(_model);
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> Pay(CheckOutModels model)
+        {
+            var _model = new CheckOutModels()
+            {
+                Cart = model.Cart,
+                ShippingAddress = model.ShippingAddress,
+                PaymentDetail = model.PaymentDetail
+            };
+
+
+            var Billing = new AuthBillingAddress();
+
+            var _charge = new ChargeAuthorizeServiceOptions()
+            {
+                total = model.PaymentDetail.PaymentAmount,
+                currency = "USD",
+                merchantOrderId = "123",
+                token = model.CardToken,
+                billingAddr = Billing
+
+            };
+
+
+            _payment.CheckOutTwoCheckOut(_charge);
+            return View(model);
         }
 
         public ActionResult Card()
@@ -218,41 +263,6 @@ namespace yayks.Controllers
             return View();
         }
 
-        [HttpPost]
-        public ActionResult CheckOut(FormCollection collection)
-        {
-
-            var Billing = new AuthBillingAddress();
-            Billing.addrLine1 = "123 test st";
-            Billing.city = "Columbus";
-            Billing.zipCode = "43123";
-            Billing.state = "OH";
-            Billing.country = "USA";
-            Billing.name = "Testing Tester";
-            Billing.email = "example@2co.com";
-            Billing.phoneNumber = "5555555555";
-
-            var _charge = new ChargeAuthorizeServiceOptions()
-            {
-                total = (decimal)1.00,
-                currency = "USD",
-                merchantOrderId = "123",
-                token = collection["token"].ToString(),
-                billingAddr = Billing
-
-            };
-
-
-            _payment.CheckOutTwoCheckOut(_charge);
-
-            return View();
-
-        }
-
-
-
-
-
-
+           
     }
 }

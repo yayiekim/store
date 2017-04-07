@@ -96,16 +96,18 @@
           <Property Name="ProductsId" Type="nvarchar" MaxLength="128" Nullable="false" />
           <Property Name="Quantity" Type="int" Nullable="false" />
           <Property Name="Remarks" Type="nvarchar(max)" />
-          <Property Name="Amount" Type="money" Nullable="false" />
+          <Property Name="ProductAmount" Type="money" Nullable="false" />
           <Property Name="OrderDetailsStatus" Type="nvarchar" MaxLength="50" />
           <Property Name="DateAdded" Type="datetime" Nullable="false" />
+          <Property Name="ShippingAmount" Type="money" />
+          <Property Name="ShippingTrackingNumber" Type="nvarchar" MaxLength="100" />
         </EntityType>
         <EntityType Name="OrderDetailShippingAddress">
           <Key>
             <PropertyRef Name="Id" />
           </Key>
           <Property Name="Id" Type="nvarchar" MaxLength="128" Nullable="false" />
-          <Property Name="OderDetailsId" Type="nvarchar" MaxLength="128" Nullable="false" />
+          <Property Name="OdersId" Type="nvarchar" MaxLength="128" Nullable="false" />
           <Property Name="Line1" Type="nvarchar" MaxLength="1000" Nullable="false" />
           <Property Name="Line2" Type="nvarchar" MaxLength="1000" Nullable="false" />
           <Property Name="City" Type="nvarchar" MaxLength="500" Nullable="false" />
@@ -127,6 +129,18 @@
           </Key>
           <Property Name="Id" Type="nvarchar" MaxLength="128" Nullable="false" />
           <Property Name="PaymentId" Type="nvarchar" MaxLength="128" Nullable="false" />
+          <Property Name="PaymentMethodId" Type="int" Nullable="false" />
+          <Property Name="PaymentRef" Type="nvarchar" MaxLength="150" Nullable="false" />
+          <Property Name="PayerName" Type="nvarchar" MaxLength="50" />
+          <Property Name="PaymentAmount" Type="money" Nullable="false" />
+          <Property Name="Remarks" Type="nvarchar" MaxLength="1000" />
+        </EntityType>
+        <EntityType Name="PaymentMethods">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="PaymentMethods" Type="nvarchar" MaxLength="50" Nullable="false" />
         </EntityType>
         <EntityType Name="Payments">
           <Key>
@@ -135,9 +149,7 @@
           <Property Name="Id" Type="nvarchar" MaxLength="128" Nullable="false" />
           <Property Name="PaymentDate" Type="datetime" Nullable="false" />
           <Property Name="OrdersId" Type="nvarchar" MaxLength="128" Nullable="false" />
-          <Property Name="Amount" Type="money" Nullable="false" />
-          <Property Name="ReferenceId" Type="nvarchar" MaxLength="500" />
-          <Property Name="PaymentType" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="AspNetUserId" Type="nvarchar" MaxLength="128" Nullable="false" />
         </EntityType>
         <EntityType Name="ProductBrands">
           <Key>
@@ -346,20 +358,6 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK_OrderDetailShippingAddress_CustomerShippingAddresses">
-          <End Role="CustomerShippingAddresses" Type="Self.CustomerShippingAddresses" Multiplicity="1">
-            <OnDelete Action="Cascade" />
-          </End>
-          <End Role="OrderDetailShippingAddress" Type="Self.OrderDetailShippingAddress" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="CustomerShippingAddresses">
-              <PropertyRef Name="Id" />
-            </Principal>
-            <Dependent Role="OrderDetailShippingAddress">
-              <PropertyRef Name="OderDetailsId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
         <Association Name="FK_Orders_AspNetUsers">
           <End Role="AspNetUsers" Type="Self.AspNetUsers" Multiplicity="1">
             <OnDelete Action="Cascade" />
@@ -374,8 +372,36 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_OrderShippingAddress_Oders">
+          <End Role="Orders" Type="Self.Orders" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="OrderDetailShippingAddress" Type="Self.OrderDetailShippingAddress" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Orders">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="OrderDetailShippingAddress">
+              <PropertyRef Name="OdersId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_PaymentDetails_PaymentMethod">
+          <End Role="PaymentMethods" Type="Self.PaymentMethods" Multiplicity="1" />
+          <End Role="PaymentDetails" Type="Self.PaymentDetails" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="PaymentMethods">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="PaymentDetails">
+              <PropertyRef Name="PaymentMethodId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_PaymentDetails_Payments">
-          <End Role="Payments" Type="Self.Payments" Multiplicity="1" />
+          <End Role="Payments" Type="Self.Payments" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
           <End Role="PaymentDetails" Type="Self.PaymentDetails" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="Payments">
@@ -383,6 +409,18 @@
             </Principal>
             <Dependent Role="PaymentDetails">
               <PropertyRef Name="PaymentId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Payments_AspNetUsers">
+          <End Role="AspNetUsers" Type="Self.AspNetUsers" Multiplicity="1" />
+          <End Role="Payments" Type="Self.Payments" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="AspNetUsers">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Payments">
+              <PropertyRef Name="AspNetUserId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -567,6 +605,7 @@
           <EntitySet Name="OrderDetailShippingAddress" EntityType="Self.OrderDetailShippingAddress" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Orders" EntityType="Self.Orders" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="PaymentDetails" EntityType="Self.PaymentDetails" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="PaymentMethods" EntityType="Self.PaymentMethods" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Payments" EntityType="Self.Payments" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="ProductBrands" EntityType="Self.ProductBrands" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="ProductCategories" EntityType="Self.ProductCategories" Schema="dbo" store:Type="Tables" />
@@ -611,17 +650,25 @@
             <End Role="Products" EntitySet="Products" />
             <End Role="OrderDetails" EntitySet="OrderDetails" />
           </AssociationSet>
-          <AssociationSet Name="FK_OrderDetailShippingAddress_CustomerShippingAddresses" Association="Self.FK_OrderDetailShippingAddress_CustomerShippingAddresses">
-            <End Role="CustomerShippingAddresses" EntitySet="CustomerShippingAddresses" />
-            <End Role="OrderDetailShippingAddress" EntitySet="OrderDetailShippingAddress" />
-          </AssociationSet>
           <AssociationSet Name="FK_Orders_AspNetUsers" Association="Self.FK_Orders_AspNetUsers">
             <End Role="AspNetUsers" EntitySet="AspNetUsers" />
             <End Role="Orders" EntitySet="Orders" />
           </AssociationSet>
+          <AssociationSet Name="FK_OrderShippingAddress_Oders" Association="Self.FK_OrderShippingAddress_Oders">
+            <End Role="Orders" EntitySet="Orders" />
+            <End Role="OrderDetailShippingAddress" EntitySet="OrderDetailShippingAddress" />
+          </AssociationSet>
+          <AssociationSet Name="FK_PaymentDetails_PaymentMethod" Association="Self.FK_PaymentDetails_PaymentMethod">
+            <End Role="PaymentMethods" EntitySet="PaymentMethods" />
+            <End Role="PaymentDetails" EntitySet="PaymentDetails" />
+          </AssociationSet>
           <AssociationSet Name="FK_PaymentDetails_Payments" Association="Self.FK_PaymentDetails_Payments">
             <End Role="Payments" EntitySet="Payments" />
             <End Role="PaymentDetails" EntitySet="PaymentDetails" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Payments_AspNetUsers" Association="Self.FK_Payments_AspNetUsers">
+            <End Role="AspNetUsers" EntitySet="AspNetUsers" />
+            <End Role="Payments" EntitySet="Payments" />
           </AssociationSet>
           <AssociationSet Name="FK_Payments_Orders" Association="Self.FK_Payments_Orders">
             <End Role="Orders" EntitySet="Orders" />
@@ -692,6 +739,7 @@
           <EntitySet Name="OrderDetailShippingAddresses" EntityType="Model.OrderDetailShippingAddress" />
           <EntitySet Name="Orders" EntityType="Model.Order" />
           <EntitySet Name="PaymentDetails" EntityType="Model.PaymentDetail" />
+          <EntitySet Name="PaymentMethods" EntityType="Model.PaymentMethod" />
           <EntitySet Name="Payments" EntityType="Model.Payment" />
           <EntitySet Name="ProductBrands" EntityType="Model.ProductBrand" />
           <EntitySet Name="ProductCategories" EntityType="Model.ProductCategory" />
@@ -723,13 +771,13 @@
             <End Role="AspNetUser" EntitySet="AspNetUsers" />
             <End Role="Order" EntitySet="Orders" />
           </AssociationSet>
+          <AssociationSet Name="FK_Payments_AspNetUsers" Association="Model.FK_Payments_AspNetUsers">
+            <End Role="AspNetUser" EntitySet="AspNetUsers" />
+            <End Role="Payment" EntitySet="Payments" />
+          </AssociationSet>
           <AssociationSet Name="FK_Table_AspNeUsers" Association="Model.FK_Table_AspNeUsers">
             <End Role="AspNetUser" EntitySet="AspNetUsers" />
             <End Role="Purchase" EntitySet="Purchases" />
-          </AssociationSet>
-          <AssociationSet Name="FK_OrderDetailShippingAddress_CustomerShippingAddresses" Association="Model.FK_OrderDetailShippingAddress_CustomerShippingAddresses">
-            <End Role="CustomerShippingAddress" EntitySet="CustomerShippingAddresses" />
-            <End Role="OrderDetailShippingAddress" EntitySet="OrderDetailShippingAddresses" />
           </AssociationSet>
           <AssociationSet Name="FK_OrderDetails_Orders" Association="Model.FK_OrderDetails_Orders">
             <End Role="Order" EntitySet="Orders" />
@@ -739,9 +787,17 @@
             <End Role="Product" EntitySet="Products" />
             <End Role="OrderDetail" EntitySet="OrderDetails" />
           </AssociationSet>
+          <AssociationSet Name="FK_OrderShippingAddress_Oders" Association="Model.FK_OrderShippingAddress_Oders">
+            <End Role="Order" EntitySet="Orders" />
+            <End Role="OrderDetailShippingAddress" EntitySet="OrderDetailShippingAddresses" />
+          </AssociationSet>
           <AssociationSet Name="FK_Payments_Orders" Association="Model.FK_Payments_Orders">
             <End Role="Order" EntitySet="Orders" />
             <End Role="Payment" EntitySet="Payments" />
+          </AssociationSet>
+          <AssociationSet Name="FK_PaymentDetails_PaymentMethod" Association="Model.FK_PaymentDetails_PaymentMethod">
+            <End Role="PaymentMethod" EntitySet="PaymentMethods" />
+            <End Role="PaymentDetail" EntitySet="PaymentDetails" />
           </AssociationSet>
           <AssociationSet Name="FK_PaymentDetails_Payments" Association="Model.FK_PaymentDetails_Payments">
             <End Role="Payment" EntitySet="Payments" />
@@ -852,6 +908,7 @@
           <NavigationProperty Name="CustomerCreditCards" Relationship="Model.FK_CustomerCreditCards_AspNetUsers" FromRole="AspNetUser" ToRole="CustomerCreditCard" />
           <NavigationProperty Name="CustomerShippingAddresses" Relationship="Model.FK_CustomerShippingAddresses_AspNetUsers" FromRole="AspNetUser" ToRole="CustomerShippingAddress" />
           <NavigationProperty Name="Orders" Relationship="Model.FK_Orders_AspNetUsers" FromRole="AspNetUser" ToRole="Order" />
+          <NavigationProperty Name="Payments" Relationship="Model.FK_Payments_AspNetUsers" FromRole="AspNetUser" ToRole="Payment" />
           <NavigationProperty Name="Purchases" Relationship="Model.FK_Table_AspNeUsers" FromRole="AspNetUser" ToRole="Purchase" />
           <NavigationProperty Name="AspNetRoles" Relationship="Model.AspNetUserRoles" FromRole="AspNetUser" ToRole="AspNetRole" />
         </EntityType>
@@ -877,7 +934,6 @@
           <Property Name="City" Type="String" Nullable="false" MaxLength="250" FixedLength="false" Unicode="true" />
           <Property Name="State" Type="String" Nullable="false" MaxLength="250" FixedLength="false" Unicode="true" />
           <NavigationProperty Name="AspNetUser" Relationship="Model.FK_CustomerShippingAddresses_AspNetUsers" FromRole="CustomerShippingAddress" ToRole="AspNetUser" />
-          <NavigationProperty Name="OrderDetailShippingAddresses" Relationship="Model.FK_OrderDetailShippingAddress_CustomerShippingAddresses" FromRole="CustomerShippingAddress" ToRole="OrderDetailShippingAddress" />
         </EntityType>
         <EntityType Name="OrderDetail">
           <Key>
@@ -888,23 +944,25 @@
           <Property Name="ProductsId" Type="String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="true" />
           <Property Name="Quantity" Type="Int32" Nullable="false" />
           <Property Name="Remarks" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
-          <Property Name="Amount" Type="Decimal" Nullable="false" Precision="19" Scale="4" />
+          <Property Name="ProductAmount" Type="Decimal" Nullable="false" Precision="19" Scale="4" />
           <Property Name="OrderDetailsStatus" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="DateAdded" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="ShippingAmount" Type="Decimal" Precision="19" Scale="4" />
           <NavigationProperty Name="Order" Relationship="Model.FK_OrderDetails_Orders" FromRole="OrderDetail" ToRole="Order" />
           <NavigationProperty Name="Product" Relationship="Model.FK_OrderDetails_Products" FromRole="OrderDetail" ToRole="Product" />
+          <Property Name="ShippingTrackingNumber" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
         </EntityType>
         <EntityType Name="OrderDetailShippingAddress">
           <Key>
             <PropertyRef Name="Id" />
           </Key>
           <Property Name="Id" Type="String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="true" />
-          <Property Name="OderDetailsId" Type="String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="true" />
+          <Property Name="OdersId" Type="String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="true" />
           <Property Name="Line1" Type="String" Nullable="false" MaxLength="1000" FixedLength="false" Unicode="true" />
           <Property Name="Line2" Type="String" Nullable="false" MaxLength="1000" FixedLength="false" Unicode="true" />
           <Property Name="City" Type="String" Nullable="false" MaxLength="500" FixedLength="false" Unicode="true" />
           <Property Name="State" Type="String" Nullable="false" MaxLength="500" FixedLength="false" Unicode="true" />
-          <NavigationProperty Name="CustomerShippingAddress" Relationship="Model.FK_OrderDetailShippingAddress_CustomerShippingAddresses" FromRole="OrderDetailShippingAddress" ToRole="CustomerShippingAddress" />
+          <NavigationProperty Name="Order" Relationship="Model.FK_OrderShippingAddress_Oders" FromRole="OrderDetailShippingAddress" ToRole="Order" />
         </EntityType>
         <EntityType Name="Order">
           <Key>
@@ -917,6 +975,7 @@
           <Property Name="QuickBuyToken" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
           <NavigationProperty Name="AspNetUser" Relationship="Model.FK_Orders_AspNetUsers" FromRole="Order" ToRole="AspNetUser" />
           <NavigationProperty Name="OrderDetails" Relationship="Model.FK_OrderDetails_Orders" FromRole="Order" ToRole="OrderDetail" />
+          <NavigationProperty Name="OrderDetailShippingAddresses" Relationship="Model.FK_OrderShippingAddress_Oders" FromRole="Order" ToRole="OrderDetailShippingAddress" />
           <NavigationProperty Name="Payments" Relationship="Model.FK_Payments_Orders" FromRole="Order" ToRole="Payment" />
         </EntityType>
         <EntityType Name="PaymentDetail">
@@ -925,7 +984,21 @@
           </Key>
           <Property Name="Id" Type="String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="true" />
           <Property Name="PaymentId" Type="String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="true" />
+          <Property Name="PaymentMethodId" Type="Int32" Nullable="false" />
+          <Property Name="PaymentRef" Type="String" Nullable="false" MaxLength="150" FixedLength="false" Unicode="true" />
+          <Property Name="PayerName" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="PaymentAmount" Type="Decimal" Nullable="false" Precision="19" Scale="4" />
+          <Property Name="Remarks" Type="String" MaxLength="1000" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="PaymentMethod" Relationship="Model.FK_PaymentDetails_PaymentMethod" FromRole="PaymentDetail" ToRole="PaymentMethod" />
           <NavigationProperty Name="Payment" Relationship="Model.FK_PaymentDetails_Payments" FromRole="PaymentDetail" ToRole="Payment" />
+        </EntityType>
+        <EntityType Name="PaymentMethod">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="PaymentMethods" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="PaymentDetails" Relationship="Model.FK_PaymentDetails_PaymentMethod" FromRole="PaymentMethod" ToRole="PaymentDetail" />
         </EntityType>
         <EntityType Name="Payment">
           <Key>
@@ -934,9 +1007,8 @@
           <Property Name="Id" Type="String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="true" />
           <Property Name="PaymentDate" Type="DateTime" Nullable="false" Precision="3" />
           <Property Name="OrdersId" Type="String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="true" />
-          <Property Name="Amount" Type="Decimal" Nullable="false" Precision="19" Scale="4" />
-          <Property Name="ReferenceId" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
-          <Property Name="PaymentType" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="AspNetUserId" Type="String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="AspNetUser" Relationship="Model.FK_Payments_AspNetUsers" FromRole="Payment" ToRole="AspNetUser" />
           <NavigationProperty Name="Order" Relationship="Model.FK_Payments_Orders" FromRole="Payment" ToRole="Order" />
           <NavigationProperty Name="PaymentDetails" Relationship="Model.FK_PaymentDetails_Payments" FromRole="Payment" ToRole="PaymentDetail" />
         </EntityType>
@@ -1121,6 +1193,18 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_Payments_AspNetUsers">
+          <End Type="Model.AspNetUser" Role="AspNetUser" Multiplicity="1" />
+          <End Type="Model.Payment" Role="Payment" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="AspNetUser">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Payment">
+              <PropertyRef Name="AspNetUserId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_Table_AspNeUsers">
           <End Type="Model.AspNetUser" Role="AspNetUser" Multiplicity="1" />
           <End Type="Model.Purchase" Role="Purchase" Multiplicity="*" />
@@ -1130,20 +1214,6 @@
             </Principal>
             <Dependent Role="Purchase">
               <PropertyRef Name="AspNetUserId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_OrderDetailShippingAddress_CustomerShippingAddresses">
-          <End Type="Model.CustomerShippingAddress" Role="CustomerShippingAddress" Multiplicity="1">
-            <OnDelete Action="Cascade" />
-          </End>
-          <End Type="Model.OrderDetailShippingAddress" Role="OrderDetailShippingAddress" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="CustomerShippingAddress">
-              <PropertyRef Name="Id" />
-            </Principal>
-            <Dependent Role="OrderDetailShippingAddress">
-              <PropertyRef Name="OderDetailsId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -1173,6 +1243,20 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_OrderShippingAddress_Oders">
+          <End Type="Model.Order" Role="Order" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Type="Model.OrderDetailShippingAddress" Role="OrderDetailShippingAddress" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Order">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="OrderDetailShippingAddress">
+              <PropertyRef Name="OdersId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_Payments_Orders">
           <End Type="Model.Order" Role="Order" Multiplicity="1" />
           <End Type="Model.Payment" Role="Payment" Multiplicity="*" />
@@ -1185,8 +1269,22 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_PaymentDetails_PaymentMethod">
+          <End Type="Model.PaymentMethod" Role="PaymentMethod" Multiplicity="1" />
+          <End Type="Model.PaymentDetail" Role="PaymentDetail" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="PaymentMethod">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="PaymentDetail">
+              <PropertyRef Name="PaymentMethodId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_PaymentDetails_Payments">
-          <End Type="Model.Payment" Role="Payment" Multiplicity="1" />
+          <End Type="Model.Payment" Role="Payment" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
           <End Type="Model.PaymentDetail" Role="PaymentDetail" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="Payment">
@@ -1408,9 +1506,11 @@
           <EntitySetMapping Name="OrderDetails">
             <EntityTypeMapping TypeName="Model.OrderDetail">
               <MappingFragment StoreEntitySet="OrderDetails">
+                <ScalarProperty Name="ShippingTrackingNumber" ColumnName="ShippingTrackingNumber" />
+                <ScalarProperty Name="ShippingAmount" ColumnName="ShippingAmount" />
                 <ScalarProperty Name="DateAdded" ColumnName="DateAdded" />
                 <ScalarProperty Name="OrderDetailsStatus" ColumnName="OrderDetailsStatus" />
-                <ScalarProperty Name="Amount" ColumnName="Amount" />
+                <ScalarProperty Name="ProductAmount" ColumnName="ProductAmount" />
                 <ScalarProperty Name="Remarks" ColumnName="Remarks" />
                 <ScalarProperty Name="Quantity" ColumnName="Quantity" />
                 <ScalarProperty Name="ProductsId" ColumnName="ProductsId" />
@@ -1426,7 +1526,7 @@
                 <ScalarProperty Name="City" ColumnName="City" />
                 <ScalarProperty Name="Line2" ColumnName="Line2" />
                 <ScalarProperty Name="Line1" ColumnName="Line1" />
-                <ScalarProperty Name="OderDetailsId" ColumnName="OderDetailsId" />
+                <ScalarProperty Name="OdersId" ColumnName="OdersId" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>
@@ -1445,7 +1545,20 @@
           <EntitySetMapping Name="PaymentDetails">
             <EntityTypeMapping TypeName="Model.PaymentDetail">
               <MappingFragment StoreEntitySet="PaymentDetails">
+                <ScalarProperty Name="Remarks" ColumnName="Remarks" />
+                <ScalarProperty Name="PaymentAmount" ColumnName="PaymentAmount" />
+                <ScalarProperty Name="PayerName" ColumnName="PayerName" />
+                <ScalarProperty Name="PaymentRef" ColumnName="PaymentRef" />
+                <ScalarProperty Name="PaymentMethodId" ColumnName="PaymentMethodId" />
                 <ScalarProperty Name="PaymentId" ColumnName="PaymentId" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="PaymentMethods">
+            <EntityTypeMapping TypeName="Model.PaymentMethod">
+              <MappingFragment StoreEntitySet="PaymentMethods">
+                <ScalarProperty Name="PaymentMethods" ColumnName="PaymentMethods" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>
@@ -1453,9 +1566,7 @@
           <EntitySetMapping Name="Payments">
             <EntityTypeMapping TypeName="Model.Payment">
               <MappingFragment StoreEntitySet="Payments">
-                <ScalarProperty Name="PaymentType" ColumnName="PaymentType" />
-                <ScalarProperty Name="ReferenceId" ColumnName="ReferenceId" />
-                <ScalarProperty Name="Amount" ColumnName="Amount" />
+                <ScalarProperty Name="AspNetUserId" ColumnName="AspNetUserId" />
                 <ScalarProperty Name="OrdersId" ColumnName="OrdersId" />
                 <ScalarProperty Name="PaymentDate" ColumnName="PaymentDate" />
                 <ScalarProperty Name="Id" ColumnName="Id" />

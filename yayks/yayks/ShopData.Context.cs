@@ -36,6 +36,7 @@ namespace yayks
         public virtual DbSet<OrderDetailShippingAddress> OrderDetailShippingAddresses { get; set; }
         public virtual DbSet<Order> Orders { get; set; }
         public virtual DbSet<PaymentDetail> PaymentDetails { get; set; }
+        public virtual DbSet<PaymentMethod> PaymentMethods { get; set; }
         public virtual DbSet<Payment> Payments { get; set; }
         public virtual DbSet<ProductBrand> ProductBrands { get; set; }
         public virtual DbSet<ProductCategory> ProductCategories { get; set; }
