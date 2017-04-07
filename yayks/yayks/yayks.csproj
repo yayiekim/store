@@ -268,6 +268,9 @@
     <Compile Include="OrderDetail.cs">
       <DependentUpon>ShopData.tt</DependentUpon>
     </Compile>
+    <Compile Include="OrderDetailShippingAddress.cs">
+      <DependentUpon>ShopData.tt</DependentUpon>
+    </Compile>
     <Compile Include="Payment.cs">
       <DependentUpon>ShopData.tt</DependentUpon>
     </Compile>
@@ -540,11 +543,6 @@
     <Content Include="Views\Customers\SearchProducts.cshtml" />
     <Content Include="Views\Customers\Card.cshtml" />
     <Content Include="Views\Customers\Cart.cshtml" />
-    <Content Include="Views\CustomerShippingAddresses\Create.cshtml" />
-    <Content Include="Views\CustomerShippingAddresses\Delete.cshtml" />
-    <Content Include="Views\CustomerShippingAddresses\Details.cshtml" />
-    <Content Include="Views\CustomerShippingAddresses\Edit.cshtml" />
-    <Content Include="Views\CustomerShippingAddresses\Index.cshtml" />
     <Content Include="Views\Customers\Shipping.cshtml" />
     <Content Include="Views\Shared\_Partial_ShippingList.cshtml" />
     <Content Include="Scripts\startbootstrap-sb-admin-2-gh-pages\bower.json" />
@@ -621,12 +619,12 @@
     <Content Include="Views\AdminProductMeasurements\Details.cshtml" />
     <Content Include="Views\AdminProductMeasurements\Edit.cshtml" />
     <Content Include="Views\AdminProductMeasurements\Index.cshtml" />
+    <Content Include="Views\Shared\_Partial_CreateShipping.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Code\" />
     <Folder Include="Views\Rest\" />
     <Folder Include="Views\SearchProduct\" />
-    <Folder Include="Views\Shipping\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config" />

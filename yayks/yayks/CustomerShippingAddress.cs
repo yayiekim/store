@@ -17,7 +17,7 @@ namespace yayks
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public CustomerShippingAddress()
         {
-            this.OrderDetails = new HashSet<OrderDetail>();
+            this.OrderDetailShippingAddresses = new HashSet<OrderDetailShippingAddress>();
         }
     
         public string Id { get; set; }
@@ -30,6 +30,6 @@ namespace yayks
     
         public virtual AspNetUser AspNetUser { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<OrderDetail> OrderDetails { get; set; }
+        public virtual ICollection<OrderDetailShippingAddress> OrderDetailShippingAddresses { get; set; }
     }
 }

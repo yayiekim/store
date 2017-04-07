@@ -64,6 +64,47 @@ namespace yayks.Controllers
 
         }
 
+        [HttpPost]
+        public async Task<JsonResult> CreateShipping(CustomerShippingAddress customerShippingAddress)
+        {
+
+            var userId = User.Identity.GetUserId();
+
+            customerShippingAddress.AspNetUserId = userId;
+            customerShippingAddress.Id = Guid.NewGuid().ToString();
+
+            if (ModelState.IsValid)
+            {
+                data.CustomerShippingAddresses.Add(customerShippingAddress);
+                await data.SaveChangesAsync();
+                return Json(true, JsonRequestBehavior.AllowGet);
+
+            }
+
+            return Json(false, JsonRequestBehavior.AllowGet);
+        }
+
+        [HttpPost]
+        public async Task<JsonResult> EditShipping(CustomerShippingAddress customerShippingAddress)
+        {
+            if (ModelState.IsValid)
+            {
+                data.Entry(customerShippingAddress).State = EntityState.Modified;
+                await data.SaveChangesAsync();
+                return Json(true, JsonRequestBehavior.AllowGet);
+            }
+
+            return Json(false, JsonRequestBehavior.AllowGet);
+        }
+
+        public async Task<ActionResult> DeleteShipping(string id)
+        {
+            CustomerShippingAddress customerShippingAddress = await data.CustomerShippingAddresses.FindAsync(id);
+            data.CustomerShippingAddresses.Remove(customerShippingAddress);
+            await data.SaveChangesAsync();
+            return Json(true, JsonRequestBehavior.AllowGet);
+        }
+
 
         #endregion
 

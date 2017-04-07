@@ -184,23 +184,18 @@ namespace yayks.Controllers
 
         public async Task<ActionResult> Shipping(CartModel model)
         {
-
-
-
+            
             var userId = User.Identity.GetUserId();
           
             var _shippingAddressList = await (from o in data.CustomerShippingAddresses.Where(i => i.AspNetUserId == userId)
                                               select o).ToListAsync();
             var _currentShippingAddress = (from o in _shippingAddressList.Where(i => i.IsDefault == true) select o).FirstOrDefault();
+            
 
-            var _shipping = new ShippingModel()
-            {
-                CurrentShippingAddress = _currentShippingAddress,
-                ShippingAddressList = _shippingAddressList
+            ViewData["_shippingAddressList"] = _shippingAddressList;
+            ViewData["_currentShippingAddress"] = _currentShippingAddress;
 
-            };
-
-            return View(_shipping);
+            return View();
         }
 
         public ActionResult Card()
