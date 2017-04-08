@@ -1,8 +1,9 @@
-﻿
-
-@{
+﻿@{
     ViewBag.Title = "Shipping";
     Layout = "~/Views/Shared/_Layout.cshtml";
+
+    var addressList = ((List<CustomerShippingAddress>)ViewBag.ShippingAddresses);
+    var model = new yayks.Models.CheckOutModels();
 }
 
 <h2>Shipping</h2>
@@ -11,8 +12,189 @@
 <div>
     <h4>CustomerShippingAddress</h4>
     <hr />
-    
+
 </div>
 
-@Html.Partial("~/Views/Shared/_Partial_ShippingList.cshtml", ViewData["_shippingAddressList"])
+
+<div>
+
+    @using (Html.BeginForm("PaymentMethod", "Customers", FormMethod.Post))
+    {
+      
+
+
+        @Html.HiddenFor(i => model.ShippingAddress.Id, new { @id = "shippingId" })
+        <div>
+            @Html.CheckBoxFor(o => model.ShippingAddress.IsDefault, null)
+        </div>
+        <div>
+            @Html.EditorFor(i => model.ShippingAddress.Line1)
+        </div>
+        <div>
+            @Html.EditorFor(i => model.ShippingAddress.Line2)
+        </div>
+        <div>
+            @Html.EditorFor(i => model.ShippingAddress.City)
+        </div>
+        <div>
+            @Html.EditorFor(i => model.ShippingAddress.State)
+        </div>
+
+
+
+        <input type="submit" value="submit" />
+    }
+
+
+
+</div>
+
+
+
+<div id="shipping-list">
+    <input type="button" onclick="InitNewAddress()" value="New Address" />
+    <table class="table table-responsive">
+        <tr>
+            <th>
+                Default
+            </th>
+            <th colspan="4">
+                Address
+            </th>
+
+            <th></th>
+        </tr>
+
+        <tbody id="table-body">
+            @for (int i = 0; i < addressList.Count(); i++)
+            {
+
+                <tr data-id="@addressList[i].Id">
+
+                    <td><input id="@addressList[i].Id" type="checkbox" class="chkbx" checked="@addressList[i].IsDefault" /></td>
+                    <td class="line-one-row">@addressList[i].Line1</td>
+                    <td class="line-two-row">@addressList[i].Line2</td>
+                    <td class="line-city-row">@addressList[i].City</td>
+                    <td class="line-state-row">@addressList[i].State</td>
+                    <td><button class="delete" type="button">Delete</button></td>
+                </tr>
+
+            }
+        </tbody>
+
+
+
+    </table>
+
+
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+
+    <script>
+
+        function setSelected(state) {
+
+            $('#table-body').find('tr').each(function () {
+
+                var row = $(this);
+                if (row.find('input[type="checkbox"]').is(':checked')) {
+                    $('#ShippingAddress_IsDefault')[0].checked = true;
+                    $('#ShippingAddress_Line1').val(row.find('.line-one-row').text());
+                    $('#ShippingAddress_Line2').val(row.find('.line-two-row').text());
+                    $('#ShippingAddress_City').val(row.find('.line-city-row').text());
+                    $('#ShippingAddress_State').val(row.find('.line-state-row').text());
+                    $('#shippingId').val(row.find('input[type="checkbox"]').attr('id'));
+                }
+            });
+        }
+
+        //onload selet default
+        setSelected();
+
+
+        $(".chkbx").on("click", function () {
+
+            var checkBoxId = $(this).attr('id');
+
+
+            $('#table-body').find('tr').each(function () {
+
+                var row = $(this);
+
+                if (row.find('input[type="checkbox"]').attr('id') != checkBoxId) {
+                    row.find('input[type="checkbox"]')[0].checked = false;
+                    setSelected();
+                    $('#shippingId').val(checkBoxId);
+                }
+
+
+            });
+
+
+        });
+
+        function InitNewAddress() {
+            clearFields();
+        }
+
+        function clearFields() {
+            $('#shippingId').val("");
+            $('#ShippingAddress_IsDefault')[0].checked = false;
+            $('#ShippingAddress_Line1').val("");
+            $('#ShippingAddress_Line2').val("");
+            $('#ShippingAddress_City').val("");
+            $('#ShippingAddress_State').val("");
+
+        }
+
+        function deleteAddress(id) {
+
+        }
+
+        //delete address
+        $(document).ready(function () {
+
+            $(".delete").on("click", function () {
+
+                var tr = $(this).closest('tr');
+                $.ajax({
+                    type: "get",
+                    url: "/Rest/deleteShipping",
+                    datatype: "json",
+                    data: { id: tr.attr('data-id') },
+                    traditional: true,
+                    success: function (data) {
+                        tr.remove();
+
+                        if (data != '0') {
+
+                            if ($('#table-body').find('tr').length >= 1) {
+
+                                $('#table-body').find('tr').each(function () {
+
+                                    var row = $(this);
+
+                                    if (row.attr('data-id') == data) {
+                                        row.find('input[type="checkbox"]')[0].checked = true;
+                                        setSelected();
+                                    }
+
+                                });
+                            }
+                        } else {
+
+                            clearFields();
+
+                        }
+
+                    }
+                });
+
+            });
+        });
+
+    </script>
+}
 

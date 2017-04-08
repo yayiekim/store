@@ -8,8 +8,9 @@ namespace yayks.Models
     public class CheckOutModels
     {
         public CartModel Cart { get; set; }
-        public OrderDetailShippingAddress ShippingAddress { get; set; }
+        public CustomerShippingAddress ShippingAddress { get; set; }
         public PaymentDetail PaymentDetail { get; set; }
+        public List<PaymentMethod> PaymentMethods { get; set; }
         public string CardToken { get; set; }
 
     }

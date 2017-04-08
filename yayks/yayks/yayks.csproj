@@ -227,6 +227,9 @@
     <Compile Include="AspNetUserLogin.cs">
       <DependentUpon>ShopData.tt</DependentUpon>
     </Compile>
+    <Compile Include="Cart.cs">
+      <DependentUpon>ShopData.tt</DependentUpon>
+    </Compile>
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\AdminProductBrandsController.cs" />
     <Compile Include="Controllers\AdminProductCategoriesController.cs" />
@@ -548,7 +551,6 @@
     <Content Include="Views\Customers\Card.cshtml" />
     <Content Include="Views\Customers\Cart.cshtml" />
     <Content Include="Views\Customers\Shipping.cshtml" />
-    <Content Include="Views\Shared\_Partial_ShippingList.cshtml" />
     <Content Include="Scripts\startbootstrap-sb-admin-2-gh-pages\bower.json" />
     <Content Include="Scripts\startbootstrap-sb-admin-2-gh-pages\less\mixins.less" />
     <Content Include="Scripts\startbootstrap-sb-admin-2-gh-pages\less\sb-admin-2.less" />
@@ -623,7 +625,9 @@
     <Content Include="Views\AdminProductMeasurements\Details.cshtml" />
     <Content Include="Views\AdminProductMeasurements\Edit.cshtml" />
     <Content Include="Views\AdminProductMeasurements\Index.cshtml" />
-    <Content Include="Views\Shared\_Partial_CreateShipping.cshtml" />
+    <Content Include="Views\Customers\PaymentMethod.cshtml" />
+    <Content Include="Views\Shared\_Partial_CreditCard.cshtml" />
+    <Content Include="Views\Shared\_Partial_CheckOutSummary.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Code\" />

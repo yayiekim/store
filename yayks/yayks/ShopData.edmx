@@ -66,6 +66,17 @@
           <Property Name="AccessFailedCount" Type="int" Nullable="false" />
           <Property Name="UserName" Type="nvarchar" MaxLength="256" Nullable="false" />
         </EntityType>
+        <EntityType Name="Cart">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="nvarchar" MaxLength="128" Nullable="false" />
+          <Property Name="AspNetUserId" Type="nvarchar" MaxLength="128" Nullable="false" />
+          <Property Name="ProductId" Type="nvarchar" MaxLength="128" Nullable="false" />
+          <Property Name="Quantity" Type="int" Nullable="false" />
+          <Property Name="DateCreated" Type="datetime" Nullable="false" />
+          <Property Name="IsSelected" Type="bit" Nullable="false" />
+        </EntityType>
         <EntityType Name="CustomerCreditCards">
           <Key>
             <PropertyRef Name="Id" />
@@ -252,6 +263,30 @@
           <Property Name="ReferenceNo" Type="nvarchar" MaxLength="50" />
           <Property Name="Description" Type="nvarchar" MaxLength="500" />
         </EntityType>
+        <Association Name="FK_Cart_AspNetUsers">
+          <End Role="AspNetUsers" Type="Self.AspNetUsers" Multiplicity="1" />
+          <End Role="Cart" Type="Self.Cart" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="AspNetUsers">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Cart">
+              <PropertyRef Name="AspNetUserId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Cart_Products">
+          <End Role="Products" Type="Self.Products" Multiplicity="1" />
+          <End Role="Cart" Type="Self.Cart" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Products">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Cart">
+              <PropertyRef Name="ProductId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_CustomerCreditCards_AspNetUsers">
           <End Role="AspNetUsers" Type="Self.AspNetUsers" Multiplicity="1" />
           <End Role="CustomerCreditCards" Type="Self.CustomerCreditCards" Multiplicity="*" />
@@ -599,6 +634,7 @@
           <EntitySet Name="AspNetUserLogins" EntityType="Self.AspNetUserLogins" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="AspNetUserRoles" EntityType="Self.AspNetUserRoles" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="AspNetUsers" EntityType="Self.AspNetUsers" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Cart" EntityType="Self.Cart" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="CustomerCreditCards" EntityType="Self.CustomerCreditCards" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="CustomerShippingAddresses" EntityType="Self.CustomerShippingAddresses" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="OrderDetails" EntityType="Self.OrderDetails" Schema="dbo" store:Type="Tables" />
@@ -618,6 +654,14 @@
           <EntitySet Name="ProductsInGenders" EntityType="Self.ProductsInGenders" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="PurchaseDetails" EntityType="Self.PurchaseDetails" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Purchases" EntityType="Self.Purchases" Schema="dbo" store:Type="Tables" />
+          <AssociationSet Name="FK_Cart_AspNetUsers" Association="Self.FK_Cart_AspNetUsers">
+            <End Role="AspNetUsers" EntitySet="AspNetUsers" />
+            <End Role="Cart" EntitySet="Cart" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Cart_Products" Association="Self.FK_Cart_Products">
+            <End Role="Products" EntitySet="Products" />
+            <End Role="Cart" EntitySet="Cart" />
+          </AssociationSet>
           <AssociationSet Name="FK_CustomerCreditCards_AspNetUsers" Association="Self.FK_CustomerCreditCards_AspNetUsers">
             <End Role="AspNetUsers" EntitySet="AspNetUsers" />
             <End Role="CustomerCreditCards" EntitySet="CustomerCreditCards" />
@@ -733,6 +777,7 @@
           <EntitySet Name="AspNetUserClaims" EntityType="Model.AspNetUserClaim" />
           <EntitySet Name="AspNetUserLogins" EntityType="Model.AspNetUserLogin" />
           <EntitySet Name="AspNetUsers" EntityType="Model.AspNetUser" />
+          <EntitySet Name="Carts" EntityType="Model.Cart" />
           <EntitySet Name="CustomerCreditCards" EntityType="Model.CustomerCreditCard" />
           <EntitySet Name="CustomerShippingAddresses" EntityType="Model.CustomerShippingAddress" />
           <EntitySet Name="OrderDetails" EntityType="Model.OrderDetail" />
@@ -759,6 +804,10 @@
             <End Role="AspNetUser" EntitySet="AspNetUsers" />
             <End Role="AspNetUserLogin" EntitySet="AspNetUserLogins" />
           </AssociationSet>
+          <AssociationSet Name="FK_Cart_AspNetUsers" Association="Model.FK_Cart_AspNetUsers">
+            <End Role="AspNetUser" EntitySet="AspNetUsers" />
+            <End Role="Cart" EntitySet="Carts" />
+          </AssociationSet>
           <AssociationSet Name="FK_CustomerCreditCards_AspNetUsers" Association="Model.FK_CustomerCreditCards_AspNetUsers">
             <End Role="AspNetUser" EntitySet="AspNetUsers" />
             <End Role="CustomerCreditCard" EntitySet="CustomerCreditCards" />
@@ -778,6 +827,10 @@
           <AssociationSet Name="FK_Table_AspNeUsers" Association="Model.FK_Table_AspNeUsers">
             <End Role="AspNetUser" EntitySet="AspNetUsers" />
             <End Role="Purchase" EntitySet="Purchases" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Cart_Products" Association="Model.FK_Cart_Products">
+            <End Role="Product" EntitySet="Products" />
+            <End Role="Cart" EntitySet="Carts" />
           </AssociationSet>
           <AssociationSet Name="FK_OrderDetails_Orders" Association="Model.FK_OrderDetails_Orders">
             <End Role="Order" EntitySet="Orders" />
@@ -905,12 +958,26 @@
           <Property Name="UserName" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
           <NavigationProperty Name="AspNetUserClaims" Relationship="Model.FK_dbo_AspNetUserClaims_dbo_AspNetUsers_UserId" FromRole="AspNetUser" ToRole="AspNetUserClaim" />
           <NavigationProperty Name="AspNetUserLogins" Relationship="Model.FK_dbo_AspNetUserLogins_dbo_AspNetUsers_UserId" FromRole="AspNetUser" ToRole="AspNetUserLogin" />
+          <NavigationProperty Name="Carts" Relationship="Model.FK_Cart_AspNetUsers" FromRole="AspNetUser" ToRole="Cart" />
           <NavigationProperty Name="CustomerCreditCards" Relationship="Model.FK_CustomerCreditCards_AspNetUsers" FromRole="AspNetUser" ToRole="CustomerCreditCard" />
           <NavigationProperty Name="CustomerShippingAddresses" Relationship="Model.FK_CustomerShippingAddresses_AspNetUsers" FromRole="AspNetUser" ToRole="CustomerShippingAddress" />
           <NavigationProperty Name="Orders" Relationship="Model.FK_Orders_AspNetUsers" FromRole="AspNetUser" ToRole="Order" />
           <NavigationProperty Name="Payments" Relationship="Model.FK_Payments_AspNetUsers" FromRole="AspNetUser" ToRole="Payment" />
           <NavigationProperty Name="Purchases" Relationship="Model.FK_Table_AspNeUsers" FromRole="AspNetUser" ToRole="Purchase" />
           <NavigationProperty Name="AspNetRoles" Relationship="Model.AspNetUserRoles" FromRole="AspNetUser" ToRole="AspNetRole" />
+        </EntityType>
+        <EntityType Name="Cart">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="true" />
+          <Property Name="AspNetUserId" Type="String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="true" />
+          <Property Name="ProductId" Type="String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="true" />
+          <Property Name="Quantity" Type="Int32" Nullable="false" />
+          <Property Name="DateCreated" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="IsSelected" Type="Boolean" Nullable="false" />
+          <NavigationProperty Name="AspNetUser" Relationship="Model.FK_Cart_AspNetUsers" FromRole="Cart" ToRole="AspNetUser" />
+          <NavigationProperty Name="Product" Relationship="Model.FK_Cart_Products" FromRole="Cart" ToRole="Product" />
         </EntityType>
         <EntityType Name="CustomerCreditCard">
           <Key>
@@ -948,9 +1015,9 @@
           <Property Name="OrderDetailsStatus" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="DateAdded" Type="DateTime" Nullable="false" Precision="3" />
           <Property Name="ShippingAmount" Type="Decimal" Precision="19" Scale="4" />
+          <Property Name="ShippingTrackingNumber" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
           <NavigationProperty Name="Order" Relationship="Model.FK_OrderDetails_Orders" FromRole="OrderDetail" ToRole="Order" />
           <NavigationProperty Name="Product" Relationship="Model.FK_OrderDetails_Products" FromRole="OrderDetail" ToRole="Product" />
-          <Property Name="ShippingTrackingNumber" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
         </EntityType>
         <EntityType Name="OrderDetailShippingAddress">
           <Key>
@@ -1086,6 +1153,7 @@
           <Property Name="Description" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="true" />
           <Property Name="IsEnabled" Type="Boolean" Nullable="false" />
           <Property Name="ProductBrandId" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="Carts" Relationship="Model.FK_Cart_Products" FromRole="Product" ToRole="Cart" />
           <NavigationProperty Name="OrderDetails" Relationship="Model.FK_OrderDetails_Products" FromRole="Product" ToRole="OrderDetail" />
           <NavigationProperty Name="ProductBrand" Relationship="Model.FK_Products_ProductBrand" FromRole="Product" ToRole="ProductBrand" />
           <NavigationProperty Name="ProductDetails" Relationship="Model.FK_ProductDetails_Products" FromRole="Product" ToRole="ProductDetail" />
@@ -1155,6 +1223,18 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_Cart_AspNetUsers">
+          <End Type="Model.AspNetUser" Role="AspNetUser" Multiplicity="1" />
+          <End Type="Model.Cart" Role="Cart" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="AspNetUser">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Cart">
+              <PropertyRef Name="AspNetUserId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_CustomerCreditCards_AspNetUsers">
           <End Type="Model.AspNetUser" Role="AspNetUser" Multiplicity="1" />
           <End Type="Model.CustomerCreditCard" Role="CustomerCreditCard" Multiplicity="*" />
@@ -1214,6 +1294,18 @@
             </Principal>
             <Dependent Role="Purchase">
               <PropertyRef Name="AspNetUserId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Cart_Products">
+          <End Type="Model.Product" Role="Product" Multiplicity="1" />
+          <End Type="Model.Cart" Role="Cart" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Product">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Cart">
+              <PropertyRef Name="ProductId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -1476,6 +1568,18 @@
                 <ScalarProperty Name="PasswordHash" ColumnName="PasswordHash" />
                 <ScalarProperty Name="EmailConfirmed" ColumnName="EmailConfirmed" />
                 <ScalarProperty Name="Email" ColumnName="Email" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Carts">
+            <EntityTypeMapping TypeName="Model.Cart">
+              <MappingFragment StoreEntitySet="Cart">
+                <ScalarProperty Name="IsSelected" ColumnName="IsSelected" />
+                <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
+                <ScalarProperty Name="Quantity" ColumnName="Quantity" />
+                <ScalarProperty Name="ProductId" ColumnName="ProductId" />
+                <ScalarProperty Name="AspNetUserId" ColumnName="AspNetUserId" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>

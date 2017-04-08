@@ -1,0 +1,24 @@
+﻿@model yayks.Models.CheckOutModels
+
+<table>
+    <thead>
+
+    </thead>
+    <tbody>
+        @foreach (var o in Model.Cart.ProductList)
+        {
+            <tr>
+                <td>
+                    @o.Name
+                </td>
+                <td>
+                    @o.Quantity
+                </td>
+                <td>
+                    @o.Amount
+                </td>
+            </tr>
+
+        }
+    </tbody>
+</table>

@@ -91,51 +91,31 @@ namespace yayks.Controllers
         public async Task<JsonResult> AddToCart(string Id)
         {
             var userId = User.Identity.GetUserId();
-            var _currentOrder = data.Orders.Where(i => i.AspNetUserId == userId && i.OrderStatus == "new");
+            var res = await data.Carts.Where(i=>i.ProductId == Id).ToListAsync();
 
-            OrderDetail _orderDetail = new OrderDetail();
-
-            var _product = await data.Products.FindAsync(Id);
-
-            if (_currentOrder.Any())
+            if (res.Any())
             {
-                _orderDetail.Id = Guid.NewGuid().ToString();
-                _orderDetail.OrdersId = _currentOrder.FirstOrDefault().Id;
-                _orderDetail.ProductAmount = _product.Amount;
-                _orderDetail.Quantity = 1;
-                _orderDetail.ProductsId = Id;
-                _orderDetail.DateAdded = DateTime.UtcNow;
-                data.OrderDetails.Add(_orderDetail);
+                res.First().Quantity += 1;
 
             }
             else
             {
-
-
-                Order _order = new Order()
+                Cart _myCart = new Cart()
                 {
-
                     Id = Guid.NewGuid().ToString(),
-                    AspNetUserId = userId,
+                    Quantity = 1,
+                    ProductId = Id,
                     DateCreated = DateTime.UtcNow,
-                    OrderStatus = "new",
+                    AspNetUserId = userId
 
                 };
 
-                _orderDetail.Id = Guid.NewGuid().ToString();
-                _orderDetail.OrdersId = _order.Id;
-                _orderDetail.ProductAmount = _product.Amount;
-                _orderDetail.Quantity = 1;
-                _orderDetail.ProductsId = Id;
-                _orderDetail.DateAdded = DateTime.UtcNow;
-
-
-
-                _order.OrderDetails.Add(_orderDetail);
-
-                data.Orders.Add(_order);
-
+                data.Carts.Add(_myCart);
             }
+
+
+
+           
 
             await data.SaveChangesAsync();
 
@@ -146,11 +126,12 @@ namespace yayks.Controllers
         public async Task<bool> RemoveFromCart(string Id)
         {
 
-            var res = await data.OrderDetails.FindAsync(Id);
+            var res = await data.Carts.FindAsync(Id);
 
-            data.OrderDetails.Remove(res);
+            data.Carts.Remove(res);
 
-            try {
+            try
+            {
                 await data.SaveChangesAsync();
                 return true;
             }
@@ -159,14 +140,13 @@ namespace yayks.Controllers
                 return false;
 
             }
-          
+
         }
 
         public async Task<ActionResult> Cart()
         {
             var userId = User.Identity.GetUserId();
-            var _currentOrderId = await (from o in data.Orders.Where(i => i.OrderStatus == "new" && i.AspNetUserId == userId) select o.Id).FirstOrDefaultAsync();
-            var _productList = await dataLayer.getProductsListByOrderId(_currentOrderId);
+            var _productList = await dataLayer.getProductsListFromCart(userId);
             decimal _total = 0;
             foreach (var o in _productList)
             {
@@ -175,19 +155,18 @@ namespace yayks.Controllers
                 {
                     _total = _total + o.Amount;
                 }
-                else {
+                else
+                {
 
-                    _total = _total + (o.Amount*o.Quantity);
+                    _total = _total + (o.Amount * o.Quantity);
 
                 }
-                
+
             }
-            
+
             CartModel _model = new Models.CartModel()
             {
-                OrdersId = _currentOrderId,
-                ProductList = _productList,
-                Total = _total
+                ProductList = _productList
 
             };
 
@@ -199,19 +178,19 @@ namespace yayks.Controllers
 
         public async Task<ActionResult> Shipping(CartModel model)
         {
-            
+
             var userId = User.Identity.GetUserId();
-          
+
             var _shippingAddressList = await (from o in data.CustomerShippingAddresses.Where(i => i.AspNetUserId == userId)
                                               select o).ToListAsync();
-           
 
-            ViewData["_shippingAddressList"] = _shippingAddressList;
+
+            ViewBag.ShippingAddresses = _shippingAddressList;
 
             var _model = new CheckOutModels()
             {
                 Cart = model,
-               
+
             };
 
 
@@ -220,6 +199,107 @@ namespace yayks.Controllers
 
         public async Task<ActionResult> PaymentMethod(CheckOutModels model)
         {
+            var userId = User.Identity.GetUserId();
+
+            //update shipping address if has changes and add if new
+            if (model.ShippingAddress.Id == null)
+            {
+
+                var _newAddress = new CustomerShippingAddress()
+                {
+                    Id = Guid.NewGuid().ToString(),
+                    AspNetUserId = userId,
+                    City = model.ShippingAddress.City,
+                    IsDefault = model.ShippingAddress.IsDefault,
+                    Line1 = model.ShippingAddress.Line1,
+                    Line2 = model.ShippingAddress.Line2,
+                    State = model.ShippingAddress.State
+
+                };
+
+                //unselect all except this
+                if (model.ShippingAddress.IsDefault)
+                {
+                    var _defaults = await data.CustomerShippingAddresses.Where(i => i.AspNetUserId == userId).ToListAsync();
+
+                    foreach (var o in _defaults)
+                    {
+                        if (o.Id != model.ShippingAddress.Id)
+                        {
+                            o.IsDefault = false;
+
+                        }
+
+                    }
+                }
+
+
+
+                data.CustomerShippingAddresses.Add(_newAddress);
+                await data.SaveChangesAsync();
+
+            }
+            else
+            {
+
+                bool hasChanges = false;
+                bool defaultChanges = false;
+
+                var _address = await data.CustomerShippingAddresses.FindAsync(model.ShippingAddress.Id);
+
+
+                //if address changes
+                if (_address.IsDefault != model.ShippingAddress.IsDefault)
+                {
+                    _address.IsDefault = model.ShippingAddress.IsDefault;
+                    hasChanges = true;
+                    defaultChanges = true;
+                }
+                if (_address.Line1 != model.ShippingAddress.Line1)
+                {
+                    _address.Line1 = model.ShippingAddress.Line1;
+                    hasChanges = true;
+                }
+                if (_address.Line2 != model.ShippingAddress.Line2)
+                {
+                    _address.Line2 = model.ShippingAddress.Line2;
+                    hasChanges = true;
+                }
+                if (_address.City != model.ShippingAddress.City)
+                {
+                    _address.City = model.ShippingAddress.City;
+                    hasChanges = true;
+                }
+                if (_address.State != model.ShippingAddress.State)
+                {
+                    _address.State = model.ShippingAddress.State;
+                    hasChanges = true;
+                }
+
+                //unselect all except this
+                if (defaultChanges)
+                {
+                    var _defaults = await data.CustomerShippingAddresses.Where(i => i.AspNetUserId == userId).ToListAsync();
+
+                    foreach (var o in _defaults)
+                    {
+                        if (o.Id != model.ShippingAddress.Id)
+                        {
+                            o.IsDefault = false;
+
+                        }
+
+                    }
+                }
+
+                if (hasChanges)
+                {
+                    await data.SaveChangesAsync();
+
+                }
+            }
+
+
             var _model = new CheckOutModels()
             {
                 Cart = model.Cart,
@@ -263,6 +343,6 @@ namespace yayks.Controllers
             return View();
         }
 
-           
+
     }
 }

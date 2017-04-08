@@ -1,0 +1,10 @@
+﻿@model yayks.Models.CheckOutModels
+
+@{
+    ViewBag.Title = "PaymentMethod";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>PaymentMethod</h2>
+@Html.Partial("_Partial_CheckOutSummary", Model)
+@Html.Partial("_Partial_CreditCard", Model)

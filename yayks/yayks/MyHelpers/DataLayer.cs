@@ -12,28 +12,26 @@ namespace yayks.MyHelpers
     {
         Entities data = new Entities();
 
-        public async Task<List<ProductModel>> getProductsListByOrderId(string id)
+        public async Task<List<ProductModel>> getProductsListFromCart(string userId)
         {
-            var _orderDetail = await (from o in data.Orders.Where(i => i.Id == id)
-                                      join p in data.OrderDetails on o.Id equals p.OrdersId
-                                      join r in data.Products on p.ProductsId equals r.Id
+                 var _orderDetail = await (from o in data.Carts.Where(i => i.AspNetUserId == userId)
+                                      join r in data.Products on o.ProductId equals r.Id
                                       join rr in data.ProductDetails on r.Id equals rr.ProductId
                                       select new ProductModel
                                       {
 
                                           Id = r.Id,
                                           Amount = r.Amount,
-                                          Quantity = p.Quantity,
+                                          Quantity = o.Quantity,
                                           Brand = r.ProductBrand.Name,
                                           Color = rr.ProductColor.ProductColorName,
                                           Description = r.Description,
                                           Name = r.ProductName,
                                           Measurement = rr.ProductMeasurement.MeasurementValue.ToString(),
                                           Images = rr.ProductDetailImages.ToList().Select(i=>i.ImageUrl).ToList(),
-                                          IsSelected = false,
-                                          ProductDetailId = p.Id
-
-
+                                          IsSelected = o.IsSelected,
+                                          CartId = o.Id
+                                       
                                       }).ToListAsync();
 
             return _orderDetail;
