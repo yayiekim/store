@@ -45,6 +45,16 @@ namespace yayks.Controllers
 
         #region Customers
 
+        public async Task<JsonResult> setCartItemSelection(string id, bool selection)
+        {
+            var _res = await data.Carts.FindAsync(id);
+            _res.IsSelected = selection;
+
+            await data.SaveChangesAsync();
+            return Json(true, JsonRequestBehavior.AllowGet);
+        }
+
+
         public async Task<JsonResult> getCartCount()
         {
 

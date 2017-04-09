@@ -30,7 +30,7 @@
             {
                 <tr data-id="@Html.DisplayFor(o => o.ProductList[i].CartId, null).ToHtmlString()">
 
-                    <td>@Html.CheckBoxFor(o => o.ProductList[i].IsSelected, new {@onclick = "SumAmount()" })</td>
+                    <td>@Html.CheckBoxFor(o => o.ProductList[i].IsSelected, new { @id=Model.ProductList[i].CartId, @onclick = "SumAmount()", @class="chkbx" })</td>
                     <td>@Html.DisplayFor(o => o.ProductList[i].Name, null)</td>
                     <td>@Html.DisplayFor(o => o.ProductList[i].Description, null)</td>
                     <td class="amount">@Html.DisplayFor(o => o.ProductList[i].Amount)</td>
@@ -72,6 +72,10 @@
 
         }
 
+
+        SumAmount();
+
+
         $(document).ready(function () {
 
             $(".delete").on("click", function () {
@@ -105,6 +109,27 @@
 
 
 
+        $(".chkbx").on("click", function () {
+
+            var checkBoxId = $(this).attr('id');
+
+            console.log($(this));
+
+            $.ajax({
+                type: "get",
+                url: "/Rest/setCartItemSelection",
+                datatype: "json",
+                data: { id: checkBoxId, selection: $(this).is(':checked') },
+                traditional: true,
+                success: function (data) {
+
+                }
+            });
+
+        });
+
+
+      
 
 
     </script>

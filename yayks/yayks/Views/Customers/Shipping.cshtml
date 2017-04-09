@@ -20,7 +20,7 @@
 
     @using (Html.BeginForm("PaymentMethod", "Customers", FormMethod.Post))
     {
-      
+
 
 
         @Html.HiddenFor(i => model.ShippingAddress.Id, new { @id = "shippingId" })
@@ -77,6 +77,7 @@
                     <td class="line-city-row">@addressList[i].City</td>
                     <td class="line-state-row">@addressList[i].State</td>
                     <td><button class="delete" type="button">Delete</button></td>
+
                 </tr>
 
             }
@@ -131,7 +132,6 @@
 
 
             });
-
 
         });
 

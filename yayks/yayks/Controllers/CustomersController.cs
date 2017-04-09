@@ -146,7 +146,7 @@ namespace yayks.Controllers
         public async Task<ActionResult> Cart()
         {
             var userId = User.Identity.GetUserId();
-            var _productList = await dataLayer.getProductsListFromCart(userId);
+            var _productList = await dataLayer.getProductsListFromCart(userId, null);
             decimal _total = 0;
             foreach (var o in _productList)
             {
@@ -189,7 +189,7 @@ namespace yayks.Controllers
 
             var _model = new CheckOutModels()
             {
-                Cart = model,
+                Cart = model.ProductList,
 
             };
 
@@ -201,6 +201,7 @@ namespace yayks.Controllers
         {
             var userId = User.Identity.GetUserId();
 
+           
             //update shipping address if has changes and add if new
             if (model.ShippingAddress.Id == null)
             {
@@ -302,7 +303,7 @@ namespace yayks.Controllers
 
             var _model = new CheckOutModels()
             {
-                Cart = model.Cart,
+                Cart = await dataLayer.getProductsListFromCart(userId, true),
                 ShippingAddress = model.ShippingAddress
 
             };
@@ -311,30 +312,49 @@ namespace yayks.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult> Pay(CheckOutModels model)
+        public async Task<ActionResult> Pay(CheckOutModels model, FormCollection collection)
         {
-            var _model = new CheckOutModels()
-            {
-                Cart = model.Cart,
-                ShippingAddress = model.ShippingAddress,
-                PaymentDetail = model.PaymentDetail
-            };
-
-
+           //Credit Card
             var Billing = new AuthBillingAddress();
+            
+            Billing.addrLine1 = "123 test st";
+            Billing.city = "Columbus";
+            Billing.zipCode = "43123";
+            Billing.state = "OH";
+            Billing.country = "USA";
+            Billing.name = "Testing Tester";
+            Billing.email = "example@2co.com";
+            Billing.phoneNumber = "5555555555";
 
             var _charge = new ChargeAuthorizeServiceOptions()
             {
-                total = model.PaymentDetail.PaymentAmount,
+                total = (decimal)100.00,
                 currency = "USD",
                 merchantOrderId = "123",
-                token = model.CardToken,
+                token = collection["token"].ToString(),
                 billingAddr = Billing
 
             };
 
+            //Cart Details
+            CheckOutModels _model = new CheckOutModels()
+            {
 
-            _payment.CheckOutTwoCheckOut(_charge);
+
+            };
+
+
+
+           var _paymentResult = _payment.CheckOutTwoCheckOut(_charge);
+
+            if (_paymentResult)
+            {
+                dataLayer.createOrder(model);
+
+            }
+            
+
+
             return View(model);
         }
 
