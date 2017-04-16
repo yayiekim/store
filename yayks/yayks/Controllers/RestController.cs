@@ -192,6 +192,15 @@ namespace yayks.Controllers
                       
         }
 
+        public async Task<JsonResult> GetProduct(string Id)
+        {
+
+            return Json(await dataLayer.GetProduct(Id), JsonRequestBehavior.AllowGet);
+
+        }
+
+
+
 
         #endregion
 

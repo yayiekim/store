@@ -1,33 +1,87 @@
-﻿@{
-    ViewBag.Title = "Home Page";
+﻿@model PagedList.IPagedList<yayks.Models.ProductModel>
+@using PagedList.Mvc;
+@{
+    ViewBag.Title = "Products";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<div class="jumbotron">
-    <h1>ASP.NET</h1>
-    <p class="lead">ASP.NET is a free web framework for building great Web sites and Web applications using HTML, CSS and JavaScript.</p>
-    <p><a href="http://asp.net" class="btn btn-primary btn-lg">Learn more &raquo;</a></p>
-</div>
+<h2>Products</h2>
 
 <div class="row">
-    <div class="col-md-4">
-        <h2>Getting started</h2>
-        <p>
-            ASP.NET MVC gives you a powerful, patterns-based way to build dynamic websites that
-            enables a clean separation of concerns and gives you full control over markup
-            for enjoyable, agile development.
-        </p>
-        <p><a class="btn btn-default" href="http://go.microsoft.com/fwlink/?LinkId=301865">Learn more &raquo;</a></p>
-    </div>
-    <div class="col-md-4">
-        <h2>Get more libraries</h2>
-        <p>NuGet is a free Visual Studio extension that makes it easy to add, remove, and update libraries and tools in Visual Studio projects.</p>
-        <p><a class="btn btn-default" href="http://go.microsoft.com/fwlink/?LinkId=301866">Learn more &raquo;</a></p>
-    </div>
-    <div class="col-md-4">
-        <h2>Web Hosting</h2>
-        <p>You can easily find a web hosting company that offers the right mix of features and price for your applications.</p>
-        <p><a class="btn btn-default" href="http://go.microsoft.com/fwlink/?LinkId=301867">Learn more &raquo;</a></p>
+    @foreach (var item in Model)
+    {
+        @Html.Partial("_Partial_Products", item)
+
+    }
+
+</div>
+<br />
+Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount
+
+@Html.PagedListPager(Model, page => Url.Action("Index",
+    new { page, sortOrder = ViewBag.CurrentSort, currentFilter = ViewBag.CurrentFilter }))
+
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+
+    <script>
+
+        function getProduct(id) {
+
+            var _id = id.toString();
+
+            $.get('@Url.Action("GetProduct", "Rest")', { Id: id }, function (res) {
+
+                $("#modal-image").attr('src', res.Images[0]);
+                $("#modal-name").text(res.Name);
+                $("#modal-brand").text(res.Brand);
+                $("#modal-amount").text(res.Amount);
+                $("#modal-description").text(res.Description);
+                $("#modal-stocks").text(res.Stocks);
+                $("#modal-cart").attr('onclick', 'addToCart(' + "'" + _id + "'" + ')');
+
+
+                $("#myModalProductFocus").modal('show');
+
+            });
+
+        }
+
+    </script>
+
+
+
+}
+
+
+<!-- Modal -->
+<div id="myModalProductFocus" class="modal fade" role="dialog">
+    <div class="modal-dialog modal-lg">
+
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-body">
+
+                <div class="row">
+                    <div class="col-md-8">
+                        <div class="img-thumbnail"><img id="modal-image" class="img-responsive" /></div>
+                    </div>
+                    <div class="col-md-4">
+                        <h3 id="modal-name"></h3>
+                        <small id="modal-brand"></small>
+                        <h2 id="modal-amount"></h2>
+                        <span id="modal-cart" style="font-size:24px" role="button" class="glyphicon glyphicon-shopping-cart"></span>&nbsp;add to cart
+                        <hr />
+                        <small id="modal-description"></small>
+                        <small id="modal-stocks"></small>
+                    </div>
+
+                </div>
+
+
+            </div>
+        </div>
+
     </div>
 </div>
-

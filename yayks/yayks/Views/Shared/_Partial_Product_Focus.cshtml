@@ -1,0 +1,19 @@
+﻿@model yayks.Models.ProductModel
+<div class="col-md-12">
+    <div class="row">
+        <div class="col-md-8">
+            <div class="img-thumbnail"><img class="img-responsive" src="@Model.Images[0]" /></div>
+        </div>
+        <div class="col-md-4">
+            <h3>@Model.Name</h3>
+            <small>@Model.Brand</small>
+            <h2>@Model.Amount.ToString("0.00")</h2>
+            <span onclick="addToCart('@Model.Id')" style="font-size:24px" role="button" class="glyphicon glyphicon-shopping-cart"></span>&nbsp;add to cart
+            <hr />
+            <small>@Model.Description</small>
+
+        </div>
+
+    </div>
+
+</div>

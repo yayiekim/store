@@ -20,6 +20,7 @@ namespace yayks.Models
         public bool IsSelected { get; set; }
         public string CartId { get; set; }
         public string Status { get; set; }
+        public int Stocks { get; set; }
 
     }
 

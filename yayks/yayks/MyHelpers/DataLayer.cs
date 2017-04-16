@@ -78,14 +78,14 @@ namespace yayks.MyHelpers
                 Id = Guid.NewGuid().ToString(),
                 AspNetUserId = model.UserId,
                 DateCreated = dateTime,
-                
+
             };
 
             //set order status and orderdetail status if paid
             if (model.PaymentStatus == "paid")
             {
                 _orderNewStatus = "shipping";
-            } 
+            }
 
 
 
@@ -223,7 +223,7 @@ namespace yayks.MyHelpers
             var _ordersCount = 0;
 
             var _purchases = await (from o in data.Purchases
-                                    join p in data.PurchaseDetails.Where(i=>i.PurchaseDetailStatus == "delivered") on o.Id equals p.PurchaseId
+                                    join p in data.PurchaseDetails.Where(i => i.PurchaseDetailStatus == "delivered" && i.ProductId == Id) on o.Id equals p.PurchaseId
                                     group p by p.ProductId into opp
                                     select new
                                     {
@@ -233,7 +233,7 @@ namespace yayks.MyHelpers
 
 
             var _orders = await (from o in data.Orders
-                                 join p in data.OrderDetails.Where(i=>i.OrderDetailsStatus == "delivered" || i.OrderDetailsStatus == "shipping") on o.Id equals p.OrdersId
+                                 join p in data.OrderDetails.Where(i => i.ProductsId == Id && (i.OrderDetailsStatus == "delivered" || i.OrderDetailsStatus == "shipping")) on o.Id equals p.OrdersId
                                  group p by p.ProductsId into opp
                                  select new
                                  {
@@ -261,19 +261,19 @@ namespace yayks.MyHelpers
 
         public async Task<int> GetProductCountInMyCart(string Id, string UserId)
         {
-    
+
             var _cartCount = 0;
 
             var _stocks = await GetProductCountInOrdered(Id);
 
 
             var _cart = await (from o in data.Carts.Where(i => i.AspNetUserId == UserId && i.ProductId == Id)
-                                 group o  by o.ProductId into og
-                                 select new
-                                 {
-                                     cartCount = og.Sum(i => i.Quantity)
+                               group o by o.ProductId into og
+                               select new
+                               {
+                                   cartCount = og.Sum(i => i.Quantity)
 
-                                 }).FirstOrDefaultAsync();
+                               }).FirstOrDefaultAsync();
 
 
 
@@ -291,7 +291,7 @@ namespace yayks.MyHelpers
 
         public async Task<bool> setCartItemSelection(string id, bool selection, string userId)
         {
-          
+
             var _res = await data.Carts.FindAsync(id);
 
             var itemCount = await GetProductCountInMyCart(_res.ProductId, userId);
@@ -307,6 +307,27 @@ namespace yayks.MyHelpers
                 await data.SaveChangesAsync();
                 return true;
             }
+
+        }
+
+
+        public async Task<ProductModel> GetProduct(string Id)
+        {
+
+            var _stocks = await GetProductCountInOrdered(Id);
+
+            return await (from o in data.Products.Where(i => i.Id == Id)
+                          select new ProductModel
+                          {
+                              Id = o.Id,
+                              Name = o.ProductName,
+                              Description = o.Description,
+                              Brand = o.ProductBrand.Name,
+                              Amount = o.Amount,
+                              Images = o.ProductDetails.Select(i => i.ProductDetailImages.FirstOrDefault()).Select(i => i.ImageUrl).ToList(),
+                              Stocks = _stocks
+
+                          }).SingleAsync();
 
         }
 
