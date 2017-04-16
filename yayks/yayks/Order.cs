@@ -18,18 +18,20 @@ namespace yayks
         public Order()
         {
             this.OrderDetails = new HashSet<OrderDetail>();
+            this.OrderDetailShippingAddresses = new HashSet<OrderDetailShippingAddress>();
             this.Payments = new HashSet<Payment>();
         }
     
         public string Id { get; set; }
         public System.DateTime DateCreated { get; set; }
         public string AspNetUserId { get; set; }
-        public string OrderStatus { get; set; }
         public string QuickBuyToken { get; set; }
     
         public virtual AspNetUser AspNetUser { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<OrderDetail> OrderDetails { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<OrderDetailShippingAddress> OrderDetailShippingAddresses { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Payment> Payments { get; set; }
     }

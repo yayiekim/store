@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using Microsoft.AspNet.Identity;
+using Newtonsoft.Json;
 using PagedList;
 using System;
 using System.Collections.Generic;
@@ -130,6 +131,7 @@ namespace yayks.Controllers
         [HttpPost]
         public async Task<ActionResult> AddNewProduct(NewProductModel product, List<HttpPostedFileBase> files)
         {
+            var UserId = User.Identity.GetUserId();
 
             Product dbProduct = new Product()
             {
@@ -137,7 +139,10 @@ namespace yayks.Controllers
                 Amount = product.Amount,
                 Description = product.Description,
                 ProductName = product.Name,
-                ProductBrandId = product.ProductBrandId
+                ProductBrandId = product.ProductBrandId,
+                CreatedByUserId = UserId,
+                DateCreated = DateTime.UtcNow
+                
 
             };
 
@@ -161,7 +166,11 @@ namespace yayks.Controllers
             {
                 Id = Guid.NewGuid().ToString(),
                 ProductMeasurementId = product.MeasurementId,
-                ProductColorId = product.ColordId
+                ProductColorId = product.ColordId,
+                Length = product.Lenght,
+                Width = product.Width,
+                Height = product.Height,
+                Weight = product.Weight
 
             };
 
@@ -316,7 +325,11 @@ namespace yayks.Controllers
                 MeasurementId = _product.ProductDetails.Select(i => i.ProductMeasurement.Id).First(),
                 Categories = cbCategoriesList,
                 Genders = cbGenderList,
-                Images = _images
+                Images = _images,
+                Lenght = _product.ProductDetails.Select(i => i.Length).First(),
+                Width = _product.ProductDetails.Select(i => i.Width).First(),
+                Height = _product.ProductDetails.Select(i => i.Height).First(),
+                Weight = _product.ProductDetails.Select(i => i.Weight).First(),
 
             };
 
@@ -370,8 +383,7 @@ namespace yayks.Controllers
             _data.Amount = product.Amount;
             _data.Description = product.Description;
             _data.ProductName = product.Name;
-
-
+    
             //many to many insert mapping Categories
             List<string> tmpCategoryInt = product.Categories
                                     .Where(i => i.IsSelected).Select(i => i.Id).ToList();
@@ -438,10 +450,14 @@ namespace yayks.Controllers
 
             }
 
-
+            //Product details
             foreach (var x in _data.ProductDetails)
             {
                 x.ProductColorId = product.ColordId;
+                x.Length = product.Lenght;
+                x.Width = product.Width;
+                x.Height = product.Height;
+                x.Weight = product.Weight;
 
             }
 

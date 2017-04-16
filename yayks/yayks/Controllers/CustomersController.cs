@@ -2,6 +2,7 @@
 using PagedList;
 using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
@@ -90,88 +91,68 @@ namespace yayks.Controllers
         public async Task<JsonResult> AddToCart(string Id)
         {
             var userId = User.Identity.GetUserId();
-            var _currentOrder = data.Orders.Where(i => i.AspNetUserId == userId && i.OrderStatus == "new");
 
-            OrderDetail _orderDetail = new OrderDetail();
 
-            var _product = await data.Products.FindAsync(Id);
+            var itemCount = await dataLayer.GetProductCountInMyCart(Id, userId);
 
-            if (_currentOrder.Any())
+
+            if (itemCount < 1)
             {
-                _orderDetail.Id = Guid.NewGuid().ToString();
-                _orderDetail.OrdersId = _currentOrder.FirstOrDefault().Id;
-                _orderDetail.Amount = _product.Amount;
-                _orderDetail.Quantity = 1;
-                _orderDetail.ProductsId = Id;
-                _orderDetail.DateAdded = DateTime.UtcNow;
-                data.OrderDetails.Add(_orderDetail);
-
+                return Json("out of stock", JsonRequestBehavior.AllowGet);
             }
             else
-            {
-
-
-                Order _order = new Order()
-                {
-
-                    Id = Guid.NewGuid().ToString(),
-                    AspNetUserId = userId,
-                    DateCreated = DateTime.UtcNow,
-                    OrderStatus = "new",
-
-                };
-
-                _orderDetail.Id = Guid.NewGuid().ToString();
-                _orderDetail.OrdersId = _order.Id;
-                _orderDetail.Amount = _product.Amount;
-                _orderDetail.Quantity = 1;
-                _orderDetail.ProductsId = Id;
-                _orderDetail.DateAdded = DateTime.UtcNow;
-
-
-
-                _order.OrderDetails.Add(_orderDetail);
-
-                data.Orders.Add(_order);
-
+            {                
+                return Json(await dataLayer.AddToCart(Id, userId), JsonRequestBehavior.AllowGet);
             }
 
-            await data.SaveChangesAsync();
 
-            return Json("", JsonRequestBehavior.AllowGet);
         }
 
-        public async Task<JsonResult> RemoveFromCart(string Id)
+        [HttpGet]
+        public async Task<bool> RemoveFromCart(string Id)
         {
-            return Json("", JsonRequestBehavior.AllowGet);
+
+            return await dataLayer.RemoveFromCart(Id);
+
         }
 
         public async Task<ActionResult> Cart()
         {
-
-            var _currentOrderId = "296b9871-beb5-41d8-b0f8-8865a3172a06";
-            var _productList = await dataLayer.getProductsListByOrderId(_currentOrderId);
+            var userId = User.Identity.GetUserId();
+            var _productList = await dataLayer.getProductsListFromCart(userId, null);
             decimal _total = 0;
+
             foreach (var o in _productList)
             {
+                if (o.IsSelected)
+                {
+
+                    o.IsSelected = await dataLayer.setCartItemSelection(o.CartId, o.IsSelected, userId);
+
+                    if (!o.IsSelected)
+                    {
+                        o.Status = "out of stock";
+                    }
+                      
+
+                }
 
                 if (o.Quantity == 1)
                 {
                     _total = _total + o.Amount;
                 }
-                else {
+                else
+                {
 
-                    _total = _total + (o.Amount*o.Quantity);
+                    _total = _total + (o.Amount * o.Quantity);
 
                 }
-                
+
             }
-            
+
             CartModel _model = new Models.CartModel()
             {
-                OrdersId = _currentOrderId,
-                ProductList = _productList,
-                Total = _total
+                ProductList = _productList
 
             };
 
@@ -181,46 +162,213 @@ namespace yayks.Controllers
 
         }
 
-
-        public ActionResult Card()
+        public async Task<ActionResult> Shipping()
         {
-            return View();
+
+            var userId = User.Identity.GetUserId();
+
+            var _shippingAddressList = await (from o in data.CustomerShippingAddresses.Where(i => i.AspNetUserId == userId)
+                                              select o).ToListAsync();
+
+
+            ViewBag.ShippingAddresses = _shippingAddressList;
+
+            var _model = new CheckOutModels();
+           
+
+            return View(_model);
+        }
+
+        public async Task<ActionResult> PaymentMethod(CheckOutModels model)
+        {
+            var userId = User.Identity.GetUserId();
+
+
+            //update shipping address if has changes and add if new
+            if (model.ShippingAddress.Id == null)
+            {
+
+                var _newAddress = new CustomerShippingAddress()
+                {
+                    Id = Guid.NewGuid().ToString(),
+                    AspNetUserId = userId,
+                    City = model.ShippingAddress.City,
+                    IsDefault = model.ShippingAddress.IsDefault,
+                    Line1 = model.ShippingAddress.Line1,
+                    Line2 = model.ShippingAddress.Line2,
+                    State = model.ShippingAddress.State
+
+                };
+
+                //unselect all except this
+                if (model.ShippingAddress.IsDefault)
+                {
+                    var _defaults = await data.CustomerShippingAddresses.Where(i => i.AspNetUserId == userId).ToListAsync();
+
+                    foreach (var o in _defaults)
+                    {
+                        if (o.Id != model.ShippingAddress.Id)
+                        {
+                            o.IsDefault = false;
+
+                        }
+
+                    }
+                }
+
+
+
+                data.CustomerShippingAddresses.Add(_newAddress);
+                await data.SaveChangesAsync();
+
+            }
+            else
+            {
+
+                bool hasChanges = false;
+                bool defaultChanges = false;
+
+                var _address = await data.CustomerShippingAddresses.FindAsync(model.ShippingAddress.Id);
+
+
+                //if address changes
+                if (_address.IsDefault != model.ShippingAddress.IsDefault)
+                {
+                    _address.IsDefault = model.ShippingAddress.IsDefault;
+                    hasChanges = true;
+                    defaultChanges = true;
+                }
+                if (_address.Line1 != model.ShippingAddress.Line1)
+                {
+                    _address.Line1 = model.ShippingAddress.Line1;
+                    hasChanges = true;
+                }
+                if (_address.Line2 != model.ShippingAddress.Line2)
+                {
+                    _address.Line2 = model.ShippingAddress.Line2;
+                    hasChanges = true;
+                }
+                if (_address.City != model.ShippingAddress.City)
+                {
+                    _address.City = model.ShippingAddress.City;
+                    hasChanges = true;
+                }
+                if (_address.State != model.ShippingAddress.State)
+                {
+                    _address.State = model.ShippingAddress.State;
+                    hasChanges = true;
+                }
+
+                //unselect all except this
+                if (defaultChanges)
+                {
+                    var _defaults = await data.CustomerShippingAddresses.Where(i => i.AspNetUserId == userId).ToListAsync();
+
+                    foreach (var o in _defaults)
+                    {
+                        if (o.Id != model.ShippingAddress.Id)
+                        {
+                            o.IsDefault = false;
+
+                        }
+
+                    }
+                }
+
+                if (hasChanges)
+                {
+                    await data.SaveChangesAsync();
+
+                }
+            }
+
+
+            var _model = new CheckOutModels()
+            {
+                Cart = await dataLayer.getProductsListFromCart(userId, true),
+
+            };
+
+            return View(_model);
         }
 
         [HttpPost]
-        public ActionResult CheckOut(FormCollection collection)
+        public async Task<ActionResult> Pay(CheckOutModels model, FormCollection collection)
         {
 
-            var Billing = new AuthBillingAddress();
-            Billing.addrLine1 = "123 test st";
-            Billing.city = "Columbus";
-            Billing.zipCode = "43123";
-            Billing.state = "OH";
-            Billing.country = "USA";
-            Billing.name = "Testing Tester";
-            Billing.email = "example@2co.com";
-            Billing.phoneNumber = "5555555555";
+            var userId = User.Identity.GetUserId();
+
+            //Credit Card
+            var _totalAmount = Convert.ToDouble((from o in model.Cart
+                                                 group o by new { product = o.Id, amount = o.Amount * o.Quantity } into g
+                                                 select new
+                                                 {
+
+                                                     Total = g.Key.amount
+
+                                                 }).ToList().Sum(i => i.Total));
+
+
+
+
+            var Billing = new AuthBillingAddress()
+            {
+                addrLine1 = model.BillingAddress.addressLine1,
+                city = model.BillingAddress.city,
+                state = model.BillingAddress.state,
+                country = model.BillingAddress.country,
+                name = model.BillingAddress.name,
+                email = User.Identity.GetUserName(),
+                phoneNumber = "N/A",
+                zipCode = "0",
+
+            };
+
+
 
             var _charge = new ChargeAuthorizeServiceOptions()
             {
-                total = (decimal)1.00,
+                total = (decimal)_totalAmount,
                 currency = "USD",
-                merchantOrderId = "123",
+                merchantOrderId = "1",
                 token = collection["token"].ToString(),
                 billingAddr = Billing
 
             };
 
 
-            _payment.CheckOutTwoCheckOut(_charge);
+            var _paymentResult = new PaymentGatewayResponse();
 
-            return View();
 
+            if (model.PaymentMethodId == 1)
+            {
+                _paymentResult = _payment.CheckOutTwoCheckOut(_charge);
+
+            }
+
+
+            model.ShippingAddress = await data.CustomerShippingAddresses.Where(i => i.AspNetUserId == userId && i.IsDefault == true).FirstOrDefaultAsync();
+
+
+            if (_paymentResult.PaymentStatus != "failed")
+            {
+                model.PaymentRef = _paymentResult.refNo;
+                model.TotalAmount = _paymentResult.amount ?? 0;
+                model.UserId = userId;
+                model.PaymentStatus = _paymentResult.PaymentStatus;
+                dataLayer.createOrder(model);
+
+            }
+
+
+
+            return View(model);
         }
 
-
-
-
+        public ActionResult Card()
+        {
+            return View();
+        }
 
 
     }

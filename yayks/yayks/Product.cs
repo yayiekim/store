@@ -17,6 +17,7 @@ namespace yayks
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public Product()
         {
+            this.Carts = new HashSet<Cart>();
             this.OrderDetails = new HashSet<OrderDetail>();
             this.ProductDetails = new HashSet<ProductDetail>();
             this.ProductsInGenders = new HashSet<ProductsInGender>();
@@ -30,7 +31,12 @@ namespace yayks
         public string Description { get; set; }
         public bool IsEnabled { get; set; }
         public int ProductBrandId { get; set; }
+        public string CreatedByUserId { get; set; }
+        public System.DateTime DateCreated { get; set; }
     
+        public virtual AspNetUser AspNetUser { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<Cart> Carts { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<OrderDetail> OrderDetails { get; set; }
         public virtual ProductBrand ProductBrand { get; set; }

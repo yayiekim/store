@@ -16,7 +16,13 @@ namespace yayks
     {
         public string Id { get; set; }
         public string PaymentId { get; set; }
+        public int PaymentMethodId { get; set; }
+        public string PaymentRef { get; set; }
+        public string PayerName { get; set; }
+        public decimal PaymentAmount { get; set; }
+        public string Remarks { get; set; }
     
+        public virtual PaymentMethod PaymentMethod { get; set; }
         public virtual Payment Payment { get; set; }
     }
 }

@@ -1,0 +1,30 @@
+﻿@model yayks.Models.CheckOutModels
+
+<table>
+    <thead>
+
+    </thead>
+    <tbody>
+        @for (int i = 0; i < Model.Cart.Count(); i++)
+            {
+
+            @Html.HiddenFor(o => Model.Cart[i].Id)
+
+            <tr>
+                <td>
+                    @Model.Cart[i].Name
+                    @Html.HiddenFor(o=> Model.Cart[i].Name)
+                </td>
+                <td>
+                    @Model.Cart[i].Quantity
+                    @Html.HiddenFor(o => Model.Cart[i].Quantity)
+                </td>
+                <td>
+                    @Model.Cart[i].Amount
+                    @Html.HiddenFor(o => Model.Cart[i].Amount)
+                </td>
+            </tr>
+
+        }
+    </tbody>
+</table>

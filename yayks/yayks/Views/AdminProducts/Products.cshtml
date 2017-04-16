@@ -2,14 +2,10 @@
 @using PagedList.Mvc;
 @{
     ViewBag.Title = "Products";
-    Layout = "~/Views/Shared/_Layout.cshtml";
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
 }
 
 <h2>Products</h2>
-
-<p>
-    @Html.ActionLink("Create New", "AddNewProduct")
-</p>
 @using (Html.BeginForm("Products", "AdminProducts", FormMethod.Get))
 {
     <p>
@@ -19,9 +15,13 @@
                 <input class="btn btn-default" type="submit" value="Search" />
             </span>
         </div>
-       
+
     </p>
 }
+<p>
+    @Html.ActionLink("Create New", "AddNewProduct")
+</p>
+
 <table class="table">
     <tr>
         <th>

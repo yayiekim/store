@@ -1,0 +1,43 @@
+﻿@model yayks.ProductMeasurement
+
+@{
+    ViewBag.Title = "Details";
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>ProductMeasurement</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.MeasurementName)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.MeasurementName)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.MeasurementValue)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.MeasurementValue)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.ProductCategory.CategoryName)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.ProductCategory.CategoryName)
+        </dd>
+
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id = Model.Id }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>

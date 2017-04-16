@@ -19,9 +19,11 @@ namespace yayks
         public string ProductsId { get; set; }
         public int Quantity { get; set; }
         public string Remarks { get; set; }
-        public decimal Amount { get; set; }
+        public decimal ProductAmount { get; set; }
         public string OrderDetailsStatus { get; set; }
         public System.DateTime DateAdded { get; set; }
+        public Nullable<decimal> ShippingAmount { get; set; }
+        public string ShippingTrackingNumber { get; set; }
     
         public virtual Order Order { get; set; }
         public virtual Product Product { get; set; }

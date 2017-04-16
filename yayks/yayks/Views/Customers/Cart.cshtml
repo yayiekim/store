@@ -7,29 +7,210 @@
 
 <h2>Cart</h2>
 
-<h3>Total: @Model.Total</h3>
+<h3 id="total"></h3>
 
-<table class="table table-responsive" >
-    <thead>
-        <tr>
-            <td>Name</td>
-            <td>Description</td>
-            <td>Qty</td>
-            <td>Amount</td>
-        </tr>
-    </thead>
-    <tbody>
-            @foreach (var x in Model.ProductList)
+@Html.ActionLink("Check Out", "Shipping", "Customers", new { @class = "btn btn-primary" })
+
+@using (Html.BeginForm("Shipping", "Customers", FormMethod.Post))
+{
+
+    <table class="table table-responsive">
+        <thead>
+            <tr>
+                <td></td>
+                <td>Name</td>
+                <td>Description</td>
+                <td>Amount</td>
+                <td>Qty</td>
+                <td></td>
+                <td></td>
+            </tr>
+        </thead>
+        <tbody id="table-body">
+
+            @for (int i = 0; i < Model.ProductList.Count; i++)
             {
-                <tr>
-                    <td>@x.Name</td>
-                    <td>@x.Description</td>
-                    <td>@x.Quantity</td>
-                    <td>@x.Amount</td>
+                <tr class="@Html.DisplayFor(o => o.ProductList[i].Id, null).ToHtmlString()" data-id="@Html.DisplayFor(o => o.ProductList[i].CartId, null).ToHtmlString()">
+
+                    <td>@Html.CheckBoxFor(o => o.ProductList[i].IsSelected, new { @id = Model.ProductList[i].CartId, @onclick = "SumAmount()", @class = "chkbx" })</td>
+                    <td>@Html.DisplayFor(o => o.ProductList[i].Name, null)</td>
+                    <td>@Html.DisplayFor(o => o.ProductList[i].Description, null)</td>
+                    <td class="amount">@Html.DisplayFor(o => o.ProductList[i].Amount)</td>
+                    <td><span role="button" class="addBtn fa fa-plus-circle"></span>@Html.EditorFor(m => m.ProductList[i].Quantity, new { htmlAttributes = new { @disabled = "disabled", @class = "item-qty form-control" } })<span role="button" class="lessBtn fa fa-minus-circle"></span></td>
+                    <td class="statusMessage">@Html.DisplayFor(o => o.ProductList[i].Status, null)</td>
+                    <td><button class="delete" type="button">Delete</button></td>
+
                 </tr>
 
-            } 
-    </tbody>
-</table>
+            }
+
+        </tbody>
+
+
+    </table>
+
+
+    <input type="submit" value="go" />
+
+}
+
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+
+    <script>
+
+
+
+        function SumAmount() {
+            var total = 0;
+
+            $('#table-body').find('tr').each(function () {
+                var row = $(this);
+                if (row.find('input[type="checkbox"]').is(':checked')) {
+                    total = total + parseInt(row.find('.amount').text()) * parseInt(row.find('input[type="number"]').val());
+                }
+
+                if (row.find('.statusMessage').text() == 'out of stock') {
+                    row.find('input[type="checkbox"]').attr('disabled', 'disabled');
+                }
+
+
+            });
+
+            $('#total').text('Total: ' + total);
+
+        }
+
+
+        SumAmount();
+
+
+        $(document).ready(function () {
+
+            $(".delete").on("click", function () {
+
+                var tr = $(this).closest('tr');
+
+                $.get('@Url.Action("RemoveFromCart", "Customers")', { Id: tr.attr('data-id') }, function (res) {
+                    
+                    if (res) {
+                        tr.remove();
+                        SumAmount();
+                        updateCartCount();
+                    }
+                });
+
+
+            });
+
+
+            $(".addBtn").on("click", function () {
+
+                var tr = $(this).closest('tr');
+                var inp = $(this).next('input');
+
+               
+                //pass product id
+                $.get('@Url.Action("changeCartQuantity", "Rest")', { Id: tr.attr('class'), mode: 'plus' }, function (res) {
+
+                    console.log(res);
+
+
+                    if (res >= 0 ) {
+                        inp.val(parseInt(inp.val()) + 1)
+                    }
+
+                   
+
+                    
+                });
+
+
+            });
+
+
+
+            $(".lessBtn").on("click", function () {
+
+               
+                var tr = $(this).closest('tr');
+                var inp = $(this).prev('input');
+
+                if (parseInt(inp.val()) === 1)
+                {
+                    return;
+
+                }
+
+
+                //pass cartid
+                $.get('@Url.Action("changeCartQuantity", "Rest")', { Id: tr.attr('data-id'), mode: 'less' }, function (res) {
+
+
+                    if (res >= 1) {
+                        inp.val(parseInt(inp.val()) - 1)
+                    }
+
+                    
+
+                });
+
+
+            });
+
+
+
+
+
+
+        });
+
+        //compute total on qty value change
+        $(".item-qty").keyup(function () {
+            SumAmount();
+        });
+
+        $(".item-qty").click(function () {
+            SumAmount();
+        });
+
+
+
+        $(".chkbx").on("click", function () {
+
+            var checkBoxId = $(this).attr('id');
+
+            console.log($(this));
+
+
+            if ($(this).is(':checked')) {
+
+                $.ajax({
+                    type: "get",
+                    url: "/Rest/setCartItemSelection",
+                    datatype: "json",
+                    data: { id: checkBoxId, selection: $(this).is(':checked') },
+                    traditional: true,
+                    success: function (data) {
+
+                    }
+                });
+
+            }
+
+           
+        });
+
+        function changeCount(mode)
+        {
+            
+        }
+
+
+
+    </script>
+
+}
 
 

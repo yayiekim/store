@@ -1,0 +1,36 @@
+﻿@model yayks.Models.CheckOutModels
+@{
+    ViewBag.Title = "Card";
+}
+
+<h2>Card</h2>
+
+<form id="myCCForm" action="@Url.Action("Pay", "Customers")" method="post">
+    @Html.Partial("_Partial_CheckOutSummary", Model)
+    @Html.Partial("_Partial_BillingAddress", Model)
+    @Html.Hidden("PaymentMethodId", 1)
+
+    <input name="token" type="hidden" value="" />
+    <div>
+        <label>
+            <span>Card Number</span>
+            <input id="ccNo" type="text" value="" autocomplete="off" required />
+        </label>
+    </div>
+    <div>
+        <label>
+            <span>Expiration Date (MM/YYYY)</span>
+            <input id="expMonth" type="text" size="2" required />
+        </label>
+        <span> / </span>
+        <input id="expYear" type="text" size="4" required />
+    </div>
+    <div>
+        <label>
+            <span>CVC</span>
+            <input id="cvv" type="text" value="" autocomplete="off" required />
+        </label>
+    </div>
+    <input type="submit" value="Submit Payment" />
+</form>
+

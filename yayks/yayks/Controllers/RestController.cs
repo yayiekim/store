@@ -17,6 +17,7 @@ namespace yayks.Controllers
         Entities data = new Entities();
         AzureBlob azureBlob = new AzureBlob();
         CommonModels common = new CommonModels();
+        DataLayer dataLayer = new DataLayer();
 
         // GET: Rest
         public ActionResult Index()
@@ -45,23 +46,150 @@ namespace yayks.Controllers
 
         #region Customers
 
+        public async Task<JsonResult> setCartItemSelection(string id, bool selection)
+        {
+            var _userId = User.Identity.GetUserId();
+
+            var itemCount = await dataLayer.setCartItemSelection(id,selection, _userId);
+
+
+            if (itemCount)
+            {
+
+                return Json(true, JsonRequestBehavior.AllowGet);
+
+            }
+            else
+            {
+
+                return Json("out of stock", JsonRequestBehavior.AllowGet);
+                            
+            }
+            
+        }
+
+        public async Task<JsonResult> changeCartQuantity(string id, string mode)
+        {
+            var _userId = User.Identity.GetUserId();
+
+            var stockCount = 0;
+
+            if (mode == "plus")
+            {
+                stockCount = await dataLayer.GetProductCountInMyCart(id,_userId) - 1;
+
+                if (stockCount >= 0)
+                {
+                    await dataLayer.AddToCart(id, _userId);
+                }
+
+            }
+            else {
+
+                stockCount = await dataLayer.GetProductCountInMyCart(id, _userId);
+
+                if (stockCount > 0)
+                {
+                    await dataLayer.RemoveFromCart(id);
+                }
+            }
+
+            return Json(stockCount, JsonRequestBehavior.AllowGet);
+        }
+
         public async Task<JsonResult> getCartCount()
         {
 
             var _userId = User.Identity.GetUserId();
 
-            var _tmp = await (from o in data.Orders.Where(i => i.AspNetUserId == _userId)
-                              join p in data.OrderDetails on o.Id equals p.OrdersId into op
-                              select new
-                              {
-                                  Count = op.Sum(i => i.Quantity)
-
-                              }).SingleOrDefaultAsync();
-
+            var _tmp = await data.Carts.Where(i => i.AspNetUserId == _userId).CountAsync();
+                              
 
             return Json(_tmp, JsonRequestBehavior.AllowGet);
 
 
+        }
+
+        public async Task<JsonResult> getShipping()
+        {
+            var userId = User.Identity.GetUserId();
+            var _res = await data.CustomerShippingAddresses.Where(i => i.AspNetUserId == userId).ToListAsync();
+
+
+            return Json(_res, JsonRequestBehavior.AllowGet);
+        }
+
+
+        [HttpPost]
+        public async Task<JsonResult> createShipping(CustomerShippingAddress customerShippingAddress)
+        {
+
+            var userId = User.Identity.GetUserId();
+
+            customerShippingAddress.AspNetUserId = userId;
+            customerShippingAddress.Id = Guid.NewGuid().ToString();
+
+            if (ModelState.IsValid)
+            {
+                data.CustomerShippingAddresses.Add(customerShippingAddress);
+                await data.SaveChangesAsync();
+                return Json(true, JsonRequestBehavior.AllowGet);
+
+            }
+
+            return Json(false, JsonRequestBehavior.AllowGet);
+        }
+
+        [HttpPost]
+        public async Task<JsonResult> editShipping(CustomerShippingAddress customerShippingAddress)
+        {
+            if (ModelState.IsValid)
+            {
+                data.Entry(customerShippingAddress).State = EntityState.Modified;
+                await data.SaveChangesAsync();
+                return Json(true, JsonRequestBehavior.AllowGet);
+            }
+
+            return Json(false, JsonRequestBehavior.AllowGet);
+        }
+
+        public async Task<ActionResult> deleteShipping(string id)
+        {
+            var _defaultId = "";
+            var userId = User.Identity.GetUserId();
+
+            CustomerShippingAddress customerShippingAddress = await data.CustomerShippingAddresses.FindAsync(id);
+
+            var _NoDefaultAddress = await data.CustomerShippingAddresses.Where(i => i.AspNetUserId == userId && i.Id != id).ToListAsync();
+
+
+            if (customerShippingAddress.IsDefault)
+            {
+
+                if (_NoDefaultAddress.Count >= 1)
+                {
+                    _defaultId = _NoDefaultAddress.Last().Id;
+                    _NoDefaultAddress.Last().IsDefault = true;
+                }
+                else {
+
+                    _defaultId = "0";
+
+                }
+                
+
+            }
+            else {
+
+                _defaultId = _NoDefaultAddress.Where(i => i.IsDefault == true).Single().Id;
+
+            }
+
+            data.CustomerShippingAddresses.Remove(customerShippingAddress);
+            
+            await data.SaveChangesAsync();
+            return Json(_defaultId, JsonRequestBehavior.AllowGet);
+                      
         }
 
 

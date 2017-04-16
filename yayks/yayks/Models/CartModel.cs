@@ -9,8 +9,6 @@ namespace yayks.Models
     {
 
         public List<ProductModel> ProductList { get; set; }
-        public decimal Total { get; set; }
-        public string OrdersId { get; set; }
 
     }
 }

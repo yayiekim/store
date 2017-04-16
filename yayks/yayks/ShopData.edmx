@@ -66,6 +66,38 @@
           <Property Name="AccessFailedCount" Type="int" Nullable="false" />
           <Property Name="UserName" Type="nvarchar" MaxLength="256" Nullable="false" />
         </EntityType>
+        <EntityType Name="Cart">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="nvarchar" MaxLength="128" Nullable="false" />
+          <Property Name="AspNetUserId" Type="nvarchar" MaxLength="128" Nullable="false" />
+          <Property Name="ProductId" Type="nvarchar" MaxLength="128" Nullable="false" />
+          <Property Name="Quantity" Type="int" Nullable="false" />
+          <Property Name="DateCreated" Type="datetime" Nullable="false" />
+          <Property Name="IsSelected" Type="bit" Nullable="false" />
+        </EntityType>
+        <EntityType Name="CustomerCreditCards">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="nvarchar" MaxLength="128" Nullable="false" />
+          <Property Name="Token" Type="nvarchar(max)" />
+          <Property Name="AspNetUserId" Type="nvarchar" MaxLength="128" Nullable="false" />
+          <Property Name="IsDefault" Type="bit" Nullable="false" />
+        </EntityType>
+        <EntityType Name="CustomerShippingAddresses">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="nvarchar" MaxLength="128" Nullable="false" />
+          <Property Name="AspNetUserId" Type="nvarchar" MaxLength="128" Nullable="false" />
+          <Property Name="IsDefault" Type="bit" Nullable="false" />
+          <Property Name="Line1" Type="nvarchar" MaxLength="250" Nullable="false" />
+          <Property Name="Line2" Type="nvarchar" MaxLength="250" Nullable="false" />
+          <Property Name="City" Type="nvarchar" MaxLength="250" Nullable="false" />
+          <Property Name="State" Type="nvarchar" MaxLength="250" Nullable="false" />
+        </EntityType>
         <EntityType Name="OrderDetails">
           <Key>
             <PropertyRef Name="Id" />
@@ -75,9 +107,22 @@
           <Property Name="ProductsId" Type="nvarchar" MaxLength="128" Nullable="false" />
           <Property Name="Quantity" Type="int" Nullable="false" />
           <Property Name="Remarks" Type="nvarchar(max)" />
-          <Property Name="Amount" Type="money" Nullable="false" />
+          <Property Name="ProductAmount" Type="money" Nullable="false" />
           <Property Name="OrderDetailsStatus" Type="nvarchar" MaxLength="50" />
           <Property Name="DateAdded" Type="datetime" Nullable="false" />
+          <Property Name="ShippingAmount" Type="money" />
+          <Property Name="ShippingTrackingNumber" Type="nvarchar" MaxLength="100" />
+        </EntityType>
+        <EntityType Name="OrderDetailShippingAddress">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="nvarchar" MaxLength="128" Nullable="false" />
+          <Property Name="OdersId" Type="nvarchar" MaxLength="128" Nullable="false" />
+          <Property Name="Line1" Type="nvarchar" MaxLength="1000" Nullable="false" />
+          <Property Name="Line2" Type="nvarchar" MaxLength="1000" Nullable="false" />
+          <Property Name="City" Type="nvarchar" MaxLength="500" Nullable="false" />
+          <Property Name="State" Type="nvarchar" MaxLength="500" Nullable="false" />
         </EntityType>
         <EntityType Name="Orders">
           <Key>
@@ -86,7 +131,6 @@
           <Property Name="Id" Type="nvarchar" MaxLength="128" Nullable="false" />
           <Property Name="DateCreated" Type="datetime" Nullable="false" />
           <Property Name="AspNetUserId" Type="nvarchar" MaxLength="128" Nullable="false" />
-          <Property Name="OrderStatus" Type="nvarchar" MaxLength="50" />
           <Property Name="QuickBuyToken" Type="nvarchar(max)" />
         </EntityType>
         <EntityType Name="PaymentDetails">
@@ -95,6 +139,18 @@
           </Key>
           <Property Name="Id" Type="nvarchar" MaxLength="128" Nullable="false" />
           <Property Name="PaymentId" Type="nvarchar" MaxLength="128" Nullable="false" />
+          <Property Name="PaymentMethodId" Type="int" Nullable="false" />
+          <Property Name="PaymentRef" Type="nvarchar" MaxLength="150" Nullable="false" />
+          <Property Name="PayerName" Type="nvarchar" MaxLength="50" />
+          <Property Name="PaymentAmount" Type="money" Nullable="false" />
+          <Property Name="Remarks" Type="nvarchar" MaxLength="1000" />
+        </EntityType>
+        <EntityType Name="PaymentMethods">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="PaymentMethods" Type="nvarchar" MaxLength="50" Nullable="false" />
         </EntityType>
         <EntityType Name="Payments">
           <Key>
@@ -103,9 +159,7 @@
           <Property Name="Id" Type="nvarchar" MaxLength="128" Nullable="false" />
           <Property Name="PaymentDate" Type="datetime" Nullable="false" />
           <Property Name="OrdersId" Type="nvarchar" MaxLength="128" Nullable="false" />
-          <Property Name="Amount" Type="money" Nullable="false" />
-          <Property Name="ReferenceId" Type="nvarchar" MaxLength="500" />
-          <Property Name="PaymentType" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="AspNetUserId" Type="nvarchar" MaxLength="128" Nullable="false" />
         </EntityType>
         <EntityType Name="ProductBrands">
           <Key>
@@ -146,10 +200,10 @@
           <Property Name="ProductId" Type="nvarchar" MaxLength="128" Nullable="false" />
           <Property Name="ProductColorId" Type="int" />
           <Property Name="ProductMeasurementId" Type="int" />
-          <Property Name="Length" Type="decimal" Precision="18" Scale="0" />
-          <Property Name="Width" Type="decimal" Precision="18" Scale="0" />
-          <Property Name="Height" Type="decimal" Precision="18" Scale="0" />
-          <Property Name="Weight" Type="decimal" Precision="18" Scale="0" />
+          <Property Name="Length" Type="float" Nullable="false" />
+          <Property Name="Width" Type="float" Nullable="false" />
+          <Property Name="Height" Type="float" Nullable="false" />
+          <Property Name="Weight" Type="float" Nullable="false" />
         </EntityType>
         <EntityType Name="ProductMeasurements">
           <Key>
@@ -170,6 +224,8 @@
           <Property Name="Description" Type="nvarchar(max)" Nullable="false" />
           <Property Name="IsEnabled" Type="bit" Nullable="false" />
           <Property Name="ProductBrandId" Type="int" Nullable="false" />
+          <Property Name="CreatedByUserId" Type="nvarchar" MaxLength="128" Nullable="false" />
+          <Property Name="DateCreated" Type="datetime" Nullable="false" />
         </EntityType>
         <EntityType Name="ProductsInCategories">
           <Key>
@@ -197,6 +253,7 @@
           <Property Name="Amount" Type="money" Nullable="false" />
           <Property Name="Quantity" Type="int" Nullable="false" />
           <Property Name="Remarks" Type="nvarchar" MaxLength="500" />
+          <Property Name="PurchaseDetailStatus" Type="nvarchar" MaxLength="50" Nullable="false" />
         </EntityType>
         <EntityType Name="Purchases">
           <Key>
@@ -208,6 +265,54 @@
           <Property Name="ReferenceNo" Type="nvarchar" MaxLength="50" />
           <Property Name="Description" Type="nvarchar" MaxLength="500" />
         </EntityType>
+        <Association Name="FK_Cart_AspNetUsers">
+          <End Role="AspNetUsers" Type="Self.AspNetUsers" Multiplicity="1" />
+          <End Role="Cart" Type="Self.Cart" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="AspNetUsers">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Cart">
+              <PropertyRef Name="AspNetUserId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Cart_Products">
+          <End Role="Products" Type="Self.Products" Multiplicity="1" />
+          <End Role="Cart" Type="Self.Cart" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Products">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Cart">
+              <PropertyRef Name="ProductId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_CustomerCreditCards_AspNetUsers">
+          <End Role="AspNetUsers" Type="Self.AspNetUsers" Multiplicity="1" />
+          <End Role="CustomerCreditCards" Type="Self.CustomerCreditCards" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="AspNetUsers">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="CustomerCreditCards">
+              <PropertyRef Name="AspNetUserId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_CustomerShippingAddresses_AspNetUsers">
+          <End Role="AspNetUsers" Type="Self.AspNetUsers" Multiplicity="1" />
+          <End Role="CustomerShippingAddresses" Type="Self.CustomerShippingAddresses" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="AspNetUsers">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="CustomerShippingAddresses">
+              <PropertyRef Name="AspNetUserId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_dbo_AspNetUserClaims_dbo_AspNetUsers_UserId">
           <End Role="AspNetUsers" Type="Self.AspNetUsers" Multiplicity="1">
             <OnDelete Action="Cascade" />
@@ -265,7 +370,9 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_OrderDetails_Orders">
-          <End Role="Orders" Type="Self.Orders" Multiplicity="1" />
+          <End Role="Orders" Type="Self.Orders" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
           <End Role="OrderDetails" Type="Self.OrderDetails" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="Orders">
@@ -302,8 +409,36 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_OrderShippingAddress_Oders">
+          <End Role="Orders" Type="Self.Orders" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="OrderDetailShippingAddress" Type="Self.OrderDetailShippingAddress" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Orders">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="OrderDetailShippingAddress">
+              <PropertyRef Name="OdersId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_PaymentDetails_PaymentMethod">
+          <End Role="PaymentMethods" Type="Self.PaymentMethods" Multiplicity="1" />
+          <End Role="PaymentDetails" Type="Self.PaymentDetails" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="PaymentMethods">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="PaymentDetails">
+              <PropertyRef Name="PaymentMethodId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_PaymentDetails_Payments">
-          <End Role="Payments" Type="Self.Payments" Multiplicity="1" />
+          <End Role="Payments" Type="Self.Payments" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
           <End Role="PaymentDetails" Type="Self.PaymentDetails" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="Payments">
@@ -311,6 +446,18 @@
             </Principal>
             <Dependent Role="PaymentDetails">
               <PropertyRef Name="PaymentId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Payments_AspNetUsers">
+          <End Role="AspNetUsers" Type="Self.AspNetUsers" Multiplicity="1" />
+          <End Role="Payments" Type="Self.Payments" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="AspNetUsers">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Payments">
+              <PropertyRef Name="AspNetUserId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -387,6 +534,18 @@
             </Principal>
             <Dependent Role="ProductMeasurements">
               <PropertyRef Name="ProductCategoryId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Products_AspNetUser">
+          <End Role="AspNetUsers" Type="Self.AspNetUsers" Multiplicity="1" />
+          <End Role="Products" Type="Self.Products" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="AspNetUsers">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Products">
+              <PropertyRef Name="CreatedByUserId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -489,9 +648,14 @@
           <EntitySet Name="AspNetUserLogins" EntityType="Self.AspNetUserLogins" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="AspNetUserRoles" EntityType="Self.AspNetUserRoles" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="AspNetUsers" EntityType="Self.AspNetUsers" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Cart" EntityType="Self.Cart" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="CustomerCreditCards" EntityType="Self.CustomerCreditCards" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="CustomerShippingAddresses" EntityType="Self.CustomerShippingAddresses" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="OrderDetails" EntityType="Self.OrderDetails" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="OrderDetailShippingAddress" EntityType="Self.OrderDetailShippingAddress" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Orders" EntityType="Self.Orders" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="PaymentDetails" EntityType="Self.PaymentDetails" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="PaymentMethods" EntityType="Self.PaymentMethods" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Payments" EntityType="Self.Payments" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="ProductBrands" EntityType="Self.ProductBrands" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="ProductCategories" EntityType="Self.ProductCategories" Schema="dbo" store:Type="Tables" />
@@ -504,6 +668,22 @@
           <EntitySet Name="ProductsInGenders" EntityType="Self.ProductsInGenders" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="PurchaseDetails" EntityType="Self.PurchaseDetails" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Purchases" EntityType="Self.Purchases" Schema="dbo" store:Type="Tables" />
+          <AssociationSet Name="FK_Cart_AspNetUsers" Association="Self.FK_Cart_AspNetUsers">
+            <End Role="AspNetUsers" EntitySet="AspNetUsers" />
+            <End Role="Cart" EntitySet="Cart" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Cart_Products" Association="Self.FK_Cart_Products">
+            <End Role="Products" EntitySet="Products" />
+            <End Role="Cart" EntitySet="Cart" />
+          </AssociationSet>
+          <AssociationSet Name="FK_CustomerCreditCards_AspNetUsers" Association="Self.FK_CustomerCreditCards_AspNetUsers">
+            <End Role="AspNetUsers" EntitySet="AspNetUsers" />
+            <End Role="CustomerCreditCards" EntitySet="CustomerCreditCards" />
+          </AssociationSet>
+          <AssociationSet Name="FK_CustomerShippingAddresses_AspNetUsers" Association="Self.FK_CustomerShippingAddresses_AspNetUsers">
+            <End Role="AspNetUsers" EntitySet="AspNetUsers" />
+            <End Role="CustomerShippingAddresses" EntitySet="CustomerShippingAddresses" />
+          </AssociationSet>
           <AssociationSet Name="FK_dbo_AspNetUserClaims_dbo_AspNetUsers_UserId" Association="Self.FK_dbo_AspNetUserClaims_dbo_AspNetUsers_UserId">
             <End Role="AspNetUsers" EntitySet="AspNetUsers" />
             <End Role="AspNetUserClaims" EntitySet="AspNetUserClaims" />
@@ -532,9 +712,21 @@
             <End Role="AspNetUsers" EntitySet="AspNetUsers" />
             <End Role="Orders" EntitySet="Orders" />
           </AssociationSet>
+          <AssociationSet Name="FK_OrderShippingAddress_Oders" Association="Self.FK_OrderShippingAddress_Oders">
+            <End Role="Orders" EntitySet="Orders" />
+            <End Role="OrderDetailShippingAddress" EntitySet="OrderDetailShippingAddress" />
+          </AssociationSet>
+          <AssociationSet Name="FK_PaymentDetails_PaymentMethod" Association="Self.FK_PaymentDetails_PaymentMethod">
+            <End Role="PaymentMethods" EntitySet="PaymentMethods" />
+            <End Role="PaymentDetails" EntitySet="PaymentDetails" />
+          </AssociationSet>
           <AssociationSet Name="FK_PaymentDetails_Payments" Association="Self.FK_PaymentDetails_Payments">
             <End Role="Payments" EntitySet="Payments" />
             <End Role="PaymentDetails" EntitySet="PaymentDetails" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Payments_AspNetUsers" Association="Self.FK_Payments_AspNetUsers">
+            <End Role="AspNetUsers" EntitySet="AspNetUsers" />
+            <End Role="Payments" EntitySet="Payments" />
           </AssociationSet>
           <AssociationSet Name="FK_Payments_Orders" Association="Self.FK_Payments_Orders">
             <End Role="Orders" EntitySet="Orders" />
@@ -559,6 +751,10 @@
           <AssociationSet Name="FK_ProductMeasurements_ProductCategories" Association="Self.FK_ProductMeasurements_ProductCategories">
             <End Role="ProductCategories" EntitySet="ProductCategories" />
             <End Role="ProductMeasurements" EntitySet="ProductMeasurements" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Products_AspNetUser" Association="Self.FK_Products_AspNetUser">
+            <End Role="AspNetUsers" EntitySet="AspNetUsers" />
+            <End Role="Products" EntitySet="Products" />
           </AssociationSet>
           <AssociationSet Name="FK_Products_ProductBrand" Association="Self.FK_Products_ProductBrand">
             <End Role="ProductBrands" EntitySet="ProductBrands" />
@@ -599,9 +795,14 @@
           <EntitySet Name="AspNetUserClaims" EntityType="Model.AspNetUserClaim" />
           <EntitySet Name="AspNetUserLogins" EntityType="Model.AspNetUserLogin" />
           <EntitySet Name="AspNetUsers" EntityType="Model.AspNetUser" />
+          <EntitySet Name="Carts" EntityType="Model.Cart" />
+          <EntitySet Name="CustomerCreditCards" EntityType="Model.CustomerCreditCard" />
+          <EntitySet Name="CustomerShippingAddresses" EntityType="Model.CustomerShippingAddress" />
           <EntitySet Name="OrderDetails" EntityType="Model.OrderDetail" />
+          <EntitySet Name="OrderDetailShippingAddresses" EntityType="Model.OrderDetailShippingAddress" />
           <EntitySet Name="Orders" EntityType="Model.Order" />
           <EntitySet Name="PaymentDetails" EntityType="Model.PaymentDetail" />
+          <EntitySet Name="PaymentMethods" EntityType="Model.PaymentMethod" />
           <EntitySet Name="Payments" EntityType="Model.Payment" />
           <EntitySet Name="ProductBrands" EntityType="Model.ProductBrand" />
           <EntitySet Name="ProductCategories" EntityType="Model.ProductCategory" />
@@ -621,13 +822,37 @@
             <End Role="AspNetUser" EntitySet="AspNetUsers" />
             <End Role="AspNetUserLogin" EntitySet="AspNetUserLogins" />
           </AssociationSet>
+          <AssociationSet Name="FK_Cart_AspNetUsers" Association="Model.FK_Cart_AspNetUsers">
+            <End Role="AspNetUser" EntitySet="AspNetUsers" />
+            <End Role="Cart" EntitySet="Carts" />
+          </AssociationSet>
+          <AssociationSet Name="FK_CustomerCreditCards_AspNetUsers" Association="Model.FK_CustomerCreditCards_AspNetUsers">
+            <End Role="AspNetUser" EntitySet="AspNetUsers" />
+            <End Role="CustomerCreditCard" EntitySet="CustomerCreditCards" />
+          </AssociationSet>
+          <AssociationSet Name="FK_CustomerShippingAddresses_AspNetUsers" Association="Model.FK_CustomerShippingAddresses_AspNetUsers">
+            <End Role="AspNetUser" EntitySet="AspNetUsers" />
+            <End Role="CustomerShippingAddress" EntitySet="CustomerShippingAddresses" />
+          </AssociationSet>
           <AssociationSet Name="FK_Orders_AspNetUsers" Association="Model.FK_Orders_AspNetUsers">
             <End Role="AspNetUser" EntitySet="AspNetUsers" />
             <End Role="Order" EntitySet="Orders" />
           </AssociationSet>
+          <AssociationSet Name="FK_Payments_AspNetUsers" Association="Model.FK_Payments_AspNetUsers">
+            <End Role="AspNetUser" EntitySet="AspNetUsers" />
+            <End Role="Payment" EntitySet="Payments" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Products_AspNetUser" Association="Model.FK_Products_AspNetUser">
+            <End Role="AspNetUser" EntitySet="AspNetUsers" />
+            <End Role="Product" EntitySet="Products" />
+          </AssociationSet>
           <AssociationSet Name="FK_Table_AspNeUsers" Association="Model.FK_Table_AspNeUsers">
             <End Role="AspNetUser" EntitySet="AspNetUsers" />
             <End Role="Purchase" EntitySet="Purchases" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Cart_Products" Association="Model.FK_Cart_Products">
+            <End Role="Product" EntitySet="Products" />
+            <End Role="Cart" EntitySet="Carts" />
           </AssociationSet>
           <AssociationSet Name="FK_OrderDetails_Orders" Association="Model.FK_OrderDetails_Orders">
             <End Role="Order" EntitySet="Orders" />
@@ -637,9 +862,17 @@
             <End Role="Product" EntitySet="Products" />
             <End Role="OrderDetail" EntitySet="OrderDetails" />
           </AssociationSet>
+          <AssociationSet Name="FK_OrderShippingAddress_Oders" Association="Model.FK_OrderShippingAddress_Oders">
+            <End Role="Order" EntitySet="Orders" />
+            <End Role="OrderDetailShippingAddress" EntitySet="OrderDetailShippingAddresses" />
+          </AssociationSet>
           <AssociationSet Name="FK_Payments_Orders" Association="Model.FK_Payments_Orders">
             <End Role="Order" EntitySet="Orders" />
             <End Role="Payment" EntitySet="Payments" />
+          </AssociationSet>
+          <AssociationSet Name="FK_PaymentDetails_PaymentMethod" Association="Model.FK_PaymentDetails_PaymentMethod">
+            <End Role="PaymentMethod" EntitySet="PaymentMethods" />
+            <End Role="PaymentDetail" EntitySet="PaymentDetails" />
           </AssociationSet>
           <AssociationSet Name="FK_PaymentDetails_Payments" Association="Model.FK_PaymentDetails_Payments">
             <End Role="Payment" EntitySet="Payments" />
@@ -747,9 +980,50 @@
           <Property Name="UserName" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
           <NavigationProperty Name="AspNetUserClaims" Relationship="Model.FK_dbo_AspNetUserClaims_dbo_AspNetUsers_UserId" FromRole="AspNetUser" ToRole="AspNetUserClaim" />
           <NavigationProperty Name="AspNetUserLogins" Relationship="Model.FK_dbo_AspNetUserLogins_dbo_AspNetUsers_UserId" FromRole="AspNetUser" ToRole="AspNetUserLogin" />
+          <NavigationProperty Name="Carts" Relationship="Model.FK_Cart_AspNetUsers" FromRole="AspNetUser" ToRole="Cart" />
+          <NavigationProperty Name="CustomerCreditCards" Relationship="Model.FK_CustomerCreditCards_AspNetUsers" FromRole="AspNetUser" ToRole="CustomerCreditCard" />
+          <NavigationProperty Name="CustomerShippingAddresses" Relationship="Model.FK_CustomerShippingAddresses_AspNetUsers" FromRole="AspNetUser" ToRole="CustomerShippingAddress" />
           <NavigationProperty Name="Orders" Relationship="Model.FK_Orders_AspNetUsers" FromRole="AspNetUser" ToRole="Order" />
+          <NavigationProperty Name="Payments" Relationship="Model.FK_Payments_AspNetUsers" FromRole="AspNetUser" ToRole="Payment" />
+          <NavigationProperty Name="Products" Relationship="Model.FK_Products_AspNetUser" FromRole="AspNetUser" ToRole="Product" />
           <NavigationProperty Name="Purchases" Relationship="Model.FK_Table_AspNeUsers" FromRole="AspNetUser" ToRole="Purchase" />
           <NavigationProperty Name="AspNetRoles" Relationship="Model.AspNetUserRoles" FromRole="AspNetUser" ToRole="AspNetRole" />
+        </EntityType>
+        <EntityType Name="Cart">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="true" />
+          <Property Name="AspNetUserId" Type="String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="true" />
+          <Property Name="ProductId" Type="String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="true" />
+          <Property Name="Quantity" Type="Int32" Nullable="false" />
+          <Property Name="DateCreated" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="IsSelected" Type="Boolean" Nullable="false" />
+          <NavigationProperty Name="AspNetUser" Relationship="Model.FK_Cart_AspNetUsers" FromRole="Cart" ToRole="AspNetUser" />
+          <NavigationProperty Name="Product" Relationship="Model.FK_Cart_Products" FromRole="Cart" ToRole="Product" />
+        </EntityType>
+        <EntityType Name="CustomerCreditCard">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="true" />
+          <Property Name="Token" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="AspNetUserId" Type="String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="true" />
+          <Property Name="IsDefault" Type="Boolean" Nullable="false" />
+          <NavigationProperty Name="AspNetUser" Relationship="Model.FK_CustomerCreditCards_AspNetUsers" FromRole="CustomerCreditCard" ToRole="AspNetUser" />
+        </EntityType>
+        <EntityType Name="CustomerShippingAddress">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="true" />
+          <Property Name="AspNetUserId" Type="String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="true" />
+          <Property Name="IsDefault" Type="Boolean" Nullable="false" />
+          <Property Name="Line1" Type="String" Nullable="false" MaxLength="250" FixedLength="false" Unicode="true" />
+          <Property Name="Line2" Type="String" Nullable="false" MaxLength="250" FixedLength="false" Unicode="true" />
+          <Property Name="City" Type="String" Nullable="false" MaxLength="250" FixedLength="false" Unicode="true" />
+          <Property Name="State" Type="String" Nullable="false" MaxLength="250" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="AspNetUser" Relationship="Model.FK_CustomerShippingAddresses_AspNetUsers" FromRole="CustomerShippingAddress" ToRole="AspNetUser" />
         </EntityType>
         <EntityType Name="OrderDetail">
           <Key>
@@ -760,11 +1034,25 @@
           <Property Name="ProductsId" Type="String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="true" />
           <Property Name="Quantity" Type="Int32" Nullable="false" />
           <Property Name="Remarks" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
-          <Property Name="Amount" Type="Decimal" Nullable="false" Precision="19" Scale="4" />
+          <Property Name="ProductAmount" Type="Decimal" Nullable="false" Precision="19" Scale="4" />
           <Property Name="OrderDetailsStatus" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="DateAdded" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="ShippingAmount" Type="Decimal" Precision="19" Scale="4" />
+          <Property Name="ShippingTrackingNumber" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
           <NavigationProperty Name="Order" Relationship="Model.FK_OrderDetails_Orders" FromRole="OrderDetail" ToRole="Order" />
           <NavigationProperty Name="Product" Relationship="Model.FK_OrderDetails_Products" FromRole="OrderDetail" ToRole="Product" />
-          <Property Name="DateAdded" Type="DateTime" Nullable="false" Precision="3" />
+        </EntityType>
+        <EntityType Name="OrderDetailShippingAddress">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="true" />
+          <Property Name="OdersId" Type="String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="true" />
+          <Property Name="Line1" Type="String" Nullable="false" MaxLength="1000" FixedLength="false" Unicode="true" />
+          <Property Name="Line2" Type="String" Nullable="false" MaxLength="1000" FixedLength="false" Unicode="true" />
+          <Property Name="City" Type="String" Nullable="false" MaxLength="500" FixedLength="false" Unicode="true" />
+          <Property Name="State" Type="String" Nullable="false" MaxLength="500" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="Order" Relationship="Model.FK_OrderShippingAddress_Oders" FromRole="OrderDetailShippingAddress" ToRole="Order" />
         </EntityType>
         <EntityType Name="Order">
           <Key>
@@ -773,10 +1061,10 @@
           <Property Name="Id" Type="String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="true" />
           <Property Name="DateCreated" Type="DateTime" Nullable="false" Precision="3" />
           <Property Name="AspNetUserId" Type="String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="true" />
-          <Property Name="OrderStatus" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="QuickBuyToken" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
           <NavigationProperty Name="AspNetUser" Relationship="Model.FK_Orders_AspNetUsers" FromRole="Order" ToRole="AspNetUser" />
           <NavigationProperty Name="OrderDetails" Relationship="Model.FK_OrderDetails_Orders" FromRole="Order" ToRole="OrderDetail" />
+          <NavigationProperty Name="OrderDetailShippingAddresses" Relationship="Model.FK_OrderShippingAddress_Oders" FromRole="Order" ToRole="OrderDetailShippingAddress" />
           <NavigationProperty Name="Payments" Relationship="Model.FK_Payments_Orders" FromRole="Order" ToRole="Payment" />
         </EntityType>
         <EntityType Name="PaymentDetail">
@@ -785,7 +1073,21 @@
           </Key>
           <Property Name="Id" Type="String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="true" />
           <Property Name="PaymentId" Type="String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="true" />
+          <Property Name="PaymentMethodId" Type="Int32" Nullable="false" />
+          <Property Name="PaymentRef" Type="String" Nullable="false" MaxLength="150" FixedLength="false" Unicode="true" />
+          <Property Name="PayerName" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="PaymentAmount" Type="Decimal" Nullable="false" Precision="19" Scale="4" />
+          <Property Name="Remarks" Type="String" MaxLength="1000" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="PaymentMethod" Relationship="Model.FK_PaymentDetails_PaymentMethod" FromRole="PaymentDetail" ToRole="PaymentMethod" />
           <NavigationProperty Name="Payment" Relationship="Model.FK_PaymentDetails_Payments" FromRole="PaymentDetail" ToRole="Payment" />
+        </EntityType>
+        <EntityType Name="PaymentMethod">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="PaymentMethods" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="PaymentDetails" Relationship="Model.FK_PaymentDetails_PaymentMethod" FromRole="PaymentMethod" ToRole="PaymentDetail" />
         </EntityType>
         <EntityType Name="Payment">
           <Key>
@@ -794,9 +1096,8 @@
           <Property Name="Id" Type="String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="true" />
           <Property Name="PaymentDate" Type="DateTime" Nullable="false" Precision="3" />
           <Property Name="OrdersId" Type="String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="true" />
-          <Property Name="Amount" Type="Decimal" Nullable="false" Precision="19" Scale="4" />
-          <Property Name="ReferenceId" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
-          <Property Name="PaymentType" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="AspNetUserId" Type="String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="AspNetUser" Relationship="Model.FK_Payments_AspNetUsers" FromRole="Payment" ToRole="AspNetUser" />
           <NavigationProperty Name="Order" Relationship="Model.FK_Payments_Orders" FromRole="Payment" ToRole="Order" />
           <NavigationProperty Name="PaymentDetails" Relationship="Model.FK_PaymentDetails_Payments" FromRole="Payment" ToRole="PaymentDetail" />
         </EntityType>
@@ -844,10 +1145,10 @@
           <Property Name="ProductId" Type="String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="true" />
           <Property Name="ProductColorId" Type="Int32" />
           <Property Name="ProductMeasurementId" Type="Int32" />
-          <Property Name="Length" Type="Decimal" Precision="18" Scale="0" />
-          <Property Name="Width" Type="Decimal" Precision="18" Scale="0" />
-          <Property Name="Height" Type="Decimal" Precision="18" Scale="0" />
-          <Property Name="Weight" Type="Decimal" Precision="18" Scale="0" />
+          <Property Name="Length" Type="Double" Nullable="false" />
+          <Property Name="Width" Type="Double" Nullable="false" />
+          <Property Name="Height" Type="Double" Nullable="false" />
+          <Property Name="Weight" Type="Double" Nullable="false" />
           <NavigationProperty Name="ProductColor" Relationship="Model.FK_ProductDetails_ProductColors" FromRole="ProductDetail" ToRole="ProductColor" />
           <NavigationProperty Name="ProductDetailImages" Relationship="Model.FK_ProductDetailImages_ProductDetails" FromRole="ProductDetail" ToRole="ProductDetailImage" />
           <NavigationProperty Name="ProductMeasurement" Relationship="Model.FK_ProductDetails_ProductMeasurements" FromRole="ProductDetail" ToRole="ProductMeasurement" />
@@ -874,6 +1175,10 @@
           <Property Name="Description" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="true" />
           <Property Name="IsEnabled" Type="Boolean" Nullable="false" />
           <Property Name="ProductBrandId" Type="Int32" Nullable="false" />
+          <Property Name="CreatedByUserId" Type="String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="true" />
+          <Property Name="DateCreated" Type="DateTime" Nullable="false" Precision="3" />
+          <NavigationProperty Name="AspNetUser" Relationship="Model.FK_Products_AspNetUser" FromRole="Product" ToRole="AspNetUser" />
+          <NavigationProperty Name="Carts" Relationship="Model.FK_Cart_Products" FromRole="Product" ToRole="Cart" />
           <NavigationProperty Name="OrderDetails" Relationship="Model.FK_OrderDetails_Products" FromRole="Product" ToRole="OrderDetail" />
           <NavigationProperty Name="ProductBrand" Relationship="Model.FK_Products_ProductBrand" FromRole="Product" ToRole="ProductBrand" />
           <NavigationProperty Name="ProductDetails" Relationship="Model.FK_ProductDetails_Products" FromRole="Product" ToRole="ProductDetail" />
@@ -902,6 +1207,7 @@
           <Property Name="Remarks" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
           <NavigationProperty Name="Product" Relationship="Model.FK_PurchaseDetails_Products" FromRole="PurchaseDetail" ToRole="Product" />
           <NavigationProperty Name="Purchase" Relationship="Model.FK_PurchaseDetails_Purchases" FromRole="PurchaseDetail" ToRole="Purchase" />
+          <Property Name="PurchaseDetailStatus" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
         </EntityType>
         <EntityType Name="Purchase">
           <Key>
@@ -943,6 +1249,42 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_Cart_AspNetUsers">
+          <End Type="Model.AspNetUser" Role="AspNetUser" Multiplicity="1" />
+          <End Type="Model.Cart" Role="Cart" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="AspNetUser">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Cart">
+              <PropertyRef Name="AspNetUserId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_CustomerCreditCards_AspNetUsers">
+          <End Type="Model.AspNetUser" Role="AspNetUser" Multiplicity="1" />
+          <End Type="Model.CustomerCreditCard" Role="CustomerCreditCard" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="AspNetUser">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="CustomerCreditCard">
+              <PropertyRef Name="AspNetUserId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_CustomerShippingAddresses_AspNetUsers">
+          <End Type="Model.AspNetUser" Role="AspNetUser" Multiplicity="1" />
+          <End Type="Model.CustomerShippingAddress" Role="CustomerShippingAddress" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="AspNetUser">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="CustomerShippingAddress">
+              <PropertyRef Name="AspNetUserId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_Orders_AspNetUsers">
           <End Type="Model.AspNetUser" Role="AspNetUser" Multiplicity="1">
             <OnDelete Action="Cascade" />
@@ -954,6 +1296,30 @@
             </Principal>
             <Dependent Role="Order">
               <PropertyRef Name="AspNetUserId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Payments_AspNetUsers">
+          <End Type="Model.AspNetUser" Role="AspNetUser" Multiplicity="1" />
+          <End Type="Model.Payment" Role="Payment" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="AspNetUser">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Payment">
+              <PropertyRef Name="AspNetUserId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Products_AspNetUser">
+          <End Type="Model.AspNetUser" Role="AspNetUser" Multiplicity="1" />
+          <End Type="Model.Product" Role="Product" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="AspNetUser">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Product">
+              <PropertyRef Name="CreatedByUserId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -969,8 +1335,22 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_Cart_Products">
+          <End Type="Model.Product" Role="Product" Multiplicity="1" />
+          <End Type="Model.Cart" Role="Cart" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Product">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Cart">
+              <PropertyRef Name="ProductId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_OrderDetails_Orders">
-          <End Type="Model.Order" Role="Order" Multiplicity="1" />
+          <End Type="Model.Order" Role="Order" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
           <End Type="Model.OrderDetail" Role="OrderDetail" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="Order">
@@ -993,6 +1373,20 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_OrderShippingAddress_Oders">
+          <End Type="Model.Order" Role="Order" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Type="Model.OrderDetailShippingAddress" Role="OrderDetailShippingAddress" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Order">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="OrderDetailShippingAddress">
+              <PropertyRef Name="OdersId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_Payments_Orders">
           <End Type="Model.Order" Role="Order" Multiplicity="1" />
           <End Type="Model.Payment" Role="Payment" Multiplicity="*" />
@@ -1005,8 +1399,22 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_PaymentDetails_PaymentMethod">
+          <End Type="Model.PaymentMethod" Role="PaymentMethod" Multiplicity="1" />
+          <End Type="Model.PaymentDetail" Role="PaymentDetail" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="PaymentMethod">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="PaymentDetail">
+              <PropertyRef Name="PaymentMethodId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_PaymentDetails_Payments">
-          <End Type="Model.Payment" Role="Payment" Multiplicity="1" />
+          <End Type="Model.Payment" Role="Payment" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
           <End Type="Model.PaymentDetail" Role="PaymentDetail" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="Payment">
@@ -1202,12 +1610,49 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
+          <EntitySetMapping Name="Carts">
+            <EntityTypeMapping TypeName="Model.Cart">
+              <MappingFragment StoreEntitySet="Cart">
+                <ScalarProperty Name="IsSelected" ColumnName="IsSelected" />
+                <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
+                <ScalarProperty Name="Quantity" ColumnName="Quantity" />
+                <ScalarProperty Name="ProductId" ColumnName="ProductId" />
+                <ScalarProperty Name="AspNetUserId" ColumnName="AspNetUserId" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="CustomerCreditCards">
+            <EntityTypeMapping TypeName="Model.CustomerCreditCard">
+              <MappingFragment StoreEntitySet="CustomerCreditCards">
+                <ScalarProperty Name="IsDefault" ColumnName="IsDefault" />
+                <ScalarProperty Name="AspNetUserId" ColumnName="AspNetUserId" />
+                <ScalarProperty Name="Token" ColumnName="Token" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="CustomerShippingAddresses">
+            <EntityTypeMapping TypeName="Model.CustomerShippingAddress">
+              <MappingFragment StoreEntitySet="CustomerShippingAddresses">
+                <ScalarProperty Name="State" ColumnName="State" />
+                <ScalarProperty Name="City" ColumnName="City" />
+                <ScalarProperty Name="Line2" ColumnName="Line2" />
+                <ScalarProperty Name="Line1" ColumnName="Line1" />
+                <ScalarProperty Name="IsDefault" ColumnName="IsDefault" />
+                <ScalarProperty Name="AspNetUserId" ColumnName="AspNetUserId" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
           <EntitySetMapping Name="OrderDetails">
             <EntityTypeMapping TypeName="Model.OrderDetail">
               <MappingFragment StoreEntitySet="OrderDetails">
+                <ScalarProperty Name="ShippingTrackingNumber" ColumnName="ShippingTrackingNumber" />
+                <ScalarProperty Name="ShippingAmount" ColumnName="ShippingAmount" />
                 <ScalarProperty Name="DateAdded" ColumnName="DateAdded" />
                 <ScalarProperty Name="OrderDetailsStatus" ColumnName="OrderDetailsStatus" />
-                <ScalarProperty Name="Amount" ColumnName="Amount" />
+                <ScalarProperty Name="ProductAmount" ColumnName="ProductAmount" />
                 <ScalarProperty Name="Remarks" ColumnName="Remarks" />
                 <ScalarProperty Name="Quantity" ColumnName="Quantity" />
                 <ScalarProperty Name="ProductsId" ColumnName="ProductsId" />
@@ -1216,11 +1661,22 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
+          <EntitySetMapping Name="OrderDetailShippingAddresses">
+            <EntityTypeMapping TypeName="Model.OrderDetailShippingAddress">
+              <MappingFragment StoreEntitySet="OrderDetailShippingAddress">
+                <ScalarProperty Name="State" ColumnName="State" />
+                <ScalarProperty Name="City" ColumnName="City" />
+                <ScalarProperty Name="Line2" ColumnName="Line2" />
+                <ScalarProperty Name="Line1" ColumnName="Line1" />
+                <ScalarProperty Name="OdersId" ColumnName="OdersId" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
           <EntitySetMapping Name="Orders">
             <EntityTypeMapping TypeName="Model.Order">
               <MappingFragment StoreEntitySet="Orders">
                 <ScalarProperty Name="QuickBuyToken" ColumnName="QuickBuyToken" />
-                <ScalarProperty Name="OrderStatus" ColumnName="OrderStatus" />
                 <ScalarProperty Name="AspNetUserId" ColumnName="AspNetUserId" />
                 <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
@@ -1230,7 +1686,20 @@
           <EntitySetMapping Name="PaymentDetails">
             <EntityTypeMapping TypeName="Model.PaymentDetail">
               <MappingFragment StoreEntitySet="PaymentDetails">
+                <ScalarProperty Name="Remarks" ColumnName="Remarks" />
+                <ScalarProperty Name="PaymentAmount" ColumnName="PaymentAmount" />
+                <ScalarProperty Name="PayerName" ColumnName="PayerName" />
+                <ScalarProperty Name="PaymentRef" ColumnName="PaymentRef" />
+                <ScalarProperty Name="PaymentMethodId" ColumnName="PaymentMethodId" />
                 <ScalarProperty Name="PaymentId" ColumnName="PaymentId" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="PaymentMethods">
+            <EntityTypeMapping TypeName="Model.PaymentMethod">
+              <MappingFragment StoreEntitySet="PaymentMethods">
+                <ScalarProperty Name="PaymentMethods" ColumnName="PaymentMethods" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>
@@ -1238,9 +1707,7 @@
           <EntitySetMapping Name="Payments">
             <EntityTypeMapping TypeName="Model.Payment">
               <MappingFragment StoreEntitySet="Payments">
-                <ScalarProperty Name="PaymentType" ColumnName="PaymentType" />
-                <ScalarProperty Name="ReferenceId" ColumnName="ReferenceId" />
-                <ScalarProperty Name="Amount" ColumnName="Amount" />
+                <ScalarProperty Name="AspNetUserId" ColumnName="AspNetUserId" />
                 <ScalarProperty Name="OrdersId" ColumnName="OrdersId" />
                 <ScalarProperty Name="PaymentDate" ColumnName="PaymentDate" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
@@ -1309,6 +1776,8 @@
           <EntitySetMapping Name="Products">
             <EntityTypeMapping TypeName="Model.Product">
               <MappingFragment StoreEntitySet="Products">
+                <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
+                <ScalarProperty Name="CreatedByUserId" ColumnName="CreatedByUserId" />
                 <ScalarProperty Name="ProductBrandId" ColumnName="ProductBrandId" />
                 <ScalarProperty Name="IsEnabled" ColumnName="IsEnabled" />
                 <ScalarProperty Name="Description" ColumnName="Description" />
@@ -1329,6 +1798,7 @@
           <EntitySetMapping Name="PurchaseDetails">
             <EntityTypeMapping TypeName="Model.PurchaseDetail">
               <MappingFragment StoreEntitySet="PurchaseDetails">
+                <ScalarProperty Name="PurchaseDetailStatus" ColumnName="PurchaseDetailStatus" />
                 <ScalarProperty Name="Remarks" ColumnName="Remarks" />
                 <ScalarProperty Name="Quantity" ColumnName="Quantity" />
                 <ScalarProperty Name="Amount" ColumnName="Amount" />

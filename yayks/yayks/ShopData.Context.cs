@@ -30,9 +30,14 @@ namespace yayks
         public virtual DbSet<AspNetUserClaim> AspNetUserClaims { get; set; }
         public virtual DbSet<AspNetUserLogin> AspNetUserLogins { get; set; }
         public virtual DbSet<AspNetUser> AspNetUsers { get; set; }
+        public virtual DbSet<Cart> Carts { get; set; }
+        public virtual DbSet<CustomerCreditCard> CustomerCreditCards { get; set; }
+        public virtual DbSet<CustomerShippingAddress> CustomerShippingAddresses { get; set; }
         public virtual DbSet<OrderDetail> OrderDetails { get; set; }
+        public virtual DbSet<OrderDetailShippingAddress> OrderDetailShippingAddresses { get; set; }
         public virtual DbSet<Order> Orders { get; set; }
         public virtual DbSet<PaymentDetail> PaymentDetails { get; set; }
+        public virtual DbSet<PaymentMethod> PaymentMethods { get; set; }
         public virtual DbSet<Payment> Payments { get; set; }
         public virtual DbSet<ProductBrand> ProductBrands { get; set; }
         public virtual DbSet<ProductCategory> ProductCategories { get; set; }
