@@ -5,17 +5,23 @@
 
     </thead>
     <tbody>
-        @foreach (var o in Model.Cart)
-        {
+        @for (int i = 0; i < Model.Cart.Count(); i++)
+            {
+
+            @Html.HiddenFor(o => Model.Cart[i].Id)
+
             <tr>
                 <td>
-                    @o.Name
+                    @Model.Cart[i].Name
+                    @Html.HiddenFor(o=> Model.Cart[i].Name)
                 </td>
                 <td>
-                    @o.Quantity
+                    @Model.Cart[i].Quantity
+                    @Html.HiddenFor(o => Model.Cart[i].Quantity)
                 </td>
                 <td>
-                    @o.Amount
+                    @Model.Cart[i].Amount
+                    @Html.HiddenFor(o => Model.Cart[i].Amount)
                 </td>
             </tr>
 

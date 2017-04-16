@@ -9,6 +9,15 @@ namespace yayks.Models
     {
     }
 
+    public class PaymentGatewayResponse
+    {
+
+        public string refNo { get; set; }
+        public decimal? amount { get; set; }
+        public string PaymentStatus { get; set; }
+        public string message { get; set; }
+        public string responseStatus { get; set; }
+    }
  
 
 }

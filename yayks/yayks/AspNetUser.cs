@@ -24,6 +24,7 @@ namespace yayks
             this.CustomerShippingAddresses = new HashSet<CustomerShippingAddress>();
             this.Orders = new HashSet<Order>();
             this.Payments = new HashSet<Payment>();
+            this.Products = new HashSet<Product>();
             this.Purchases = new HashSet<Purchase>();
             this.AspNetRoles = new HashSet<AspNetRole>();
         }
@@ -55,6 +56,8 @@ namespace yayks
         public virtual ICollection<Order> Orders { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Payment> Payments { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<Product> Products { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Purchase> Purchases { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]

@@ -6,7 +6,7 @@
 }
 
 <h2>PaymentMethod</h2>
-@Html.Partial("_Partial_CheckOutSummary", Model)
+
 @Html.Partial("_Partial_CreditCard", Model)
 
 @section Scripts{
@@ -41,11 +41,11 @@
         };
 
         var tokenRequest = function () {
-
+            6
             // Setup token request arguments
             var args = {
                 sellerId: "901342854",
-                publishableKey: "7F83E728-E2C7-457A-93A6-C3C1D6AD0F0E",
+                publishableKey: "F1F1D11F-D3C4-4D7B-9D3A-519F75C45025",
                 ccNo: $("#ccNo").val(),
                 cvv: $("#cvv").val(),
                 expMonth: $("#expMonth").val(),
@@ -70,7 +70,5 @@
         });
 
     </script>
-
-
 
 }

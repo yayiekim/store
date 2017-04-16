@@ -60,15 +60,7 @@ Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.Page
 
     <script>
 
-        function addToCart(id)
-        {
-
-            $.get('@Url.Action("AddToCart", "Customers")', { Id: id }, function (data) {
-                updateCartCount();
-            });
-
-        }
-
+       
 
     </script>
 

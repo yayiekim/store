@@ -20,6 +20,7 @@ namespace yayks
         public decimal Amount { get; set; }
         public int Quantity { get; set; }
         public string Remarks { get; set; }
+        public string PurchaseDetailStatus { get; set; }
     
         public virtual Product Product { get; set; }
         public virtual Purchase Purchase { get; set; }

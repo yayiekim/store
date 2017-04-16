@@ -131,7 +131,6 @@
           <Property Name="Id" Type="nvarchar" MaxLength="128" Nullable="false" />
           <Property Name="DateCreated" Type="datetime" Nullable="false" />
           <Property Name="AspNetUserId" Type="nvarchar" MaxLength="128" Nullable="false" />
-          <Property Name="OrderStatus" Type="nvarchar" MaxLength="50" />
           <Property Name="QuickBuyToken" Type="nvarchar(max)" />
         </EntityType>
         <EntityType Name="PaymentDetails">
@@ -201,10 +200,10 @@
           <Property Name="ProductId" Type="nvarchar" MaxLength="128" Nullable="false" />
           <Property Name="ProductColorId" Type="int" />
           <Property Name="ProductMeasurementId" Type="int" />
-          <Property Name="Length" Type="decimal" Precision="18" Scale="0" />
-          <Property Name="Width" Type="decimal" Precision="18" Scale="0" />
-          <Property Name="Height" Type="decimal" Precision="18" Scale="0" />
-          <Property Name="Weight" Type="decimal" Precision="18" Scale="0" />
+          <Property Name="Length" Type="float" Nullable="false" />
+          <Property Name="Width" Type="float" Nullable="false" />
+          <Property Name="Height" Type="float" Nullable="false" />
+          <Property Name="Weight" Type="float" Nullable="false" />
         </EntityType>
         <EntityType Name="ProductMeasurements">
           <Key>
@@ -225,6 +224,8 @@
           <Property Name="Description" Type="nvarchar(max)" Nullable="false" />
           <Property Name="IsEnabled" Type="bit" Nullable="false" />
           <Property Name="ProductBrandId" Type="int" Nullable="false" />
+          <Property Name="CreatedByUserId" Type="nvarchar" MaxLength="128" Nullable="false" />
+          <Property Name="DateCreated" Type="datetime" Nullable="false" />
         </EntityType>
         <EntityType Name="ProductsInCategories">
           <Key>
@@ -252,6 +253,7 @@
           <Property Name="Amount" Type="money" Nullable="false" />
           <Property Name="Quantity" Type="int" Nullable="false" />
           <Property Name="Remarks" Type="nvarchar" MaxLength="500" />
+          <Property Name="PurchaseDetailStatus" Type="nvarchar" MaxLength="50" Nullable="false" />
         </EntityType>
         <EntityType Name="Purchases">
           <Key>
@@ -535,6 +537,18 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_Products_AspNetUser">
+          <End Role="AspNetUsers" Type="Self.AspNetUsers" Multiplicity="1" />
+          <End Role="Products" Type="Self.Products" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="AspNetUsers">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Products">
+              <PropertyRef Name="CreatedByUserId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_Products_ProductBrand">
           <End Role="ProductBrands" Type="Self.ProductBrands" Multiplicity="1" />
           <End Role="Products" Type="Self.Products" Multiplicity="*" />
@@ -738,6 +752,10 @@
             <End Role="ProductCategories" EntitySet="ProductCategories" />
             <End Role="ProductMeasurements" EntitySet="ProductMeasurements" />
           </AssociationSet>
+          <AssociationSet Name="FK_Products_AspNetUser" Association="Self.FK_Products_AspNetUser">
+            <End Role="AspNetUsers" EntitySet="AspNetUsers" />
+            <End Role="Products" EntitySet="Products" />
+          </AssociationSet>
           <AssociationSet Name="FK_Products_ProductBrand" Association="Self.FK_Products_ProductBrand">
             <End Role="ProductBrands" EntitySet="ProductBrands" />
             <End Role="Products" EntitySet="Products" />
@@ -823,6 +841,10 @@
           <AssociationSet Name="FK_Payments_AspNetUsers" Association="Model.FK_Payments_AspNetUsers">
             <End Role="AspNetUser" EntitySet="AspNetUsers" />
             <End Role="Payment" EntitySet="Payments" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Products_AspNetUser" Association="Model.FK_Products_AspNetUser">
+            <End Role="AspNetUser" EntitySet="AspNetUsers" />
+            <End Role="Product" EntitySet="Products" />
           </AssociationSet>
           <AssociationSet Name="FK_Table_AspNeUsers" Association="Model.FK_Table_AspNeUsers">
             <End Role="AspNetUser" EntitySet="AspNetUsers" />
@@ -963,6 +985,7 @@
           <NavigationProperty Name="CustomerShippingAddresses" Relationship="Model.FK_CustomerShippingAddresses_AspNetUsers" FromRole="AspNetUser" ToRole="CustomerShippingAddress" />
           <NavigationProperty Name="Orders" Relationship="Model.FK_Orders_AspNetUsers" FromRole="AspNetUser" ToRole="Order" />
           <NavigationProperty Name="Payments" Relationship="Model.FK_Payments_AspNetUsers" FromRole="AspNetUser" ToRole="Payment" />
+          <NavigationProperty Name="Products" Relationship="Model.FK_Products_AspNetUser" FromRole="AspNetUser" ToRole="Product" />
           <NavigationProperty Name="Purchases" Relationship="Model.FK_Table_AspNeUsers" FromRole="AspNetUser" ToRole="Purchase" />
           <NavigationProperty Name="AspNetRoles" Relationship="Model.AspNetUserRoles" FromRole="AspNetUser" ToRole="AspNetRole" />
         </EntityType>
@@ -1038,7 +1061,6 @@
           <Property Name="Id" Type="String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="true" />
           <Property Name="DateCreated" Type="DateTime" Nullable="false" Precision="3" />
           <Property Name="AspNetUserId" Type="String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="true" />
-          <Property Name="OrderStatus" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="QuickBuyToken" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
           <NavigationProperty Name="AspNetUser" Relationship="Model.FK_Orders_AspNetUsers" FromRole="Order" ToRole="AspNetUser" />
           <NavigationProperty Name="OrderDetails" Relationship="Model.FK_OrderDetails_Orders" FromRole="Order" ToRole="OrderDetail" />
@@ -1123,10 +1145,10 @@
           <Property Name="ProductId" Type="String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="true" />
           <Property Name="ProductColorId" Type="Int32" />
           <Property Name="ProductMeasurementId" Type="Int32" />
-          <Property Name="Length" Type="Decimal" Precision="18" Scale="0" />
-          <Property Name="Width" Type="Decimal" Precision="18" Scale="0" />
-          <Property Name="Height" Type="Decimal" Precision="18" Scale="0" />
-          <Property Name="Weight" Type="Decimal" Precision="18" Scale="0" />
+          <Property Name="Length" Type="Double" Nullable="false" />
+          <Property Name="Width" Type="Double" Nullable="false" />
+          <Property Name="Height" Type="Double" Nullable="false" />
+          <Property Name="Weight" Type="Double" Nullable="false" />
           <NavigationProperty Name="ProductColor" Relationship="Model.FK_ProductDetails_ProductColors" FromRole="ProductDetail" ToRole="ProductColor" />
           <NavigationProperty Name="ProductDetailImages" Relationship="Model.FK_ProductDetailImages_ProductDetails" FromRole="ProductDetail" ToRole="ProductDetailImage" />
           <NavigationProperty Name="ProductMeasurement" Relationship="Model.FK_ProductDetails_ProductMeasurements" FromRole="ProductDetail" ToRole="ProductMeasurement" />
@@ -1153,6 +1175,9 @@
           <Property Name="Description" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="true" />
           <Property Name="IsEnabled" Type="Boolean" Nullable="false" />
           <Property Name="ProductBrandId" Type="Int32" Nullable="false" />
+          <Property Name="CreatedByUserId" Type="String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="true" />
+          <Property Name="DateCreated" Type="DateTime" Nullable="false" Precision="3" />
+          <NavigationProperty Name="AspNetUser" Relationship="Model.FK_Products_AspNetUser" FromRole="Product" ToRole="AspNetUser" />
           <NavigationProperty Name="Carts" Relationship="Model.FK_Cart_Products" FromRole="Product" ToRole="Cart" />
           <NavigationProperty Name="OrderDetails" Relationship="Model.FK_OrderDetails_Products" FromRole="Product" ToRole="OrderDetail" />
           <NavigationProperty Name="ProductBrand" Relationship="Model.FK_Products_ProductBrand" FromRole="Product" ToRole="ProductBrand" />
@@ -1182,6 +1207,7 @@
           <Property Name="Remarks" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
           <NavigationProperty Name="Product" Relationship="Model.FK_PurchaseDetails_Products" FromRole="PurchaseDetail" ToRole="Product" />
           <NavigationProperty Name="Purchase" Relationship="Model.FK_PurchaseDetails_Purchases" FromRole="PurchaseDetail" ToRole="Purchase" />
+          <Property Name="PurchaseDetailStatus" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
         </EntityType>
         <EntityType Name="Purchase">
           <Key>
@@ -1282,6 +1308,18 @@
             </Principal>
             <Dependent Role="Payment">
               <PropertyRef Name="AspNetUserId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Products_AspNetUser">
+          <End Type="Model.AspNetUser" Role="AspNetUser" Multiplicity="1" />
+          <End Type="Model.Product" Role="Product" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="AspNetUser">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Product">
+              <PropertyRef Name="CreatedByUserId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -1639,7 +1677,6 @@
             <EntityTypeMapping TypeName="Model.Order">
               <MappingFragment StoreEntitySet="Orders">
                 <ScalarProperty Name="QuickBuyToken" ColumnName="QuickBuyToken" />
-                <ScalarProperty Name="OrderStatus" ColumnName="OrderStatus" />
                 <ScalarProperty Name="AspNetUserId" ColumnName="AspNetUserId" />
                 <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
@@ -1739,6 +1776,8 @@
           <EntitySetMapping Name="Products">
             <EntityTypeMapping TypeName="Model.Product">
               <MappingFragment StoreEntitySet="Products">
+                <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
+                <ScalarProperty Name="CreatedByUserId" ColumnName="CreatedByUserId" />
                 <ScalarProperty Name="ProductBrandId" ColumnName="ProductBrandId" />
                 <ScalarProperty Name="IsEnabled" ColumnName="IsEnabled" />
                 <ScalarProperty Name="Description" ColumnName="Description" />
@@ -1759,6 +1798,7 @@
           <EntitySetMapping Name="PurchaseDetails">
             <EntityTypeMapping TypeName="Model.PurchaseDetail">
               <MappingFragment StoreEntitySet="PurchaseDetails">
+                <ScalarProperty Name="PurchaseDetailStatus" ColumnName="PurchaseDetailStatus" />
                 <ScalarProperty Name="Remarks" ColumnName="Remarks" />
                 <ScalarProperty Name="Quantity" ColumnName="Quantity" />
                 <ScalarProperty Name="Amount" ColumnName="Amount" />

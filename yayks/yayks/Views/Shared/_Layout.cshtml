@@ -85,6 +85,21 @@
             return dt;
         }
 
+        function addToCart(id) {
+
+            $.get('@Url.Action("AddToCart", "Customers")', { Id: id }, function (data) {
+
+                if (data == "out of stock") {
+                    alert("Out of stock");
+                } else {
+                    updateCartCount();
+                }
+
+
+            });
+
+        }
+
 
 
 

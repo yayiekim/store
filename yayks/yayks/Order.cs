@@ -25,7 +25,6 @@ namespace yayks
         public string Id { get; set; }
         public System.DateTime DateCreated { get; set; }
         public string AspNetUserId { get; set; }
-        public string OrderStatus { get; set; }
         public string QuickBuyToken { get; set; }
     
         public virtual AspNetUser AspNetUser { get; set; }

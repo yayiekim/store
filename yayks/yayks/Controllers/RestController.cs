@@ -17,6 +17,7 @@ namespace yayks.Controllers
         Entities data = new Entities();
         AzureBlob azureBlob = new AzureBlob();
         CommonModels common = new CommonModels();
+        DataLayer dataLayer = new DataLayer();
 
         // GET: Rest
         public ActionResult Index()
@@ -47,13 +48,54 @@ namespace yayks.Controllers
 
         public async Task<JsonResult> setCartItemSelection(string id, bool selection)
         {
-            var _res = await data.Carts.FindAsync(id);
-            _res.IsSelected = selection;
+            var _userId = User.Identity.GetUserId();
 
-            await data.SaveChangesAsync();
-            return Json(true, JsonRequestBehavior.AllowGet);
+            var itemCount = await dataLayer.setCartItemSelection(id,selection, _userId);
+
+
+            if (itemCount)
+            {
+
+                return Json(true, JsonRequestBehavior.AllowGet);
+
+            }
+            else
+            {
+
+                return Json("out of stock", JsonRequestBehavior.AllowGet);
+                            
+            }
+            
         }
 
+        public async Task<JsonResult> changeCartQuantity(string id, string mode)
+        {
+            var _userId = User.Identity.GetUserId();
+
+            var stockCount = 0;
+
+            if (mode == "plus")
+            {
+                stockCount = await dataLayer.GetProductCountInMyCart(id,_userId) - 1;
+
+                if (stockCount >= 0)
+                {
+                    await dataLayer.AddToCart(id, _userId);
+                }
+
+            }
+            else {
+
+                stockCount = await dataLayer.GetProductCountInMyCart(id, _userId);
+
+                if (stockCount > 0)
+                {
+                    await dataLayer.RemoveFromCart(id);
+                }
+            }
+
+            return Json(stockCount, JsonRequestBehavior.AllowGet);
+        }
 
         public async Task<JsonResult> getCartCount()
         {

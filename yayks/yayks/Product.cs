@@ -31,7 +31,10 @@ namespace yayks
         public string Description { get; set; }
         public bool IsEnabled { get; set; }
         public int ProductBrandId { get; set; }
+        public string CreatedByUserId { get; set; }
+        public System.DateTime DateCreated { get; set; }
     
+        public virtual AspNetUser AspNetUser { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Cart> Carts { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]

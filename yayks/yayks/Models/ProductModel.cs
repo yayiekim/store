@@ -19,6 +19,7 @@ namespace yayks.Models
         public List<string> Images { get; set; }
         public bool IsSelected { get; set; }
         public string CartId { get; set; }
+        public string Status { get; set; }
 
     }
 
@@ -37,6 +38,14 @@ namespace yayks.Models
         public int MeasurementId { get; set; }
         [Required]
         public int ColordId { get; set; }
+        [Required]
+        public double Lenght { get; set; }
+        [Required]
+        public double Width { get; set; }
+        [Required]
+        public double Height { get; set; }
+        [Required]
+        public double Weight { get; set; }
         [Required]
         public List<CheckBoxModel> Categories { get; set; }
         [Required]

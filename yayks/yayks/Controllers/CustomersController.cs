@@ -91,55 +91,28 @@ namespace yayks.Controllers
         public async Task<JsonResult> AddToCart(string Id)
         {
             var userId = User.Identity.GetUserId();
-            var res = await data.Carts.Where(i=>i.ProductId == Id).ToListAsync();
 
-            if (res.Any())
+
+            var itemCount = await dataLayer.GetProductCountInMyCart(Id, userId);
+
+
+            if (itemCount < 1)
             {
-                res.First().Quantity += 1;
-
+                return Json("out of stock", JsonRequestBehavior.AllowGet);
             }
             else
-            {
-                Cart _myCart = new Cart()
-                {
-                    Id = Guid.NewGuid().ToString(),
-                    Quantity = 1,
-                    ProductId = Id,
-                    DateCreated = DateTime.UtcNow,
-                    AspNetUserId = userId
-
-                };
-
-                data.Carts.Add(_myCart);
+            {                
+                return Json(await dataLayer.AddToCart(Id, userId), JsonRequestBehavior.AllowGet);
             }
 
 
-
-           
-
-            await data.SaveChangesAsync();
-
-            return Json("", JsonRequestBehavior.AllowGet);
         }
 
         [HttpGet]
         public async Task<bool> RemoveFromCart(string Id)
         {
 
-            var res = await data.Carts.FindAsync(Id);
-
-            data.Carts.Remove(res);
-
-            try
-            {
-                await data.SaveChangesAsync();
-                return true;
-            }
-            catch
-            {
-                return false;
-
-            }
+            return await dataLayer.RemoveFromCart(Id);
 
         }
 
@@ -148,8 +121,21 @@ namespace yayks.Controllers
             var userId = User.Identity.GetUserId();
             var _productList = await dataLayer.getProductsListFromCart(userId, null);
             decimal _total = 0;
+
             foreach (var o in _productList)
             {
+                if (o.IsSelected)
+                {
+
+                    o.IsSelected = await dataLayer.setCartItemSelection(o.CartId, o.IsSelected, userId);
+
+                    if (!o.IsSelected)
+                    {
+                        o.Status = "out of stock";
+                    }
+                      
+
+                }
 
                 if (o.Quantity == 1)
                 {
@@ -176,7 +162,7 @@ namespace yayks.Controllers
 
         }
 
-        public async Task<ActionResult> Shipping(CartModel model)
+        public async Task<ActionResult> Shipping()
         {
 
             var userId = User.Identity.GetUserId();
@@ -187,12 +173,8 @@ namespace yayks.Controllers
 
             ViewBag.ShippingAddresses = _shippingAddressList;
 
-            var _model = new CheckOutModels()
-            {
-                Cart = model.ProductList,
-
-            };
-
+            var _model = new CheckOutModels();
+           
 
             return View(_model);
         }
@@ -201,7 +183,7 @@ namespace yayks.Controllers
         {
             var userId = User.Identity.GetUserId();
 
-           
+
             //update shipping address if has changes and add if new
             if (model.ShippingAddress.Id == null)
             {
@@ -304,7 +286,6 @@ namespace yayks.Controllers
             var _model = new CheckOutModels()
             {
                 Cart = await dataLayer.getProductsListFromCart(userId, true),
-                ShippingAddress = model.ShippingAddress
 
             };
 
@@ -314,45 +295,71 @@ namespace yayks.Controllers
         [HttpPost]
         public async Task<ActionResult> Pay(CheckOutModels model, FormCollection collection)
         {
-           //Credit Card
-            var Billing = new AuthBillingAddress();
-            
-            Billing.addrLine1 = "123 test st";
-            Billing.city = "Columbus";
-            Billing.zipCode = "43123";
-            Billing.state = "OH";
-            Billing.country = "USA";
-            Billing.name = "Testing Tester";
-            Billing.email = "example@2co.com";
-            Billing.phoneNumber = "5555555555";
+
+            var userId = User.Identity.GetUserId();
+
+            //Credit Card
+            var _totalAmount = Convert.ToDouble((from o in model.Cart
+                                                 group o by new { product = o.Id, amount = o.Amount * o.Quantity } into g
+                                                 select new
+                                                 {
+
+                                                     Total = g.Key.amount
+
+                                                 }).ToList().Sum(i => i.Total));
+
+
+
+
+            var Billing = new AuthBillingAddress()
+            {
+                addrLine1 = model.BillingAddress.addressLine1,
+                city = model.BillingAddress.city,
+                state = model.BillingAddress.state,
+                country = model.BillingAddress.country,
+                name = model.BillingAddress.name,
+                email = User.Identity.GetUserName(),
+                phoneNumber = "N/A",
+                zipCode = "0",
+
+            };
+
+
 
             var _charge = new ChargeAuthorizeServiceOptions()
             {
-                total = (decimal)100.00,
+                total = (decimal)_totalAmount,
                 currency = "USD",
-                merchantOrderId = "123",
+                merchantOrderId = "1",
                 token = collection["token"].ToString(),
                 billingAddr = Billing
 
             };
 
-            //Cart Details
-            CheckOutModels _model = new CheckOutModels()
+
+            var _paymentResult = new PaymentGatewayResponse();
+
+
+            if (model.PaymentMethodId == 1)
             {
+                _paymentResult = _payment.CheckOutTwoCheckOut(_charge);
+
+            }
 
 
-            };
+            model.ShippingAddress = await data.CustomerShippingAddresses.Where(i => i.AspNetUserId == userId && i.IsDefault == true).FirstOrDefaultAsync();
 
 
-
-           var _paymentResult = _payment.CheckOutTwoCheckOut(_charge);
-
-            if (_paymentResult)
+            if (_paymentResult.PaymentStatus != "failed")
             {
+                model.PaymentRef = _paymentResult.refNo;
+                model.TotalAmount = _paymentResult.amount ?? 0;
+                model.UserId = userId;
+                model.PaymentStatus = _paymentResult.PaymentStatus;
                 dataLayer.createOrder(model);
 
             }
-            
+
 
 
             return View(model);

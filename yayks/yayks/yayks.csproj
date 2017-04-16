@@ -628,6 +628,7 @@
     <Content Include="Views\Customers\PaymentMethod.cshtml" />
     <Content Include="Views\Shared\_Partial_CreditCard.cshtml" />
     <Content Include="Views\Shared\_Partial_CheckOutSummary.cshtml" />
+    <Content Include="Views\Shared\_Partial_BillingAddress.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Code\" />
