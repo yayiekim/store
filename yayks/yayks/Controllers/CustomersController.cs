@@ -289,6 +289,7 @@ namespace yayks.Controllers
 
             model.ShippingAddress = await data.CustomerShippingAddresses.Where(i => i.AspNetUserId == userId && i.IsDefault == true).FirstOrDefaultAsync();
 
+           
 
             if (_paymentResult.PaymentStatus != "failed")
             {
@@ -296,6 +297,8 @@ namespace yayks.Controllers
                 model.TotalAmount = _paymentResult.amount ?? 0;
                 model.UserId = userId;
                 model.PaymentStatus = _paymentResult.PaymentStatus;
+
+
                 dataLayer.createOrder(model);
 
             }

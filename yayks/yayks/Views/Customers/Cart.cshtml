@@ -9,7 +9,7 @@
 
 <h3 id="total"></h3>
 
-@Html.ActionLink("Check Out", "Shipping", "Customers", new { @class = "btn btn-primary" })
+@Html.ActionLink("Check Out", "Shipping", "Customers", new { @role = "button", @id = "chkbx", @class = "btn btn-primary" })
 
 @using (Html.BeginForm("Shipping", "Customers", FormMethod.Post))
 {
@@ -50,7 +50,6 @@
     </table>
 
 
-    <input type="submit" value="go" />
 
 }
 
@@ -60,8 +59,46 @@
 
     <script>
 
+        $("#chkbx").click(function () {
+
+            var tbody = $("#table-body");
+
+            if (tbody.children().length == 0) {
+
+                alert("No item on cart");
+                return false;
+            }
+            else {
+
+                var hasSelected = false;
+
+                tbody.find('tr').each(function () {
+
+                    var row = $(this);
+
+                    if (row.find('.chkbx')[0].checked == true) {
+                        hasSelected = true;
+                    }
+
+                });
 
 
+                if (hasSelected == false)
+                {
+                    alert("No item selected");
+                    return false;
+                }
+
+
+            }
+
+
+        });
+
+
+       
+
+       
         function SumAmount() {
             var total = 0;
 
@@ -93,11 +130,12 @@
                 var tr = $(this).closest('tr');
 
                 $.get('@Url.Action("RemoveFromCart", "Customers")', { Id: tr.attr('data-id') }, function (res) {
-                    
+
                     if (res) {
                         tr.remove();
                         SumAmount();
                         updateCartCount();
+                        
                     }
                 });
 
@@ -110,20 +148,20 @@
                 var tr = $(this).closest('tr');
                 var inp = $(this).next('input');
 
-               
+
                 //pass product id
                 $.get('@Url.Action("changeCartQuantity", "Rest")', { Id: tr.attr('class'), mode: 'plus' }, function (res) {
 
                     console.log(res);
 
 
-                    if (res >= 0 ) {
+                    if (res >= 0) {
                         inp.val(parseInt(inp.val()) + 1)
                     }
 
-                   
 
-                    
+
+
                 });
 
 
@@ -133,12 +171,11 @@
 
             $(".lessBtn").on("click", function () {
 
-               
+
                 var tr = $(this).closest('tr');
                 var inp = $(this).prev('input');
 
-                if (parseInt(inp.val()) === 1)
-                {
+                if (parseInt(inp.val()) === 1) {
                     return;
 
                 }
@@ -152,7 +189,7 @@
                         inp.val(parseInt(inp.val()) - 1)
                     }
 
-                    
+
 
                 });
 
@@ -199,12 +236,11 @@
 
             }
 
-           
+
         });
 
-        function changeCount(mode)
-        {
-            
+        function changeCount(mode) {
+
         }
 
 
