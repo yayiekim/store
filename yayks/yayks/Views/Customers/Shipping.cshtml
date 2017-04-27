@@ -24,25 +24,28 @@
 
 
         @Html.HiddenFor(i => model.ShippingAddress.Id, new { @id = "shippingId" })
-        <div>
+        <div class="form-group">
             @Html.CheckBoxFor(o => model.ShippingAddress.IsDefault, null)
         </div>
-        <div>
-            @Html.EditorFor(i => model.ShippingAddress.Line1)
+        <div class="form-group">
+            @Html.EditorFor(i => model.ShippingAddress.Line1, new { htmlAttributes = new { @class = "form-control" } })
         </div>
-        <div>
-            @Html.EditorFor(i => model.ShippingAddress.Line2)
+        <div class="form-group">
+            @Html.EditorFor(i => model.ShippingAddress.Line2, new { htmlAttributes = new { @class = "form-control" } })
         </div>
-        <div>
-            @Html.EditorFor(i => model.ShippingAddress.City)
+        <div class="form-group">
+            @Html.EditorFor(i => model.ShippingAddress.City, new { htmlAttributes = new { @class = "form-control" } })
         </div>
-        <div>
-            @Html.EditorFor(i => model.ShippingAddress.State)
+        <div class="form-group">
+            @Html.EditorFor(i => model.ShippingAddress.State, new { htmlAttributes = new { @class = "form-control" } })
         </div>
 
+        <div class="form-group">
+            
+                <input type="submit" value="Submit" class="btn btn-default" />
+            
+        </div>
 
-
-        <input type="submit" value="submit" />
     }
 
 

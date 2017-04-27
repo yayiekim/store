@@ -237,9 +237,11 @@
     <Compile Include="Controllers\AdminProductMeasurementsController.cs" />
     <Compile Include="Controllers\AdminProductsController.cs" />
     <Compile Include="Controllers\CustomersController.cs" />
-    <Compile Include="Controllers\CustomerShippingAddressesController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
+    <Compile Include="Controllers\ManageCustomerShippingAddressController.cs" />
+    <Compile Include="Controllers\PurchaseDetailsController.cs" />
+    <Compile Include="Controllers\PurchasesController.cs" />
     <Compile Include="Controllers\RestController.cs" />
     <Compile Include="CustomerCreditCard.cs">
       <DependentUpon>ShopData.tt</DependentUpon>
@@ -630,6 +632,21 @@
     <Content Include="Views\Shared\_Partial_BillingAddress.cshtml" />
     <Content Include="Views\Shared\_Partial_Products.cshtml" />
     <Content Include="Views\Shared\_Partial_Product_Focus.cshtml" />
+    <Content Include="Views\ManageCustomerShippingAddress\Create.cshtml" />
+    <Content Include="Views\ManageCustomerShippingAddress\Delete.cshtml" />
+    <Content Include="Views\ManageCustomerShippingAddress\Details.cshtml" />
+    <Content Include="Views\ManageCustomerShippingAddress\Edit.cshtml" />
+    <Content Include="Views\ManageCustomerShippingAddress\Index.cshtml" />
+    <Content Include="Views\Customers\Pay.cshtml" />
+    <Content Include="Views\Purchases\Create.cshtml" />
+    <Content Include="Views\Purchases\Delete.cshtml" />
+    <Content Include="Views\Purchases\Details.cshtml" />
+    <Content Include="Views\Purchases\Edit.cshtml" />
+    <Content Include="Views\Purchases\Index.cshtml" />
+    <Content Include="Views\PurchaseDetails\Create.cshtml" />
+    <Content Include="Views\PurchaseDetails\Delete.cshtml" />
+    <Content Include="Views\PurchaseDetails\Edit.cshtml" />
+    <Content Include="Views\PurchaseDetails\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Code\" />

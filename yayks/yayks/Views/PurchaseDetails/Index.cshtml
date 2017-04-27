@@ -1,0 +1,60 @@
+﻿@model IEnumerable<yayks.PurchaseDetail>
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+
+
+
+}
+
+<h2>Purchase Details</h2>
+
+<p>
+    @Html.ActionLink("Create New", "Create", "PurchaseDetails", new { id = ViewBag.PurchaseId }, null)
+</p>
+<table class="table">
+    <tr>
+        <th>
+            <label>Product Name</label>
+        </th>
+        <th>
+            <label>Amount</label>
+        </th>
+        <th>
+            <label>Quantity</label>
+        </th>
+        <th>
+            <label>Remarks</label>
+        </th>
+        <th>
+            <label>Status</label>
+        </th>
+        <th></th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.Product.ProductName)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Amount)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Quantity)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Remarks)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.PurchaseDetailStatus)
+        </td>
+        <td>
+            @Html.ActionLink("Edit", "Edit", new { id=item.Id }) |
+            @Html.ActionLink("Delete", "Delete", new { id=item.Id })
+        </td>
+    </tr>
+}
+
+</table>
