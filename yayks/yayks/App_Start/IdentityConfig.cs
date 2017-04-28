@@ -11,6 +11,9 @@ using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin;
 using Microsoft.Owin.Security;
 using yayks.Models;
+using System.Configuration;
+using SendGrid;
+using SendGrid.Helpers.Mail;
 
 namespace yayks
 {
@@ -18,8 +21,22 @@ namespace yayks
     {
         public Task SendAsync(IdentityMessage message)
         {
-            // Plug in your email service here to send an email.
-            return Task.FromResult(0);
+            return configSendGridasync(message);
+        }
+
+        private async Task configSendGridasync(IdentityMessage message)
+        {
+            var apiKey = ConfigurationManager.AppSettings["SendGridKey"];
+            var client = new SendGridClient(apiKey);
+            var from = new EmailAddress("admin@yayks.com", "Yayks");
+            var subject = message.Subject;
+            var to = new EmailAddress(message.Destination, "Example User");
+            var plainTextContent = "";
+            var htmlContent = message.Body;
+            var msg = MailHelper.CreateSingleEmail(from, to, subject, plainTextContent, htmlContent);
+            var response = await client.SendEmailAsync(msg);
+
+
         }
     }
 

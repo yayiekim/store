@@ -9,6 +9,7 @@ using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
 using yayks.Models;
+using yayks.MyHelpers;
 
 namespace yayks.Controllers
 {
@@ -72,6 +73,22 @@ namespace yayks.Controllers
             if (!ModelState.IsValid)
             {
                 return View(model);
+            }
+
+            // Require the user to have a confirmed email before they can log on.
+            var user = await UserManager.FindByNameAsync(model.Email);
+            if (user != null)
+            {
+                if (!await UserManager.IsEmailConfirmedAsync(user.Id))
+                {
+                    string callbackUrl = await SendEmailConfirmationTokenAsync(user.Id, "Confirm your account-Resend");
+
+                    // Uncomment to debug locally  
+                    // ViewBag.Link = callbackUrl;
+                    ViewBag.errorMessage = "You must have a confirmed email to log on. "
+                                         + "The confirmation token has been resent to your email account.";
+                    return View("Error");
+                }
             }
 
             // This doesn't count login failures towards account lockout
@@ -156,15 +173,17 @@ namespace yayks.Controllers
                 var result = await UserManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
                 {
-                    await SignInManager.SignInAsync(user, isPersistent:false, rememberBrowser:false);
-                    
-                    // For more information on how to enable account confirmation and password reset please visit http://go.microsoft.com/fwlink/?LinkID=320771
-                    // Send an email with this link
-                    // string code = await UserManager.GenerateEmailConfirmationTokenAsync(user.Id);
-                    // var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);
-                    // await UserManager.SendEmailAsync(user.Id, "Confirm your account", "Please confirm your account by clicking <a href=\"" + callbackUrl + "\">here</a>");
+                    //  Comment the following line to prevent log in until the user is confirmed.
+                    //  await SignInManager.SignInAsync(user, isPersistent:false, rememberBrowser:false);
 
-                    return RedirectToAction("Index", "Home");
+                    string callbackUrl = await SendEmailConfirmationTokenAsync(user.Id, "Confirm your account");
+
+
+                    ViewBag.Message = "Check your email and confirm your account, you must be confirmed "
+                                    + "before you can log in.";
+
+                    return View("Info");
+                    //return RedirectToAction("Index", "Home");
                 }
                 AddErrors(result);
             }
@@ -210,12 +229,10 @@ namespace yayks.Controllers
                     return View("ForgotPasswordConfirmation");
                 }
 
-                // For more information on how to enable account confirmation and password reset please visit http://go.microsoft.com/fwlink/?LinkID=320771
-                // Send an email with this link
-                // string code = await UserManager.GeneratePasswordResetTokenAsync(user.Id);
-                // var callbackUrl = Url.Action("ResetPassword", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);		
-                // await UserManager.SendEmailAsync(user.Id, "Reset Password", "Please reset your password by clicking <a href=\"" + callbackUrl + "\">here</a>");
-                // return RedirectToAction("ForgotPasswordConfirmation", "Account");
+                string code = await UserManager.GeneratePasswordResetTokenAsync(user.Id);
+                var callbackUrl = Url.Action("ResetPassword", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);
+                await UserManager.SendEmailAsync(user.Id, "Reset Password", "Please reset your password by clicking <a href=\"" + callbackUrl + "\">here</a>");
+                return RedirectToAction("ForgotPasswordConfirmation", "Account");
             }
 
             // If we got this far, something failed, redisplay form
@@ -480,6 +497,17 @@ namespace yayks.Controllers
                 }
                 context.HttpContext.GetOwinContext().Authentication.Challenge(properties, LoginProvider);
             }
+        }
+
+        private async Task<string> SendEmailConfirmationTokenAsync(string userID, string subject)
+        {
+            string code = await UserManager.GenerateEmailConfirmationTokenAsync(userID);
+            var callbackUrl = Url.Action("ConfirmEmail", "Account",
+               new { userId = userID, code = code }, protocol: Request.Url.Scheme);
+            await UserManager.SendEmailAsync(userID, subject,
+               "Please confirm your account by clicking <a href=\"" + callbackUrl + "\">here</a>");
+
+            return callbackUrl;
         }
         #endregion
     }

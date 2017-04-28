@@ -54,9 +54,9 @@ namespace yayks
             //   consumerKey: "",
             //   consumerSecret: "");
 
-            //app.UseFacebookAuthentication(
-            //   appId: "",
-            //   appSecret: "");
+            app.UseFacebookAuthentication(
+               appId: "582768515190790",
+               appSecret: "d06768800dcf5ab613f54cc7ed04e728");
 
             //app.UseGoogleAuthentication(new GoogleOAuth2AuthenticationOptions()
             //{
