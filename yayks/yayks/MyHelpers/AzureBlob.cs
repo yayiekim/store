@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using System.IO;
 using static yayks.Models.CommonModels;
 using yayks.Models;
+using System.Configuration;
 
 namespace yayks.MyHelpers
 {
@@ -16,7 +17,7 @@ namespace yayks.MyHelpers
     public class AzureBlob
     {
         // Parse the connection string and return a reference to the storage account.
-        CloudStorageAccount storageAccount = CloudStorageAccount.Parse(CloudConfigurationManager.GetSetting("StorageConnectionString"));
+        CloudStorageAccount storageAccount = CloudStorageAccount.Parse(ConfigurationManager.AppSettings["StorageConnectionString"]);
      
 
         public async Task<BlobResultForSaving> UploadImageAsync(NewIMageModel imageToUpload)
@@ -25,10 +26,10 @@ namespace yayks.MyHelpers
             CloudBlobClient blobClient = storageAccount.CreateCloudBlobClient();
 
             // Retrieve reference to a previously created container.
-            CloudBlobContainer container = blobClient.GetContainerReference("mycontainer");
+            CloudBlobContainer container = blobClient.GetContainerReference("yayks");
 
             // Retrieve reference to a blob named "myblob".
-            CloudBlockBlob blockBlob = container.GetBlockBlobReference("myblob");
+            CloudBlockBlob blockBlob = container.GetBlockBlobReference("yayks");
 
 
             if (await container.CreateIfNotExistsAsync())
@@ -70,7 +71,7 @@ namespace yayks.MyHelpers
             CloudBlobClient blobClient = storageAccount.CreateCloudBlobClient();
 
             // Retrieve reference to a previously created container.
-            CloudBlobContainer container = blobClient.GetContainerReference("mycontainer");
+            CloudBlobContainer container = blobClient.GetContainerReference("yayks");
 
             List<string> result = new List<string>();
 

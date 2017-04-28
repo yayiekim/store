@@ -5,16 +5,31 @@ VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "yayks", "yayks\yayks.csproj", "{2C660A21-1FD7-46F7-BB47-D44E503D8FDA}"
 EndProject
+Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "Database", "Database\Database.sqlproj", "{17A2E2B0-90CD-45C1-B991-5CB711889A6B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		azure|Any CPU = azure|Any CPU
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{2C660A21-1FD7-46F7-BB47-D44E503D8FDA}.azure|Any CPU.ActiveCfg = azure|Any CPU
+		{2C660A21-1FD7-46F7-BB47-D44E503D8FDA}.azure|Any CPU.Build.0 = azure|Any CPU
+		{2C660A21-1FD7-46F7-BB47-D44E503D8FDA}.azure|Any CPU.Deploy.0 = azure|Any CPU
 		{2C660A21-1FD7-46F7-BB47-D44E503D8FDA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{2C660A21-1FD7-46F7-BB47-D44E503D8FDA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2C660A21-1FD7-46F7-BB47-D44E503D8FDA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2C660A21-1FD7-46F7-BB47-D44E503D8FDA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{17A2E2B0-90CD-45C1-B991-5CB711889A6B}.azure|Any CPU.ActiveCfg = azure|Any CPU
+		{17A2E2B0-90CD-45C1-B991-5CB711889A6B}.azure|Any CPU.Build.0 = azure|Any CPU
+		{17A2E2B0-90CD-45C1-B991-5CB711889A6B}.azure|Any CPU.Deploy.0 = azure|Any CPU
+		{17A2E2B0-90CD-45C1-B991-5CB711889A6B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{17A2E2B0-90CD-45C1-B991-5CB711889A6B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{17A2E2B0-90CD-45C1-B991-5CB711889A6B}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{17A2E2B0-90CD-45C1-B991-5CB711889A6B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{17A2E2B0-90CD-45C1-B991-5CB711889A6B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{17A2E2B0-90CD-45C1-B991-5CB711889A6B}.Release|Any CPU.Deploy.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
