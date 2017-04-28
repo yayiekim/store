@@ -191,6 +191,7 @@
           <Property Name="ProductDetailsId" Type="nvarchar" MaxLength="128" Nullable="false" />
           <Property Name="ImageUrl" Type="nvarchar" MaxLength="500" Nullable="false" />
           <Property Name="FileName" Type="nvarchar" MaxLength="500" Nullable="false" />
+          <Property Name="ThumbUrl" Type="nvarchar" MaxLength="500" />
         </EntityType>
         <EntityType Name="ProductDetails">
           <Key>
@@ -1135,6 +1136,7 @@
           <Property Name="ProductDetailsId" Type="String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="true" />
           <Property Name="ImageUrl" Type="String" Nullable="false" MaxLength="500" FixedLength="false" Unicode="true" />
           <Property Name="FileName" Type="String" Nullable="false" MaxLength="500" FixedLength="false" Unicode="true" />
+          <Property Name="ThumbUrl" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
           <NavigationProperty Name="ProductDetail" Relationship="Model.FK_ProductDetailImages_ProductDetails" FromRole="ProductDetailImage" ToRole="ProductDetail" />
         </EntityType>
         <EntityType Name="ProductDetail">
@@ -1205,9 +1207,9 @@
           <Property Name="Amount" Type="Decimal" Nullable="false" Precision="19" Scale="4" />
           <Property Name="Quantity" Type="Int32" Nullable="false" />
           <Property Name="Remarks" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
+          <Property Name="PurchaseDetailStatus" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
           <NavigationProperty Name="Product" Relationship="Model.FK_PurchaseDetails_Products" FromRole="PurchaseDetail" ToRole="Product" />
           <NavigationProperty Name="Purchase" Relationship="Model.FK_PurchaseDetails_Purchases" FromRole="PurchaseDetail" ToRole="Purchase" />
-          <Property Name="PurchaseDetailStatus" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
         </EntityType>
         <EntityType Name="Purchase">
           <Key>
@@ -1742,6 +1744,7 @@
           <EntitySetMapping Name="ProductDetailImages">
             <EntityTypeMapping TypeName="Model.ProductDetailImage">
               <MappingFragment StoreEntitySet="ProductDetailImages">
+                <ScalarProperty Name="ThumbUrl" ColumnName="ThumbUrl" />
                 <ScalarProperty Name="FileName" ColumnName="FileName" />
                 <ScalarProperty Name="ImageUrl" ColumnName="ImageUrl" />
                 <ScalarProperty Name="ProductDetailsId" ColumnName="ProductDetailsId" />

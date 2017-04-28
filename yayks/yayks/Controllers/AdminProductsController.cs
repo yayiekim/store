@@ -142,7 +142,7 @@ namespace yayks.Controllers
                 ProductBrandId = product.ProductBrandId,
                 CreatedByUserId = UserId,
                 DateCreated = DateTime.UtcNow
-                
+
 
             };
 
@@ -197,7 +197,8 @@ namespace yayks.Controllers
 
                         Id = img.Id,
                         ImageUrl = res.URL,
-                        FileName = res.FileName
+                        FileName = res.FileName,
+                        ThumbUrl = res.ThumbUrl
 
                     };
 
@@ -234,20 +235,20 @@ namespace yayks.Controllers
 
         public async Task<ActionResult> Edit(string Id)
         {
-            ViewBag.Colors = from o in data.ProductColors
+            ViewBag.Colors = await (from o in data.ProductColors
                              select new
                              {
                                  Id = o.Id,
                                  Name = o.ProductColorName
 
-                             };
+                             }).ToListAsync();
 
 
             var _product = await data.Products.FindAsync(Id);
             List<CheckBoxModel> cbCategoriesList = new List<CheckBoxModel>();
             List<CheckBoxModel> cbGenderList = new List<CheckBoxModel>();
 
-            foreach (var x in data.ProductCategories)
+            foreach (var x in await data.ProductCategories.ToListAsync())
             {
                 var IsSelected = false;
 
@@ -299,7 +300,7 @@ namespace yayks.Controllers
 
             List<NewIMageModel> _images = new List<NewIMageModel>();
 
-            foreach (var x in _tmpImages)
+            foreach (var x in _tmpImages.ToList())
             {
 
                 foreach (var y in x)
@@ -383,7 +384,7 @@ namespace yayks.Controllers
             _data.Amount = product.Amount;
             _data.Description = product.Description;
             _data.ProductName = product.Name;
-    
+
             //many to many insert mapping Categories
             List<string> tmpCategoryInt = product.Categories
                                     .Where(i => i.IsSelected).Select(i => i.Id).ToList();
@@ -486,7 +487,8 @@ namespace yayks.Controllers
                         Id = img.Id,
                         ProductDetailsId = _data.ProductDetails.First().Id,
                         ImageUrl = res.URL,
-                        FileName = res.FileName
+                        FileName = res.FileName,
+                        ThumbUrl = res.ThumbUrl
 
                     };
 
@@ -511,7 +513,15 @@ namespace yayks.Controllers
 
                 }
 
-                await azureBlob.DeleteBlobs(product.ForDeleteImages.Split(','));
+                try
+                {
+                    await azureBlob.DeleteBlobs(product.ForDeleteImages.Split(','));
+                }
+                catch
+                {
+
+                }
+
             }
 
 
@@ -525,20 +535,20 @@ namespace yayks.Controllers
         public async Task<ActionResult> Delete(string Id)
         {
 
-            ViewBag.Colors = from o in data.ProductColors
+            ViewBag.Colors = await (from o in data.ProductColors
                              select new
                              {
                                  Id = o.Id,
                                  Name = o.ProductColorName
 
-                             };
+                             }).ToListAsync();
 
 
             var _product = await data.Products.FindAsync(Id);
             List<CheckBoxModel> cbCategoriesList = new List<CheckBoxModel>();
             List<CheckBoxModel> cbGenderList = new List<CheckBoxModel>();
 
-            foreach (var x in data.ProductCategories)
+            foreach (var x in await data.ProductCategories.ToListAsync())
             {
                 var IsSelected = false;
 
@@ -636,22 +646,22 @@ namespace yayks.Controllers
 
                                           }).ToListAsync();
 
-            ViewBag.Brands = from o in data.ProductBrands
+            ViewBag.Brands = await (from o in data.ProductBrands
                              select new
                              {
                                  Id = o.Id,
                                  Name = o.Name
 
-                             };
+                             }).ToListAsync();
 
 
-            ViewBag.Colors = from o in data.ProductColors
+            ViewBag.Colors = await (from o in data.ProductColors
                              select new
                              {
                                  Id = o.Id,
                                  Color = o.ProductColorName
 
-                             };
+                             }).ToListAsync();
 
 
 
@@ -672,7 +682,13 @@ namespace yayks.Controllers
 
                 string[] c = y.ProductDetailImages.Select(i => i.Id).ToArray();
 
-                await azureBlob.DeleteBlobs(c);
+                try
+                {
+                    await azureBlob.DeleteBlobs(c);
+
+                }
+                catch { }
+
 
             }
 

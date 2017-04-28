@@ -366,10 +366,6 @@
     <Compile Include="Startup.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="App_Data\aspnet-yayks-20170226033717.mdf" />
-    <Content Include="App_Data\aspnet-yayks-20170226033717_log.ldf">
-      <DependentUpon>aspnet-yayks-20170226033717.mdf</DependentUpon>
-    </Content>
     <Content Include="Content\bootstrap-theme.css" />
     <Content Include="Content\bootstrap-theme.min.css" />
     <Content Include="Content\bootstrap.css" />
@@ -678,10 +674,12 @@
     <Content Include="Views\PurchaseDetails\Index.cshtml" />
     <None Include="Web.azure.config">
       <DependentUpon>Web.config</DependentUpon>
+      <SubType>Designer</SubType>
     </None>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Code\" />
+    <Folder Include="App_Data\" />
     <Folder Include="Views\Rest\" />
     <Folder Include="Views\SearchProduct\" />
   </ItemGroup>

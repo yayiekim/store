@@ -31,7 +31,7 @@ namespace yayks.MyHelpers
                                               Description = r.Description,
                                               Name = r.ProductName,
                                               Measurement = rr.ProductMeasurement.MeasurementValue.ToString(),
-                                              Images = rr.ProductDetailImages.ToList().Select(i => i.ImageUrl).ToList(),
+                                              Images = rr.ProductDetailImages.ToList().Select(i => i.ThumbUrl).ToList(),
                                               IsSelected = o.IsSelected,
                                               CartId = o.Id
 
@@ -156,7 +156,7 @@ namespace yayks.MyHelpers
                 await data.SaveChangesAsync();
                 return true;
             }
-            catch (Exception ex)
+            catch
             {
                 return false;
             }

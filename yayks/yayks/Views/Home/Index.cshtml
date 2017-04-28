@@ -10,8 +10,10 @@
 <div class="row">
     @foreach (var item in Model)
     {
-        @Html.Partial("_Partial_Products", item)
-
+        <div class="col-md-3" >
+            @Html.Partial("_Partial_Products", item)
+        </div>
+        
     }
 
 </div>

@@ -38,7 +38,7 @@ namespace yayks.Controllers
                                Description = o.Description,
                                Brand = o.ProductBrand.Name,
                                Amount = o.Amount,
-                               Images = o.ProductDetails.Select(i => i.ProductDetailImages.FirstOrDefault()).Select(i => i.ImageUrl).ToList()
+                               Images = o.ProductDetails.Select(i => i.ProductDetailImages.FirstOrDefault()).Select(i => i.ThumbUrl).ToList()
                            };
 
 
@@ -65,7 +65,7 @@ namespace yayks.Controllers
                     break;
             }
 
-            int pageSize = 3;
+            int pageSize = 4;
             int pageNumber = (page ?? 1);
             return View(products.ToPagedList(pageNumber, pageSize));
 

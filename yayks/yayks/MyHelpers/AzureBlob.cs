@@ -10,15 +10,15 @@ using System.IO;
 using static yayks.Models.CommonModels;
 using yayks.Models;
 using System.Configuration;
+using System.Web.Helpers;
 
 namespace yayks.MyHelpers
 {
-  
+
     public class AzureBlob
     {
         // Parse the connection string and return a reference to the storage account.
-        CloudStorageAccount storageAccount = CloudStorageAccount.Parse(ConfigurationManager.AppSettings["StorageConnectionString"]);
-     
+        CloudStorageAccount storageAccount = CloudStorageAccount.Parse(CloudConfigurationManager.GetSetting("StorageConnectionString"));
 
         public async Task<BlobResultForSaving> UploadImageAsync(NewIMageModel imageToUpload)
         {
@@ -51,16 +51,28 @@ namespace yayks.MyHelpers
             CloudBlockBlob cloudBlockBlob = container.GetBlockBlobReference(imageName);
             cloudBlockBlob.Properties.ContentType = imageToUpload.FileExtention;
             await cloudBlockBlob.UploadFromStreamAsync(imageToUpload.File.InputStream);
+            
 
+            WebImage imgThumb = new WebImage(imageToUpload.File.InputStream).Resize(160,160);
+
+
+            string imageNameThumb = "thumb" + imageToUpload.Id + ".png";
+
+            CloudBlockBlob cloudBlockBlobThumb = container.GetBlockBlobReference(imageNameThumb);
+            cloudBlockBlobThumb.Properties.ContentType = imageToUpload.FileExtention;
+            await cloudBlockBlobThumb.UploadFromByteArrayAsync(imgThumb.GetBytes(), 0, imgThumb.GetBytes().Count());
+
+            
             BlobResultForSaving res = new BlobResultForSaving()
             {
                 URL = cloudBlockBlob.Uri.ToString(),
                 BaseUrl = storageAccount.BlobEndpoint.ToString(),
-                FileName = imageName
+                FileName = imageName,
+                ThumbUrl = cloudBlockBlobThumb.Uri.ToString(),
 
 
             };
-            
+
             return res;
 
         }
@@ -79,20 +91,35 @@ namespace yayks.MyHelpers
             {
                 // Retrieve reference to a blob named "myblob.txt".
                 CloudBlockBlob blockBlob = container.GetBlockBlobReference(x + ".png");
+                CloudBlockBlob blockBlobThumb = container.GetBlockBlobReference("thumb" + x + ".png");
 
-                // Delete the blob.
-               await blockBlob.DeleteAsync();
-                result.Add(x);
+
+                try {
+
+                    // Delete the blob.
+                    await blockBlob.DeleteAsync();
+
+                    // Delete the blob thumb.
+                    await blockBlobThumb.DeleteAsync();
+
+                    result.Add(x);
+                }
+                catch {
+
+                }
+
+              
+                
 
             }
-            
-        }  
+
+        }
 
 
 
     }
 
-   
+
 
 
 }

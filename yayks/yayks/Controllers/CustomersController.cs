@@ -297,7 +297,7 @@ namespace yayks.Controllers
                 model.UserId = userId;
                 model.PaymentStatus = _paymentResult.PaymentStatus;
 
-                dataLayer.createOrder(model);
+               await dataLayer.createOrder(model);
 
                 ViewBag.paymentStat = "Success";
             }
